@@ -1,5 +1,7 @@
-# Inspector Spacetime
+# [Inspector Spacetime][4e4c540d]
 Motion specs are a necessary part of the engineering process. It's often difficult and time consuming to deliver the data required to replicate motion on device. With Inspector Spacetime you can generate this data along side the reference quicktime, with just one click.
+
+  [4e4c540d]: https://google.github.io/inspectorspacetime/ "Inspector Spacetime"
 
 > This is not an official Google product. Motion designers at Google just kinda like it a lot. Built by [Adam Plouff][8638464d].
 
