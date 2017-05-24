@@ -19,25 +19,25 @@ Motion specs are a necessary part of the engineering process. It's often difficu
 ## Usage
 
 ### Basics
-![Panel](https://knowledge-ux-prototyping.teams.x20web.corp.google.com/motion/tools/inspectorspacetime/img/Panel.png)
+<img src="https://google.github.io/inspectorspacetime/img/Panel.png width="400">
 
 Select a pair or several pairs of keyframes and click the button. Your comp will be duplicated and resized to create space for all the useful spec data to live right along side the reference animation.
 
 A new text layer is generated with all the selected element data. Raw text may be edited. Enabling the expression will update style and live values.
 
 ### Live Text
-![Start Time](https://knowledge-ux-prototyping.teams.x20web.corp.google.com/motion/tools/inspectorspacetime/gif/StartTime.gif)
+<img src="https://google.github.io/inspectorspacetime/gif/StartTime.gif width="400">
 
 Spec data is based on the overall transition time. Markers are created at the time of the first and last selected keyframes as a reference for the transition time. Moving the Start and End markers update:
 
 - Total Duration
 - Delay
 - Time Counter
--
+
 **Spec Layer Name** heading comes from the layer name itself.
 
 ### Data output
-![Data Output](https://knowledge-ux-prototyping.teams.x20web.corp.google.com/motion/tools/inspectorspacetime/gif/DataOutput.gif)
+<img src="https://google.github.io/inspectorspacetime/gif/DataOutput.gif width="400">
 
 Keyframe data output:
 
@@ -53,28 +53,28 @@ Keyframe data output:
 ## Generator Buttons
 
 ### Isolation Layer
-![Iso Layer](https://knowledge-ux-prototyping.teams.x20web.corp.google.com/motion/tools/inspectorspacetime/gif/IsoLayer.gif)
+<img src="https://google.github.io/inspectorspacetime/gif/IsoLayer.gif width="400">
 
 If your comp is really busy it can be tough to clearly see what's being spec'd. An isolation layer is just an adjustment layer that will grey out everything below it to get a little more focus on what you're showing.
 
 ## Time Counter
-![Time Counter](https://knowledge-ux-prototyping.teams.x20web.corp.google.com/motion/tools/inspectorspacetime/gif/TimeCounter.gif)
+<img src="https://google.github.io/inspectorspacetime/gif/TimeCounter.gif width="400">
 
 Created with every spec, a counter is also available as it's own layer. Create a millisecond counter with a defined start and end point. Start the timer at the beginning of the transition to easily illustrate the global start time.
 
 ## Pointer
-![Pointer](https://knowledge-ux-prototyping.teams.x20web.corp.google.com/motion/tools/inspectorspacetime/img/Pointer.png)
+<img src="https://google.github.io/inspectorspacetime/img/Pointer.png width="400">
 
 Everyone names things differently which can lead to confusion. So draw a line from spec data to the visual element and save yourself a lot of explaining. This button will get you started, or just draw your own. Either way, it'll make your life easier.
 
 ___
 ## Why the dumb name?
 
-Named after the Doctor Who parody from the underrated NBC comedy Community. It was a really great show.
+Named after the Doctor Who parody from the underrated NBC comedy [Community][a97544c1]. It was a really great show.
 
-In`spec`tor Spacetime. It's a bad pun. I'm a dad. I can't help it.
+  [a97544c1]: https://youtu.be/WQAgPaJvvHU "Community - Inspector Spacetime'"
 
-[![IMAGE ALT TEXT HERE](https://img.youtube.com/vi/YOUTUBE_VIDEO_ID_HERE/0.jpg)](https://youtu.be/WQAgPaJvvHU)
+In**spec**tor Spacetime. It's a bad pun. I'm a dad. I can't help it.
 ___
 
 ## License
