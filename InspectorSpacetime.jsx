@@ -405,7 +405,8 @@ function round(value, opt_decimals) {
 	// if (value instanceof Array) {alert('ggggg')}
 	try{
 		var decimals = (opt_decimals !== undefined) ? opt_decimals : 2;       // default to 2 decimal places if nothing is specified
-		return Number(Math.round(value+'e'+decimals)+'e-'+decimals);
+		return parseFloat(value.toFixed(decimals));
+		// return Number(Math.round(value+'e'+decimals)+'e-'+decimals);
 	} catch (e) {
 		return value;
 	}
@@ -843,21 +844,23 @@ btnLaunch.onClick = function() {
 		if (selectedProperties[k].canVaryOverTime && 
 				selectedProperties[k].selectedKeys.length > 1) {  										// check if selected prop is keyframable
 			var selKeys = selectedProperties[k].selectedKeys;												// set var to store selectedKey indices
+		for (var m = 0; m < selKeys.length-1; m++) {
 			propCollect.push( {
 				obj: selectedProperties[k],
 				name: selectedProperties[k].name,
-				dur: selectedProperties[k].keyTime(selKeys[1]) - selectedProperties[k].keyTime(selKeys[0]),
+				dur: selectedProperties[k].keyTime(selKeys[m+1]) - selectedProperties[k].keyTime(selKeys[m]),
 				val: 0,
-				startTime: selectedProperties[k].keyTime(selKeys[0]),
-				startValue: selectedProperties[k].keyValue(selKeys[0]),
-				startTemporalEase: selectedProperties[k].keyOutTemporalEase(selKeys[0])[0],
-				startEaseType: selectedProperties[k].keyOutInterpolationType(selKeys[0]),
-				endTime: selectedProperties[k].keyTime(selKeys[1]),
-				endValue: selectedProperties[k].keyValue(selKeys[1]),
-				endTemporalEase: selectedProperties[k].keyInTemporalEase(selKeys[1])[0],
-				endEaseType: selectedProperties[k].keyInInterpolationType(selKeys[1]),
-				duration: selectedProperties[k].keyTime(selKeys[1]) - selectedProperties[k].keyTime(selKeys[0])
+				startTime: selectedProperties[k].keyTime(selKeys[m]),
+				startValue: selectedProperties[k].keyValue(selKeys[m]),
+				startTemporalEase: selectedProperties[k].keyOutTemporalEase(selKeys[m])[0],
+				startEaseType: selectedProperties[k].keyOutInterpolationType(selKeys[m]),
+				endTime: selectedProperties[k].keyTime(selKeys[m+1]),
+				endValue: selectedProperties[k].keyValue(selKeys[m+1]),
+				endTemporalEase: selectedProperties[k].keyInTemporalEase(selKeys[m+1])[0],
+				endEaseType: selectedProperties[k].keyInInterpolationType(selKeys[m+1]),
+				duration: selectedProperties[k].keyTime(selKeys[m+1]) - selectedProperties[k].keyTime(selKeys[m])
 			} );
+		}
 			lastKeyTime = Math.max(lastKeyTime, propCollect[propCollect.length-1].endTime);
 		}
 	}
