@@ -23,14 +23,14 @@ Motion specs are a necessary part of the engineering process. It's often difficu
 ### Basics
 <img src="https://google.github.io/inspectorspacetime/img/Panel.png" width="400">
 
-Select a pair or several pairs of keyframes and click the button. Your comp will be duplicated and resized to create space for all the useful spec data to live right along side the reference animation.
+Select a pair or several pairs of keyframes and click the giant button. Your comp will be duplicated and resized to create space for all the useful spec data to live right alongside the reference animation.
 
 A new text layer is generated with all the selected element data. Raw text may be edited. Enabling the expression will update style and live values.
 
 ### Live Text
 <img src="https://google.github.io/inspectorspacetime/gif/StartTime.gif" width="400">
 
-Spec data is based on the overall transition time. Markers are created at the time of the first and last selected keyframes as a reference for the transition time. Moving the Start and End markers update:
+Spec data is based on the overall transition time. Markers are placed at the time of the first and last selected keyframes as a reference for the transition time. Moving the start and end markers updates:
 
 - Total Duration
 - Delay
@@ -62,12 +62,12 @@ If your comp is really busy it can be tough to clearly see what's being spec'd. 
 ## Time Counter
 <img src="https://google.github.io/inspectorspacetime/gif/TimeCounter.gif" width="400">
 
-Created with every spec, a counter is also available as it's own layer. Create a millisecond counter with a defined start and end point. Start the timer at the beginning of the transition to easily illustrate the global start time.
+Created with every spec, a counter is also available as its own layer. Create a millisecond counter with a defined start and end point. Start the timer at the beginning of the transition to easily illustrate the global start time.
 
 ## Pointer
 <img src="https://google.github.io/inspectorspacetime/img/Pointer.png" width="400">
 
-Everyone names things differently which can lead to confusion. So draw a line from spec data to the visual element and save yourself a lot of explaining. This button will get you started, or just draw your own. Either way, it'll make your life easier.
+Everyone names things differently, which can lead to confusion. So draw a line from spec data to the visual element and save yourself a lot of explaining. This button will get you started, or just draw your own. Either way, it'll make your life easier.
 
 ___
 ## Why the dumb name?
@@ -76,7 +76,7 @@ Named after the Doctor Who parody from the underrated NBC comedy [Community][a97
 
   [a97544c1]: https://youtu.be/WQAgPaJvvHU "Community - Inspector Spacetime'"
 
-In**spec**tor Spacetime. It's a bad pun. I'm a dad. I can't help it.
+In**spec**tor Spacetime. It's a bad pun. But I'm a dad. I can't help it.
 ___
 
 ## License
