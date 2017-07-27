@@ -1,3 +1,7 @@
+![alt text][logo]
+
+[logo]: https://github.com/google/inspectorspacetime/blob/gh-pages/img/Inspector_Spacetime_logo.png "Inspector Spacetime logo"
+
 # [Inspector Spacetime][4e4c540d]
 Motion specs are a necessary part of the engineering process. It's often difficult and time consuming to deliver the data required to replicate motion on device. With Inspector Spacetime you can generate this data along side the reference quicktime, with just one click.
 
