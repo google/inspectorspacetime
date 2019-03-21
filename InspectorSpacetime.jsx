@@ -1071,13 +1071,14 @@ btn_aboutScript.onClick = function() {
 
 		var btn_url = buttonColorVector(content, icons.build, '#EF5350', [224,64]);
 
-		content.add('statictext', [0,0,400,380],
-			'Speed up the creation of animation specs for engineering while reducing miscommunication. One click duplicates the comp and generates keyframe data as text layers (for manual tweaking). All of this is built along side the comp for easy reference.' +
+		content.add('statictext', [0,0,400,340],
+			'Speed up the creation of animation specs for engineering while reducing miscommunication. One click to collect selected keyframe pair data to a text panel. Copy/paste this text out or build a panel along side the comp for easy reference.' +
 			'\n\n' +
 			'Usage:\n' +
-			'• Live: Creates the sidebar with selected keyframe data. Basic opens a panel to collect keyframe data as plain text –additional keys may be added. \n' +
-			'• Basic: Opens a panel to collect keyframe data as plain text. Additional keys may be added but their delay time will be based on the first key\'s time. This collected data may copied out or used to create a plain text sidebar. \n' +
-			'Select pairs of keyframes and press the button. That\'s it. There are a couple of options too.\n\n' +
+			'• Click the big button to open the property collection panel. \n' +
+			'• Additional key pairs will be added to the list, grouped by layer. The total duration and individual propery delays will update. \n' +
+			'• Copy out this text or create a panel along side a duplicate of your comp. \n\n' +
+			'Add ons:\n' +
 			'• Pixel/DP: This data can be communicated as coordinates or in DP. Set the density dropdown based on resolution of your comp.\n' +
 			'• ISO LAYER: Creates an adjustment layer below the selected layer to dims other layers. This allows layers to be hilighted while keeping things in context.\n' +
 			'• POINTER: Creates an editable arrow to quickly draw a line from the text spec to on-screen element.\n\n' +
