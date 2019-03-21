@@ -27,20 +27,14 @@ Motion specs are a necessary part of the engineering process. It's often difficu
 ### Basics
 <img src="https://google.github.io/inspectorspacetime/img/Panel.png" width="400">
 
-Select a pair or several pairs of keyframes and click the giant button. Your comp will be duplicated and resized to create space for all the useful spec data to live right alongside the reference animation.
+Select a pair or several pairs of keyframes and click the giant button. These keyframe values will be collected within a floating panel and may be copied out as text or added to a renderable blue side panel in a duplicate comp.
 
-A new text layer is generated with all the selected element data. Raw text may be edited. Enabling the expression will update style and live values.
+### Pastable Text
+<img src="https://google.github.io/inspectorspacetime/img/PropPanel.png" width="400">
 
-### Live Text
-<img src="https://google.github.io/inspectorspacetime/gif/StartTime.gif" width="400">
+Selected keyframe pairs are now added to the property list as plain text. Additional keys may be added to the list and the overall duration and delay of each key pair will update.
 
-Spec data is based on the overall transition time. Markers are placed at the time of the first and last selected keyframes as a reference for the transition time. Moving the start and end markers updates:
-
-- Total Duration
-- Delay
-- Time Counter
-
-**Spec Layer Name** heading comes from the layer name itself.
+**Note: Live text is dead–** as of v2.1, the live text panel has been removed because it was a major pain to get useable data out with all those expressions.
 
 ### Data output
 <img src="https://google.github.io/inspectorspacetime/gif/DataOutput.gif" width="400">
