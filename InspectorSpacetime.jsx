@@ -634,6 +634,8 @@ function getEase(activeProp) {
 	//// check type of keys
 	if (activeProp.startEaseType == KeyframeInterpolationType.LINEAR && activeProp.endEaseType == KeyframeInterpolationType.LINEAR) {
 	  return 'Linear';																																			// return if linear keys
+  } else if (activeProp.startEaseType == KeyframeInterpolationType.HOLD){
+	  return 'Hold';																																		// return if no change
 	} else if (isNaN(y1)){
 	  return 'No Change';																																		// return if no change
 	} else {
