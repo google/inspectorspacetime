@@ -468,7 +468,7 @@ function getPropObj(opt_propObj) {
 						duration: prop.keyTime(selKeys[m+1]) - prop.keyTime(selKeys[m]),
 					} );
 				}
-				firstKeyTime = Math.min(firstKeyTime, propCollect[propCollect.length-1].startTime);
+				firstKeyTime = Math.min(firstKeyTime, propCollect[0].startTime);							// set firstKeyTime to first keyframe's start time
 				lastKeyTime = Math.max(lastKeyTime, propCollect[propCollect.length-1].endTime);
 			}
 		}
