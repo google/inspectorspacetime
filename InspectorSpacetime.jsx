@@ -50,6 +50,7 @@ var icons = {																																		// icon string for retina icons
 
 /** Set the current comp to the var thisComp */
 function setComp() {
+  app.activeViewer.setActive();                             // activate the comp even if it isnt highlighted
   thisComp = app.project.activeItem;																						// stupid extendscript
   if (!thisComp || !(thisComp instanceof CompItem)) {														// Make sure a comp is selected
     alert("Gotta select a comp first");
@@ -376,7 +377,26 @@ function buildTextBlock(p, op_firstKeyTime) {
 
 	return str;
 }
+function getKeyRange() {
+    var firstKeyTime = 9999999;
+    var lastKeyTime = 0;
 
+
+    for (var i = 0; i < thisComp.selectedLayers.length; i++) {
+        var layer = thisComp.selectedLayers[i];
+        for (var j = 0; j < layer.selectedProperties.length; j++) {
+            var prop = layer.selectedProperties[j];
+            for (var k = 0; k < prop.selectedKeys.length; k++) {
+                var key = prop.selectedKeys[k];
+                // alert(prop.keyTime(key))
+
+                firstKeyTime = Math.min(firstKeyTime, prop.keyTime(key));							// set firstKeyTime to first keyframe's start time
+				lastKeyTime = Math.max(lastKeyTime, prop.keyTime(key));
+            }
+        }
+    }
+    return [firstKeyTime, lastKeyTime];
+}
 function getPropObj(opt_propObj) {
 	if (opt_propObj == undefined) {
 		propCollect = [],
@@ -1111,11 +1131,13 @@ btn_pointer.onClick = function() {
 
 btn_counter.onClick = function() {
 	setComp();
-	getPanelSize();
+    // getPanelSize();
+    var keyRange = getKeyRange();           // get selected keys range
+    if (keyRange[0] == 9999999) { keyRange = [thisComp.time, thisComp.time + 1] }       // if no keys selected use the playhead time and playhead + 1:00
 
 	app.beginUndoGroup('New Counter');
 	var textLayer = buildCounter();																											// build text layer
-	setTimeMarkers(textLayer, thisComp.time-0.02, thisComp.time + 1);										// set markers
+	setTimeMarkers(textLayer, keyRange[0], keyRange[1]);										// set markers
 	textLayer("ADBE Text Properties")("ADBE Text Document").expression = exp_counter;
 
 	// close twirled layers
