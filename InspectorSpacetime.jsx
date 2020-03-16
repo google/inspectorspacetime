@@ -639,16 +639,18 @@ function getEase(activeProp) {
 	var k1 = activeProp.startValue;																												// initalize first key
 	var k2 = activeProp.endValue;																													// initalize last key
 
-	var change = (dims == 1 || activeProp.propertyType == PropertyType.PROPERTY) ? k2 - k1 : Math.sqrt( Math.pow(k2[0] - k1[0], 2) + Math.pow(k2[1] - k1[1], 2) );
-	var keyOutSp = (activeProp.startTemporalEase.speed < 0) ? activeProp.startTemporalEase.speed : -activeProp.startTemporalEase.speed;
-	var y1Mult = (activeProp.startTemporalEase.speed < 0) ? 1 : -1;
-	var keyInSp = (activeProp.endTemporalEase.speed < 0) ? activeProp.endTemporalEase.speed : -activeProp.endTemporalEase.speed;
+	var valChange = (dims == 1 || activeProp.propertyType == PropertyType.PROPERTY) ? k2 - k1 : Math.sqrt( Math.pow(k2[0] - k1[0], 2) + Math.pow(k2[1] - k1[1], 2) );
+	var keyOutSpeed = activeProp.startTemporalEase.speed;
+	var keyInSpeed = activeProp.endTemporalEase.speed;
+	if (keyOutSpeed < 0) { keyOutSpeed *= -1 }
+	if (keyInSpeed > 0) { keyInSpeed *= -1 }
+	var y1Mult = (activeProp.startTemporalEase.speed > 0) ? 1 : -1;
 	var y2Mult = (activeProp.endTemporalEase.speed > 0) ? 1 : -1;
 
-	var x1 = activeProp.startTemporalEase.influence/100;
-	var y1 = ((keyOutSp * x1) * activeProp.duration/change) * y1Mult;
-	var x2 = 1 - activeProp.endTemporalEase.influence/100;
-	var y2 = 1 - ((keyInSp * (x2-1)) * activeProp.duration/change) * y2Mult;
+	var x1 = activeProp.startTemporalEase.influence / 100;
+	var y1 = (keyOutSpeed * x1) * (activeProp.duration / valChange) * y1Mult;
+	var x2 = 1 - activeProp.endTemporalEase.influence / 100;
+	var y2 = 1 - (keyInSpeed * (x2-1)) * (activeProp.duration / valChange) * y2Mult;
 
 
 	//// check type of keys
