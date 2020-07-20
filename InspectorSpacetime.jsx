@@ -476,6 +476,7 @@ function getPropObj(opt_propObj) {
 						threeDLayer: layer.threeDLayer || (layer instanceof CameraLayer),
 						propertyValueType: prop.propertyValueType,
 						name: prop.name,
+						matchName: prop.matchName,
 						dur: prop.keyTime(selKeys[m+1]) - prop.keyTime(selKeys[m]),
 						// val: 0,
 						startTime: prop.keyTime(selKeys[m]),
