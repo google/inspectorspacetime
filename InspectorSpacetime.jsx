@@ -445,6 +445,7 @@ function getPropObj(opt_propObj) {
 				layer = selectedLayers[i];
 				propObj.layers.push({
 					name: layer.name,
+					matchName: layer.matchName,
 					index: layer.index,
 					props: getProps(layer),
 				})
@@ -638,8 +639,20 @@ function getEase(activeProp) {
 	var dims = (activeProp.obj.value instanceof Array) ? activeProp.obj.value.length : 1;	// count the property dimension
 	var k1 = activeProp.startValue;																												// initalize first key
 	var k2 = activeProp.endValue;																													// initalize last key
-
-	var valChange = (dims == 1 || activeProp.propertyType == PropertyType.PROPERTY) ? k2 - k1 : Math.sqrt( Math.pow(k2[0] - k1[0], 2) + Math.pow(k2[1] - k1[1], 2) );
+	
+	// value change logic
+	var valChange;
+	if (dims == 1 || activeProp.propertyType == PropertyType.PROPERTY) {
+		valChange = k2 - k1;
+	} else {
+		// alert(activeProp.matchName)
+		if (activeProp.matchName.indexOf('Size') != -1) {
+			valChange = 100000000000000;
+		} else {
+			valChange = Math.sqrt(Math.pow(k2[0] - k1[0], 2) + Math.pow(k2[1] - k1[1], 2));
+		}
+	}
+	
 	var keyOutSpeed = activeProp.startTemporalEase.speed;
 	var keyInSpeed = activeProp.endTemporalEase.speed;
 	if (keyOutSpeed < 0) { keyOutSpeed *= -1 }
