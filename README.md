@@ -1,6 +1,4 @@
-![alt text][logo]
-
-[logo]: https://github.com/google/inspectorspacetime/blob/gh-pages/gif/space_gif.gif "Inspector Spacetime logo"
+<img src="https://google.github.io/inspectorspacetime/images/Inspector_Spacetime_logo.png" width="100" alt="Inspector Spacetime logo">
 
 # [Inspector Spacetime][4e4c540d]
 Motion specs are a necessary part of the engineering process. It's often difficult and time consuming to deliver the data required to replicate motion on device. With Inspector Spacetime you can generate this data along side the reference quicktime, with just one click.
@@ -15,7 +13,15 @@ Motion specs are a necessary part of the engineering process. It's often difficu
 ## Installation
 
 
-### After Effects
+### CC2019+
+In newer versions of After Effects, it is possible to install RubberHose 2 and other scripts without digging through your hard drive.
+
+`File > Scripts > Install Script UI Panel…`
+
+Restart Ae and InspectorSpacetime will be available in the Window menu at the top of the screen. Scroll down to find the installed scripts
+
+
+### CC2018 and older
 1. Close After Effects
 2. Drag the `InspectorSpacetime.jsx` file into Applications > Adobe After Effects [version number] > Scripts > ScriptUI Panels
 3. Fire up After Effects again
@@ -25,19 +31,19 @@ Motion specs are a necessary part of the engineering process. It's often difficu
 ## Usage
 
 ### Basics
-<img src="https://google.github.io/inspectorspacetime/img/Panel.png" width="400">
+<img src="https://google.github.io/inspectorspacetime/images/Panel.png" width="380">
 
 Select a pair or several pairs of keyframes and click the giant button. These keyframe values will be collected within a floating panel and may be copied out as text or added to a renderable blue side panel in a duplicate comp.
 
 ### Pastable Text
-<img src="https://google.github.io/inspectorspacetime/img/PropPanel.png" width="400">
+<img src="https://google.github.io/inspectorspacetime/images/PropPanel.png" width="380">
 
 Selected keyframe pairs are now added to the property list as plain text. Additional keys may be added to the list and the overall duration and delay of each key pair will update.
 
 **Note: Live text is dead–** as of v2.1, the live text panel has been removed because it was a major pain to get useable data out with all those expressions.
 
 ### Data output
-<img src="https://google.github.io/inspectorspacetime/gif/DataOutput.gif" width="400">
+<img src="https://google.github.io/inspectorspacetime/images/DataOutput.gif" width="380">
 
 Keyframe data output:
 
@@ -53,24 +59,24 @@ Keyframe data output:
 ## Generator Buttons
 
 ### Isolation Layer
-<img src="https://google.github.io/inspectorspacetime/gif/IsoLayer.gif" width="400">
+<img src="https://google.github.io/inspectorspacetime/images/IsoLayer.gif" width="380">
 
 If your comp is really busy it can be tough to clearly see what's being spec'd. An isolation layer is just an adjustment layer that will grey out everything below it to get a little more focus on what you're showing.
 
 ## Time Counter
-<img src="https://google.github.io/inspectorspacetime/gif/TimeCounter.gif" width="400">
+<img src="https://google.github.io/inspectorspacetime/images/TimeCounter.gif" width="380">
 
 Created with every spec, a counter is also available as its own layer. Create a millisecond counter with a defined start and end point. Start the timer at the beginning of the transition to easily illustrate the global start time.
 
 ## Pointer
-<img src="https://google.github.io/inspectorspacetime/img/Pointer.png" width="400">
+<img src="https://google.github.io/inspectorspacetime/images/Pointer.png" width="380">
 
 Everyone names things differently, which can lead to confusion. So draw a line from spec data to the visual element and save yourself a lot of explaining. This button will get you started, or just draw your own. Either way, it'll make your life easier.
 
 ___
 ## Why the dumb name?
 
-Named after the Doctor Who parody from the underrated NBC comedy [Community][a97544c1]. It was a really great show.
+Named after the Doctor Who parody from the underrated NBC comedy [Community][a97544c1]. The series really falls apart at the end but it's mostly pretty amazing.
 
   [a97544c1]: https://youtu.be/WQAgPaJvvHU "Community - Inspector Spacetime'"
 
