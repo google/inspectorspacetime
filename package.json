@@ -1,0 +1,19 @@
+{
+  "name": "inspector-spacetime",
+  "version": "2.1.0",
+  "description": "Motion specs from After Effects",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/google/inspectorspacetime.git"
+  },
+  "author": "Adam Plouff",
+  "license": "Apache-2.0",
+  "bugs": {
+    "url": "https://github.com/google/inspectorspacetime/issues"
+  },
+  "homepage": "https://github.com/google/inspectorspacetime#readme"
+}
