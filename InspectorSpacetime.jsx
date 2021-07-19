@@ -640,7 +640,7 @@ function getEase(activeProp) {
 	var dims = (activeProp.obj.value instanceof Array) ? activeProp.obj.value.length : 1;	// count the property dimension
 	var k1 = activeProp.startValue;																												// initalize first key
 	var k2 = activeProp.endValue;																													// initalize last key
-	
+
 	// value change logic
 	var valChange;
 	if (dims == 1 || activeProp.propertyType == PropertyType.PROPERTY) {
@@ -653,7 +653,7 @@ function getEase(activeProp) {
 			valChange = Math.sqrt(Math.pow(k2[0] - k1[0], 2) + Math.pow(k2[1] - k1[1], 2));
 		}
 	}
-	
+
 	var keyOutSpeed = activeProp.startTemporalEase.speed;
 	var keyInSpeed = activeProp.endTemporalEase.speed;
 	if (keyOutSpeed < 0) { keyOutSpeed *= -1 }
