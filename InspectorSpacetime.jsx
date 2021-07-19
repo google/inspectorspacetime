@@ -51,15 +51,15 @@ var icons = {																																		// icon string for retina icons
  * Set the current comp to the var thisComp
  */
 function setComp() {
-  app.activeViewer.setActive();                             // activate the comp even if it isnt highlighted
-  thisComp = app.project.activeItem;																						// stupid extendscript
-  if (!thisComp || !(thisComp instanceof CompItem)) {														// Make sure a comp is selected
-    alert("Gotta select a comp first");
-    return false;
-  }
-  workStart = thisComp.workAreaStart;																						// set the workStart var
-  workEnd = workStart + thisComp.workAreaDuration;															// set the workEnd var
-  return true;
+	app.activeViewer.setActive();                             // activate the comp even if it isnt highlighted
+	thisComp = app.project.activeItem;																						// stupid extendscript
+	if (!thisComp || !(thisComp instanceof CompItem)) {														// Make sure a comp is selected
+		alert("Gotta select a comp first");
+		return false;
+	}
+	workStart = thisComp.workAreaStart;																						// set the workStart var
+	workEnd = workStart + thisComp.workAreaDuration;															// set the workEnd var
+	return true;
 }
 
 
@@ -86,9 +86,9 @@ function buttonColorText(parentObj, accentColor, buttonText) {
 	return btn;																																		// return the button for the listener
 
 	/**
-   * Draws vector button
-   */
-  function gfxDraw() {
+	 * Draws vector button
+	 */
+	function gfxDraw() {
 		with (this) {
 			graphics.drawOSControl();
 			graphics.rectPath(0,0,size[0],size[1]);
@@ -103,12 +103,12 @@ function buttonColorText(parentObj, accentColor, buttonText) {
 	}
 
 	/**
-   * Converts a hex string to an RGB array
-   *
-   * @param {string} hexString - Hex string
-   * @return {number[]}        - Colour array
-   */
-  function hexToArray(hexString) {
+	 * Converts a hex string to an RGB array
+	 *
+	 * @param {string} hexString - Hex string
+	 * @return {number[]}        - Colour array
+	 */
+	function hexToArray(hexString) {
 		var hexColor = hexString.replace('#', '');
 		var r = parseInt(hexColor.slice(0, 2), 16) / 255,
 				g = parseInt(hexColor.slice(2, 4), 16) / 255,
@@ -137,12 +137,12 @@ function buttonColorVector(parentObj, iconVec, iconColor, size) {    /// from sk
 			return vButton;
 
 	/**
-   * Converts SVG coordinates to ScriptUI voordinates
-   *
-   * @param {string[]} vecCoord - Array of SVG coordinate strings
-   * @return {number[][]}       - Array of coordinates
-   */
-  function vecToPoints(vecCoord) {
+	 * Converts SVG coordinates to ScriptUI voordinates
+	 *
+	 * @param {string[]} vecCoord - Array of SVG coordinate strings
+	 * @return {number[][]}       - Array of coordinates
+	 */
+	function vecToPoints(vecCoord) {
 		var points = [];
 		var n;
 
@@ -167,12 +167,12 @@ function buttonColorVector(parentObj, iconVec, iconColor, size) {    /// from sk
 	}
 
 	/**
-   * Converts a hex string to an RGB array
-   *
-   * @param {string} hexString - Hex string
-   * @return {number[]}        - Colour array
-   */
-   function hexToArray(hexString) {
+	 * Converts a hex string to an RGB array
+	 *
+	 * @param {string} hexString - Hex string
+	 * @return {number[]}        - Colour array
+	 */
+	 function hexToArray(hexString) {
 		var hexColor = hexString.replace('#', '');
 		var r = parseInt(hexColor.slice(0, 2), 16) / 255,
 				g = parseInt(hexColor.slice(2, 4), 16) / 255,
@@ -182,9 +182,9 @@ function buttonColorVector(parentObj, iconVec, iconColor, size) {    /// from sk
 
 
 	/**
-   * Draws a vector path button
-   */
-  function vecDraw() {
+	 * Draws a vector path button
+	 */
+	function vecDraw() {
 		with ( this ) {
 			graphics.drawOSControl();
 
@@ -325,23 +325,23 @@ function buildTextBlock(p) {
  * @return {number[]} - Duration between first and last keys
  */
 function getKeyRange() {
-    var firstKeyTime = 9999999;
-    var lastKeyTime = 0;
+		var firstKeyTime = 9999999;
+		var lastKeyTime = 0;
 
-    for (var i = 0; i < thisComp.selectedLayers.length; i++) {
-        var layer = thisComp.selectedLayers[i];
-        for (var j = 0; j < layer.selectedProperties.length; j++) {
-            var prop = layer.selectedProperties[j];
-            for (var k = 0; k < prop.selectedKeys.length; k++) {
-                var key = prop.selectedKeys[k];
-                // alert(prop.keyTime(key))
+		for (var i = 0; i < thisComp.selectedLayers.length; i++) {
+				var layer = thisComp.selectedLayers[i];
+				for (var j = 0; j < layer.selectedProperties.length; j++) {
+						var prop = layer.selectedProperties[j];
+						for (var k = 0; k < prop.selectedKeys.length; k++) {
+								var key = prop.selectedKeys[k];
+								// alert(prop.keyTime(key))
 
-                firstKeyTime = Math.min(firstKeyTime, prop.keyTime(key));							// set firstKeyTime to first keyframe's start time
+								firstKeyTime = Math.min(firstKeyTime, prop.keyTime(key));							// set firstKeyTime to first keyframe's start time
 				lastKeyTime = Math.max(lastKeyTime, prop.keyTime(key));
-            }
-        }
-    }
-    return [firstKeyTime, lastKeyTime];
+						}
+				}
+		}
+		return [firstKeyTime, lastKeyTime];
 }
 
 /**
@@ -415,12 +415,12 @@ function getPropObj(opt_propObj) {
 	return propObj;
 
 	/**
-   * Gets property data from a layer
-   *
-   * @param {Layer} layer - Layer to get property data from
-   * @return {object[]}   - Data for each selected layer property
-   */
-  function getProps(layer) {
+	 * Gets property data from a layer
+	 *
+	 * @param {Layer} layer - Layer to get property data from
+	 * @return {object[]}   - Data for each selected layer property
+	 */
+	function getProps(layer) {
 		var propCollect = [];
 
 		for (var k = 0; k < layer.selectedProperties.length; k++) {												// loop through selected properties
@@ -564,13 +564,13 @@ function getEase(activeProp) {
 
 	//// check type of keys
 	if (activeProp.startEaseType == KeyframeInterpolationType.LINEAR && activeProp.endEaseType == KeyframeInterpolationType.LINEAR) {
-	  return 'Linear';																																			// return if linear keys
-  } else if (activeProp.startEaseType == KeyframeInterpolationType.HOLD){
-	  return 'Hold';																																		// return if no change
+		return 'Linear';																																			// return if linear keys
+	} else if (activeProp.startEaseType == KeyframeInterpolationType.HOLD){
+		return 'Hold';																																		// return if no change
 	} else if (isNaN(y1)){
-	  return 'No Change';																																		// return if no change
+		return 'No Change';																																		// return if no change
 	} else {
-	  return '(' + round(x1) + ', ' + round(y1) + ', ' + round(x2) + ', ' + round(y2) + ')';// return cubic bezier string
+		return '(' + round(x1) + ', ' + round(y1) + ', ' + round(x2) + ', ' + round(y2) + ')';// return cubic bezier string
 	}
 	}catch(e) {return '()'}																																	// error catch returns ()
 }
@@ -1058,9 +1058,9 @@ btn_pointer.onClick = function() {
 
 btn_counter.onClick = function() {
 	setComp();
-    // getPanelSize();
-    var keyRange = getKeyRange();           // get selected keys range
-    if (keyRange[0] == 9999999) { keyRange = [thisComp.time, thisComp.time + 1] }       // if no keys selected use the playhead time and playhead + 1:00
+		// getPanelSize();
+		var keyRange = getKeyRange();           // get selected keys range
+		if (keyRange[0] == 9999999) { keyRange = [thisComp.time, thisComp.time + 1] }       // if no keys selected use the playhead time and playhead + 1:00
 
 	app.beginUndoGroup('New Counter');
 	var textLayer = buildCounter();																											// build text layer
@@ -1142,21 +1142,21 @@ btnLaunch.onClick = function() {
 	}
 
 	/**
-   * JSON replacer filter
-   *
-   * @param {string} key - Object key
-   * @param {any} val    - Object value
-   * @return {any}       - Object value
-   */
-  function replacer(key, val) {
+	 * JSON replacer filter
+	 *
+	 * @param {string} key - Object key
+	 * @param {any} val    - Object value
+	 * @return {any}       - Object value
+	 */
+	function replacer(key, val) {
 		if (key === 'obj') return undefined;
 		else return val;
 	};
 
 	/**
-   * Clears global variables
-   */
-  function clearProps() {
+	 * Clears global variables
+	 */
+	function clearProps() {
 		propObj = null;
 		propText = null;
 
