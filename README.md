@@ -14,7 +14,7 @@ Motion specs are a necessary part of the engineering process. It's often difficu
 
 
 ### CC2019+
-In newer versions of After Effects, it is possible to install RubberHose 2 and other scripts without digging through your hard drive.
+In newer versions of After Effects, it is possible to install Inspector Spacetime and other scripts without digging through your hard drive.
 
 `File > Scripts > Install Script UI Panel…`
 
