@@ -48,7 +48,9 @@ var icons = {																																		// icon string for retina icons
 // ================ FUNCTIONS =============
 
 
-/** Set the current comp to the var thisComp */
+/**
+ * Set the current comp to the var thisComp
+ */
 function setComp() {
   app.activeViewer.setActive();                             // activate the comp even if it isnt highlighted
   thisComp = app.project.activeItem;																						// stupid extendscript
@@ -84,8 +86,11 @@ function buttonColorText(parentObj, accentColor, buttonText) {
 
 	return btn;																																		// return the button for the listener
 
-	function gfxDraw() {																													// func that does the drawing
-		{ with (this) {
+	/**
+   * Draws vector button
+   */
+  function gfxDraw() {
+		with (this) {
 			graphics.drawOSControl();
 			graphics.rectPath(0,0,size[0],size[1]);
 			graphics.fillPath(fillBrush);
@@ -95,9 +100,16 @@ function buttonColorText(parentObj, accentColor, buttonText) {
 				(size[0]-graphics.measureString (text,graphics.font,size[0])[0])/2,
 				(size[1]-graphics.measureString (text,graphics.font,size[0])[1])/1.75,
 				graphics.font);
-		}}
+		}
 	}
-	function hexToArray(hexString) {																							// func that converts hex to AE color array
+
+	/**
+   * Converts a hex string to an RGB array
+   *
+   * @param {string} hexString - Hex string
+   * @return {number[]}        - Colour array
+   */
+  function hexToArray(hexString) {
 		var hexColor = hexString.replace('#', '');
 		var r = parseInt(hexColor.slice(0, 2), 16) / 255,
 				g = parseInt(hexColor.slice(2, 4), 16) / 255,
@@ -125,7 +137,13 @@ function buttonColorVector(parentObj, iconVec, iconColor, size) {    /// from sk
 
 			return vButton;
 
-	function vecToPoints(vecCoord) {																							// func that converts SVG coords to ScriptUI coords
+	/**
+   * Converts SVG coordinates to ScriptUI voordinates
+   *
+   * @param {string[]} vecCoord - Array of SVG coordinate strings
+   * @return {number[][]}       - Array of coordinates
+   */
+  function vecToPoints(vecCoord) {
 		var points = [];
 		var n;
 
@@ -149,14 +167,25 @@ function buttonColorVector(parentObj, iconVec, iconColor, size) {    /// from sk
 		return points;																															// return the 2D array
 	}
 
-	function hexToArray(hexString) {																							// func that converts hex to AE color array
+	/**
+   * Converts a hex string to an RGB array
+   *
+   * @param {string} hexString - Hex string
+   * @return {number[]}        - Colour array
+   */
+   function hexToArray(hexString) {
 		var hexColor = hexString.replace('#', '');
 		var r = parseInt(hexColor.slice(0, 2), 16) / 255,
 				g = parseInt(hexColor.slice(2, 4), 16) / 255,
 				b = parseInt(hexColor.slice(4, 6), 16) / 255;
 		return [r, g, b, 1];
 	}
-	function vecDraw() {																													// func that does the drawing
+
+
+	/**
+   * Draws a vector path button
+   */
+  function vecDraw() {
 		with ( this ) {
 			graphics.drawOSControl();
 
@@ -387,6 +416,13 @@ function buildText_plain(str) {
 		}
 }
 
+/**
+ * Builds text block
+ *
+ * @param {*} p
+ * @param {*} op_firstKeyTime
+ * @return {*}
+ */
 function buildTextBlock(p, op_firstKeyTime) {
 	var firstKeyTime = p.firstKeyTime;
 	var str = '';
@@ -407,10 +443,15 @@ function buildTextBlock(p, op_firstKeyTime) {
 
 	return str;
 }
+
+/**
+ * Gets first and last key times
+ *
+ * @return {number[]} - Duration between first and last keys
+ */
 function getKeyRange() {
     var firstKeyTime = 9999999;
     var lastKeyTime = 0;
-
 
     for (var i = 0; i < thisComp.selectedLayers.length; i++) {
         var layer = thisComp.selectedLayers[i];
@@ -427,6 +468,13 @@ function getKeyRange() {
     }
     return [firstKeyTime, lastKeyTime];
 }
+
+/**
+ * Gets property object
+ *
+ * @param {object} [opt_propObj] - Initial property object
+ * @return {object}              - Property object
+ */
 function getPropObj(opt_propObj) {
 	if (opt_propObj == undefined) {
 		propCollect = [],
@@ -491,7 +539,13 @@ function getPropObj(opt_propObj) {
 
 	return propObj;
 
-	function getProps(layer) {
+	/**
+   * Gets property data from a layer
+   *
+   * @param {Layer} layer - Layer to get property data from
+   * @return {object[]}   - Data for each selected layer property
+   */
+  function getProps(layer) {
 		var propCollect = [];
 
 		for (var k = 0; k < layer.selectedProperties.length; k++) {												// loop through selected properties
@@ -529,6 +583,13 @@ function getPropObj(opt_propObj) {
 	}
 
 }
+
+/**
+ * Gets property data from a layer
+ *
+ * @param {Layer} layer - Layer to get property data from
+ * @return {object[]}   - Data for each selected layer property
+ */
 function getPropData() {
 	var selectedProperties = [],
 	propCollect = [],
@@ -602,6 +663,14 @@ function getPropData() {
 	}
 	return layerData;
 }
+
+
+/**
+ * Builds property text from an object
+ *
+ * @param {object} propObj - Property object to build text from
+ * @return {string}        - Text string
+ */
 function getPropText(propObj) {
 	var propStr = '';
 
@@ -898,7 +967,6 @@ function valXPosition(activeProp) {
 	}
 }
 
-
 /**
  * returns the opacity value change
  *
@@ -910,7 +978,6 @@ function valOpacity(activeProp) {
 	return (round(a, 2) + '% ››› ' + round(b, 2) + '%');																// return opacity percentage
 }
 
-
 /**
  * returns the rotation value change
  *
@@ -921,7 +988,6 @@ function valRotation(activeProp) {
 	var b = activeProp.endValue;																												// get the last key value
 	return round(a) + '° ››› ' + round(b) + '°';																				// return rotation degrees
 }
-
 
 /**
  * returns the scale value change
@@ -940,7 +1006,6 @@ function valScale(activeProp) {
 		return ('['+round(a[0])+','+round(a[1])+']%››['+round(b[0])+','+round(b[1])+']%');// print arrays
 	}
 }
-
 
 /**
  * returns the raw value change
@@ -969,12 +1034,10 @@ function valGeneric(activeProp) {
 }
 
 
-
-
 /**
  * create an isolation layer
  */
-function buildIsoLayer(opt_selectedLayers) {
+function buildIsoLayer() {
 	var isolationLayer = thisComp.layers.addShape();
 			isolationLayer.name = '\u2193\u2193 Isolation \u2193\u2193';
 			isolationLayer.label = 0;
@@ -1290,12 +1353,22 @@ btnLaunch.onClick = function() {
 		} catch(e) {alert(e.toString() + "\nError on line: " + e.line.toString()); }
 	}
 
-	/// json filter
-	function replacer(key, val) {
+	/**
+   * JSON replacer filter
+   *
+   * @param {string} key - Object key
+   * @param {any} val    - Object value
+   * @return {any}       - Object value
+   */
+  function replacer(key, val) {
 		if (key === 'obj') return undefined;
 		else return val;
 	};
-	function clearProps() {
+
+	/**
+   * Clears global variables
+   */
+  function clearProps() {
 		propObj = null;
 		propText = null;
 
