@@ -62,11 +62,14 @@ function setComp() {
 }
 
 
-/** draw a text button with colored background
-	@param {parentObj} object - ScriptUI group that holds the button
-	@param {accentColor} color - background color
-	@param {buttonText} string - button text
-*/
+/**
+ * draw a text button with colored background
+ *
+ * @param {object} parentObj   - ScriptUI group that holds the button
+ * @param {string} accentColor - background color hex
+ * @param {string} buttonText  - button text
+ * @returns {Button}           - created button
+ */
 function buttonColorText(parentObj, accentColor, buttonText) {
 	var btn = parentObj.add('button', undefined, '', {name:'ok'});								// draw a regular button, make it pressable with ENTER key
 			btn.fillBrush = btn.graphics.newBrush( btn.graphics.BrushType.SOLID_COLOR, hexToArray(accentColor));
@@ -104,12 +107,15 @@ function buttonColorText(parentObj, accentColor, buttonText) {
 }
 
 
-/** draw a icon button with colored background
-	@param {parentObj} object - ScriptUI group that holds the button
-	@param {iconVec} string - svg coords as text string
-	@param {iconColor} color - background color
-	@param {size} array - button size
-*/
+/**
+ * draw a icon button with colored background
+ *
+ * @param {object} parentObj - ScriptUI group that holds the button
+ * @param {string} iconVec   - svg coords as text string
+ * @param {string} iconColor - background color hex string
+ * @param {number[]} size    - button size
+ * @returns {number[]}       - coordinates array
+ */
 function buttonColorVector(parentObj, iconVec, iconColor, size) {    /// from sketch
 	var artSize = size;																														// defines the artsize before resizing the button container
 	var vButton = parentObj.add('button', [0,0,size[0],size[1], undefined]);
@@ -156,7 +162,7 @@ function buttonColorVector(parentObj, iconVec, iconColor, size) {    /// from sk
 
 			// draw background
 			graphics.rectPath(0,0,size[0],size[1]);
-			graphics.fillPath(graphics.newBrush(graphics.BrushType.SOLID_COLOR, hexToArray(iconColor)));
+			graphics.fillPath(graphics.newBrush(graphics.BrushType.SOLID_COLOR, hexToArray(fillColor)));
 
 			// draw shape
 			for (var i = 0; i < coord.length; i++) {
@@ -174,11 +180,13 @@ function buttonColorVector(parentObj, iconVec, iconColor, size) {    /// from sk
 }
 
 
-/** add start and end markers to the input layer
-	@param {layer} object - comp layer object
-	@param {startTime} float - time of first keyframe
-	@param {endTime} float - time of last keyframe
-*/
+/**
+ * add start and end markers to the input layer
+ *
+ * @param {Layer} layer      - comp layer object
+ * @param {number} startTime - time of first keyframe
+ * @param {number} endTime   - time of last keyframe
+ */
 function setTimeMarkers(layer, startTime, endTime) {
 		var layer_marker1 = new MarkerValue("Start");																// new marker object
 			layer_marker1.eventCuePoint = true;
@@ -193,18 +201,24 @@ function setTimeMarkers(layer, startTime, endTime) {
 }
 
 
-/** convert time to ms
-	@param {time} float - time float value
-*/
+/**
+ * convert time to ms
+ *
+ * @param {number} time - time float value
+ * @returns {string}    - rounded time in ms
+ */
 function timeToMs(time) {
 	return Math.round(time * 1000) + 'ms';
 }
 
 
-/** create the master text layer, return text layer
-	@param {p} array - of property objects
-	@param {firstKeyTime} float - time of first keyframe
-*/
+/**
+ * create the master text layer, return text layer
+ *
+ * @param {Property[]} p        - of property objects
+ * @param {number} firstKeyTime - time of first keyframe
+ * @returns {TextLayer}         - Created text layer
+ */
 function buildText_live(p, firstKeyTime) {
 	var propStr = '';																																			// initialize propStr as empty string
 	try{
@@ -259,6 +273,14 @@ function buildText_live(p, firstKeyTime) {
 			alert(e.toString() + "\nError on line: " + e.line.toString());
 		}
 }
+
+/**
+ * create the master text layer, return text layer; basic version
+ *
+ * @param {Property[]} p        - of property objects
+ * @param {number} firstKeyTime - time of first keyframe
+ * @returns {TextLayer}         - Created text layer
+ */
 function buildText_basic(p, firstKeyTime) {
 	var propStr = '';																																			// initialize propStr as empty string
 	try{
@@ -310,6 +332,14 @@ function buildText_basic(p, firstKeyTime) {
 			alert(e.toString() + "\nError on line: " + e.line.toString());
 		}
 }
+
+
+/**
+ * create the master text layer, return text layer; plain version
+ *
+ * @param {string} str  - Text to create
+ * @returns {TextLayer} - Created text layer
+ */
 function buildText_plain(str) {
 	var propStr = str;																																			// initialize propStr as empty string
 	try{
@@ -582,10 +612,11 @@ function getPropText(propObj) {
 	return propStr;
 }
 
-/** create the master text layer, return text layer
-	@param {p} array - of property objects
-	@param {firstKeyTime} float - time of first keyframe
-*/
+/**
+ * Creates a counter
+ *
+ * @returns {TextLayer} - Created text layer
+ */
 function buildCounter() {
 	try{
 
@@ -632,9 +663,11 @@ function buildCounter() {
 }
 
 
-/** calculate and return cubic bezier text string
-	@param {activeProp} obj - property object
-*/
+/**
+ * calculate and return cubic bezier text string
+ *
+ * @param {Property} activeProp - property object
+ */
 function getEase(activeProp) {
 	try{
 	var dims = (activeProp.obj.value instanceof Array) ? activeProp.obj.value.length : 1;	// count the property dimension
@@ -681,9 +714,10 @@ function getEase(activeProp) {
 }
 
 
-/** dup comp, resize new comp, add panel
-	@param {work_comp} obj - comp object
-*/
+/**
+ * dup comp, resize new comp, add panel
+ * @param {CompItem} work_comp - comp object
+ */
 function resizeCompNew(work_comp) {
 	for (var i = 1; i <= work_comp.layers.length; i++) {
 		if (thisComp.layers[i].comment === scriptName + '_panel') {														// skip all this if there's already a panel layer
@@ -735,10 +769,12 @@ function resizeCompNew(work_comp) {
 }
 
 
-/** round input to maximum number if decimal places, or int
-	@param {value} float - comp object
-	@param {opt_decimals} int - comp object
-*/
+/**
+ * round input to maximum number if decimal places, or int
+ *
+ * @param {number} value          - Value to round
+ * @param {number} [opt_decimals] - Number of decimals, optional
+ */
 function round(value, opt_decimals) {
 	// if (value instanceof Array) {alert('ggggg')}
 	try{
@@ -749,7 +785,9 @@ function round(value, opt_decimals) {
 	}
 }
 
-/** create a SPEC folder if one doesn't exist */
+/**
+ * Create a SPEC folder if one doesn't exist
+ */
 function createISTfolder() {
 	var hasRedlineFolder = false;																										// initialize var with false
 	for (var i = 1; i <= app.project.numItems; i++) {																// loop through all project items
@@ -767,7 +805,9 @@ function createISTfolder() {
 }
 
 
-/** get the size of the current info panel */
+/**
+ * get the size of the current info panel
+ */
 function getPanelSize() {
 	for(var i = 1; i <= thisComp.layers.length; i++) {																							// loop through layers
 		if (thisComp.layer(i).comment == scriptName + '_panel') {																			// if layer has a panel comment
@@ -781,9 +821,11 @@ function getPanelSize() {
 }
 
 
-/** filtering func that checks the property match name then feeds the prop to the appropriate value func
-	@param {activeProp} obj - current property
-*/
+/**
+ * filtering func that checks the property match name then feeds the prop to the appropriate value func
+ *
+ * @param {Property} activeProp - current property
+ */
 function getValChange(activeProp) {
 	switch (activeProp.obj.matchName) {						// check the property match name
 		case 'ADBE Scale':													// is Scale
@@ -815,9 +857,11 @@ function getValChange(activeProp) {
 	}
 }
 
-/** returns the position value change
-	@param {activeProp} obj - current property
-*/
+/**
+ * returns the position value change
+ *
+ * @param {Property} activeProp - current property
+ */
 function valPosition(activeProp) {
 	var a = activeProp.startValue;																											// get the first key value
 	var b = activeProp.endValue;																												// get the last key value
@@ -834,9 +878,11 @@ function valPosition(activeProp) {
 	}
 }
 
-/** returns the position value change for a seperated position value
-	@param {activeProp} obj - current property
-*/
+/**
+ * returns the position value change for a seperated position value
+ *
+ * @param {Property} activeProp - current property
+ */
 function valXPosition(activeProp) {
 	var a = activeProp.startValue;																											// get the first key value
 	var b = activeProp.endValue;																												// get the last key value
@@ -853,9 +899,11 @@ function valXPosition(activeProp) {
 }
 
 
-/** returns the opacity value change
-	@param {activeProp} obj - current property
-*/
+/**
+ * returns the opacity value change
+ *
+ * @param {Property} activeProp - current property
+ */
 function valOpacity(activeProp) {
 	var a = activeProp.startValue;																											// get the first key value
 	var b = activeProp.endValue;																												// get the last key value
@@ -863,9 +911,11 @@ function valOpacity(activeProp) {
 }
 
 
-/** returns the rotation value change
-	@param {activeProp} obj - current property
-*/
+/**
+ * returns the rotation value change
+ *
+ * @param {Property} activeProp - current property
+ */
 function valRotation(activeProp) {
 	var a = activeProp.startValue;																											// get the first key value
 	var b = activeProp.endValue;																												// get the last key value
@@ -873,9 +923,11 @@ function valRotation(activeProp) {
 }
 
 
-/** returns the scale value change
-	@param {activeProp} obj - current property
-*/
+/**
+ * returns the scale value change
+ *
+ * @param {Property} activeProp - current property
+ */
 function valScale(activeProp) {
 	var a = activeProp.startValue;																											// get the first key value
 	var b = activeProp.endValue;																												// get the last key value
@@ -890,9 +942,11 @@ function valScale(activeProp) {
 }
 
 
-/** returns the raw value change
-	@param {activeProp} obj - current property
-*/
+/**
+ * returns the raw value change
+ *
+ * @param {Property} activeProp - current property
+ */
 function valGeneric(activeProp) {
 	var a = activeProp.startValue;																											// get the first key value
 	var b = activeProp.endValue;																												// get the last key value
@@ -917,7 +971,9 @@ function valGeneric(activeProp) {
 
 
 
-/** create an isolation layer **/
+/**
+ * create an isolation layer
+ */
 function buildIsoLayer(opt_selectedLayers) {
 	var isolationLayer = thisComp.layers.addShape();
 			isolationLayer.name = '\u2193\u2193 Isolation \u2193\u2193';
@@ -938,7 +994,9 @@ function buildIsoLayer(opt_selectedLayers) {
 }
 
 
-/** create a shape layer pointer **/
+/**
+ * create a shape layer pointer
+ */
 function buildPointer() {
 	try{
 	if (leftEdge == undefined) {alert('Gotta create a spec panel first.'); return;}
@@ -994,9 +1052,11 @@ function buildPointer() {
 }
 
 
-/** create clickable web links from AE
-    @param {url} string - web url
-*/
+/**
+ * create clickable web links from AE
+ *
+ * @param {string} url - web url
+ */
 function visitURL(url) {
 	if ($.os.indexOf("Windows") != -1) {
 		system.callSystem('cmd /c "' + Folder.commonFiles.parent.fsName + "\\Internet Explorer\\iexplore.exe" + '" ' + url);
