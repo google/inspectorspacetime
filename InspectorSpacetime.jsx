@@ -33,7 +33,6 @@ var scriptName = 'Inspector Spacetime';
 var scriptVersion = '2.1';
 var thisComp, inspectorFolder, margin, leftEdge, panelSize = [0, 0], dataSize = [0, 0];
 
-var exp_conv = 'var sTime = marker.key(\'Start\').time;\r\nvar eTime = marker.key(\'End\').time;\r\nvar totalTime = Math.max(eTime - sTime, 0);\r\nvar countTime = Math.max(time - sTime, 0);\r\ncountTime = Math.min(countTime, eTime - sTime);\r\nvar counter = Math.round( countTime * 1000) + \'ms\';\r\nvar playIcon = (time > sTime && time < eTime) ? \'\\u25ba \' + counter : \'\\u25a0\';\r\n\r\nvar txtGroups = value.split(\'**\');\r\nvar groupArr = [];\r\n\r\nfor (var i = 1; i < txtGroups.length; i++) {\r\n\tvar groupLines = txtGroups[i].split(\'\\r\');\r\n\tgroupArr.push(\r\n\t\t\'\\u2261 \'+ groupLines[0].split(\':\')[1] + \' \\u2261\\r\' + \r\n\t\t\'Delay: \'+ Math.round((parseFloat(groupLines[1].split(\':\')[1]) - sTime) * 1000)  + \'ms\\t\\t\\t\' + \r\n\t\t\'Dur: \' + groupLines[2].split(\':\')[1] + \'\\r\' + \r\n\t\t\'\\u2302 Val: \' + groupLines[3].split(\':\')[1] + \'\\r\' + \r\n\t\tgroupLines[4]\r\n\t);\r\n}\r\n\r\nthisLayer.name + \'\\r\' + \t\t\t\t\/\/ layer name\r\n\'Total Dur: \' + Math.round(totalTime*1000) + \'ms\' + \'\\r\\r\' + \t\t\t\t\t\/\/ line 2 - duration\r\ngroupArr.join(\'\\r\\r\') + \r\n\r\n\'\\r\\r\u2013\u2013\u2013\\r\' + playIcon;';
 var exp_counter = 'var sTime = marker.key("Start").time; var eTime = marker.key("End").time; var countTime = Math.max(time - sTime, 0); countTime = Math.min(countTime, eTime - sTime); var counter = Math.round( countTime * 1000); var playIcon = (time > sTime && time < eTime) ? "\u25ba " : "\u25a0 "; playIcon + counter + "ms";';
 
 var icons = {																																		// icon string for retina icons
@@ -240,129 +239,6 @@ function timeToMs(time) {
 	return Math.round(time * 1000) + 'ms';
 }
 
-
-/**
- * create the master text layer, return text layer
- *
- * @param {Property[]} p        - of property objects
- * @param {number} firstKeyTime - time of first keyframe
- * @returns {TextLayer}         - Created text layer
- */
-function buildText_live(p, firstKeyTime) {
-	var propStr = '';																																			// initialize propStr as empty string
-	try{
-
-	var dynText = thisComp.layers.addText("Spec Layer Name");															// create new text layer
-			dynText.name = 'Spec Layer Name';																									// set the layer name
-			dynText.comment = scriptName + '_data';																						// add a comment
-	var dynText_TextProp = dynText("ADBE Text Properties")("ADBE Text Document");		// new text object
-	var dynText_TextDocument = dynText_TextProp.value;																		// initialize dynText_TextDocument with values
-			dynText_TextDocument.resetCharStyle();																						// reset all text values
-
-		dynText_TextDocument.fontSize = Math.floor(dataSize[0] / 16);												// set font size
-		dynText_TextDocument.font = "CourierNewPS-BoldMT";																	// set font
-		dynText_TextDocument.applyFill = true;																							// apply color
-		dynText_TextDocument.fillColor = [1,1,1];
-		dynText_TextDocument.applyStroke = false;																						// no stroke
-		dynText_TextDocument.justification = ParagraphJustification.LEFT_JUSTIFY;						// justify left
-		dynText_TextDocument.tracking = -30;																								// set tracking
-		if (parseFloat(app.version) >= 13.2 ) {
-			dynText_TextDocument.verticalScale = 1;
-			dynText_TextDocument.horizontalScale = 1;
-			dynText_TextDocument.baselineShift = 0;
-			dynText_TextDocument.tsume = 0;
-		}
-
-		for (var i = 0; i < p.length; i++) {																								// loop through collected props
-			propStr += '**Name:' + p[i].name + '\n';																						// add prop name to text string
-			propStr += 'Start:' + p[i].startTime + '\n';							// add start time
-			propStr += 'Dur:' + timeToMs(p[i].dur) + '\n';																		// add duration
-			propStr += 'Val:' + getValChange(p[i]) + '\n';																		// add value change
-			propStr += getEase(p[i]) + '\n\n';																								// add interpolation value
-		}
-
-		dynText_TextProp.setValue(dynText_TextDocument);																		// apply text properties
-		dynText_TextProp.setValue(propStr);																									// apply text string
-
-	var manualLineHeight = 10;																														// define manualLineHeight
-	var lineHeight = dynText("ADBE Text Properties")(4).addProperty("ADBE Text Animator");// create a new text animator
-			lineHeight.name = 'Line Height';																									// name it line height
-			lineHeight("ADBE Text Animator Properties").addProperty("ADBE Text Line Spacing");// add a Line Spacing element
-			lineHeight(1).addProperty("ADBE Text Selector");																	// add a selector
-			lineHeight(2)("ADBE Text Line Spacing").setValue([0,manualLineHeight]);						// set value
-
-
-	//// Transforms
-		dynText("ADBE Transform Group")("ADBE Anchor Point").setValue([0, -dynText_TextDocument.fontSize*0.82, 0]);
-		dynText("ADBE Transform Group")("ADBE Position").setValue([leftEdge, margin, 0]);
-
-		return dynText;
-
-		} catch(e) {
-			alert(e.toString() + "\nError on line: " + e.line.toString());
-		}
-}
-
-/**
- * create the master text layer, return text layer; basic version
- *
- * @param {Property[]} p        - of property objects
- * @param {number} firstKeyTime - time of first keyframe
- * @returns {TextLayer}         - Created text layer
- */
-function buildText_basic(p, firstKeyTime) {
-	var propStr = '';																																			// initialize propStr as empty string
-	try{
-
-	var dynText = thisComp.layers.addText("Spec Layer Name");															// create new text layer
-		dynText.name = 'Spec Layer Name';																									// set the layer name
-		dynText.comment = scriptName + '_data';																						// add a comment
-	var dynText_TextProp = dynText("ADBE Text Properties")("ADBE Text Document");		// new text object
-	var dynText_TextDocument = dynText_TextProp.value;																		// initialize dynText_TextDocument with values
-		dynText_TextDocument.resetCharStyle();																						// reset all text values
-
-		dynText_TextDocument.fontSize = Math.floor(dataSize[0] / 16);												// set font size
-		dynText_TextDocument.font = "CourierNewPS-BoldMT";																	// set font
-		dynText_TextDocument.applyFill = true;																							// apply color
-		dynText_TextDocument.fillColor = [1,1,1];
-		dynText_TextDocument.applyStroke = false;																						// no stroke
-		dynText_TextDocument.justification = ParagraphJustification.LEFT_JUSTIFY;						// justify left
-		dynText_TextDocument.tracking = -30;																								// set tracking
-		if (parseFloat(app.version) >= 13.2 ) {
-			dynText_TextDocument.verticalScale = 1;
-			dynText_TextDocument.horizontalScale = 1;
-			dynText_TextDocument.baselineShift = 0;
-			dynText_TextDocument.tsume = 0;
-		}
-
-		propStr += 'Spec Layer Name\n';
-		propStr += 'Total Dur: ' + timeToMs(p[0].totalDur) + '\n\n';
-
-		propStr += buildTextBlock(p);
-
-		dynText_TextProp.setValue(dynText_TextDocument);																		// apply text properties
-		dynText_TextProp.setValue(propStr);																									// apply text string
-
-	var manualLineHeight = 10;																														// define manualLineHeight
-	var lineHeight = dynText("ADBE Text Properties")(4).addProperty("ADBE Text Animator");// create a new text animator
-			lineHeight.name = 'Line Height';																									// name it line height
-			lineHeight("ADBE Text Animator Properties").addProperty("ADBE Text Line Spacing");// add a Line Spacing element
-			lineHeight(1).addProperty("ADBE Text Selector");																	// add a selector
-			lineHeight(2)("ADBE Text Line Spacing").setValue([0,manualLineHeight]);						// set value
-
-
-	//// Transforms
-		dynText("ADBE Transform Group")("ADBE Anchor Point").setValue([0, -dynText_TextDocument.fontSize*0.82, 0]);
-		dynText("ADBE Transform Group")("ADBE Position").setValue([leftEdge, margin, 0]);
-
-		return dynText;
-
-		} catch(e) {
-			alert(e.toString() + "\nError on line: " + e.line.toString());
-		}
-}
-
-
 /**
  * create the master text layer, return text layer; plain version
  *
@@ -419,11 +295,10 @@ function buildText_plain(str) {
 /**
  * Builds text block
  *
- * @param {*} p
- * @param {*} op_firstKeyTime
- * @return {*}
+ * @param {object} p - Property data object
+ * @return {string}  - Text block string
  */
-function buildTextBlock(p, op_firstKeyTime) {
+function buildTextBlock(p) {
 	var firstKeyTime = p.firstKeyTime;
 	var str = '';
 	for (var j = 0; j < p.layers.length; j++) {																								// loop through collected props
@@ -581,89 +456,7 @@ function getPropObj(opt_propObj) {
 
 		return propCollect;
 	}
-
 }
-
-/**
- * Gets property data from a layer
- *
- * @param {Layer} layer - Layer to get property data from
- * @return {object[]}   - Data for each selected layer property
- */
-function getPropData() {
-	var selectedProperties = [],
-	propCollect = [],
-	firstKeyTime = 0,
-	lastKeyTime = 0;
-
-	app.activeViewer.setActive();																								// set the viewer to active
-	if (!setComp()) {return;}         																					// check if theres a comp selected, stop if not
-	var selectedLayers = thisComp.selectedLayers;																// store selected layers
-
-	try {                         																							// error check that keys are selected
-		for (var i = 0; i < selectedLayers.length; i++) {													// loop through all selected layers
-			for (var j = 0; j < selectedLayers[i].selectedProperties.length; j++) {	// loop through selected properties on selected layers
-				selectedProperties.push(selectedLayers[i].selectedProperties[j]);			// store selected properties
-			}
-		}
-	} catch (e) {
-		alert('Select some keyframes dude.');																			// error alerts to select keys
-		return;																																		// exit this mess
-	}
-
-	//// get the props as an array of objects
-	for (var k = 0; k < selectedProperties.length; k++) {												// loop through selected properties
-		if (selectedProperties[k].canVaryOverTime &&
-				selectedProperties[k].selectedKeys.length > 1) {  										// check if selected prop is keyframable
-			var selKeys = selectedProperties[k].selectedKeys;												// set var to store selectedKey indices
-		for (var m = 0; m < selKeys.length-1; m++) {
-			propCollect.push( {
-				obj: selectedProperties[k],
-				propertyValueType: selectedProperties[k].propertyValueType,
-				name: selectedProperties[k].name,
-				dur: selectedProperties[k].keyTime(selKeys[m+1]) - selectedProperties[k].keyTime(selKeys[m]),
-				val: 0,
-				startTime: selectedProperties[k].keyTime(selKeys[m]),
-				startValue: selectedProperties[k].keyValue(selKeys[m]),
-				startTemporalEase: selectedProperties[k].keyOutTemporalEase(selKeys[m])[0],
-				startEaseType: selectedProperties[k].keyOutInterpolationType(selKeys[m]),
-				endTime: selectedProperties[k].keyTime(selKeys[m+1]),
-				endValue: selectedProperties[k].keyValue(selKeys[m+1]),
-				endTemporalEase: selectedProperties[k].keyInTemporalEase(selKeys[m+1])[0],
-				endEaseType: selectedProperties[k].keyInInterpolationType(selKeys[m+1]),
-				duration: selectedProperties[k].keyTime(selKeys[m+1]) - selectedProperties[k].keyTime(selKeys[m]),
-			} );
-		}
-			lastKeyTime = Math.max(lastKeyTime, propCollect[propCollect.length-1].endTime);
-		}
-	}
-
-	//// sort the props by start time
-	propCollect.sort(function (a, b) {
-		if (a.startTime > b.startTime) {
-			return 1;
-		}
-		if (a.startTime < b.startTime) {
-			return -1;
-		}
-		return 0;
-	});
-
-	try {
-		firstKeyTime = propCollect[0].startTime;
-		propCollect[propCollect[0].firstKeyTime = firstKeyTime];
-		propCollect[propCollect[0].lastKeyTime = lastKeyTime];
-		propCollect[propCollect[0].totalDur = lastKeyTime - firstKeyTime];
-	} catch (e) { alert('Select keyframe pairs to build a spec'); return;}
-
-	layerData = {
-		propCollect: propCollect,
-		firstKeyTime: firstKeyTime,
-		lastKeyTime: lastKeyTime,
-	}
-	return layerData;
-}
-
 
 /**
  * Builds property text from an object
@@ -794,15 +587,12 @@ function resizeCompNew(work_comp) {
 		}
 	}
 
-	var currentTime = thisComp.time;                																				// get the current playhead time
 	createISTfolder();																																			// make a new folder to store spec comps
 
 	thisComp = work_comp.duplicate();																												// duplicate comp
 	thisComp.parentFolder = inspectorFolder;																								// move new comp to IST folder
 	thisComp.name = work_comp.name + '_Spec';																								// rename duped comp
 	thisComp.openInViewer();																																// open new comp
-
-	var compSize = [thisComp.width, thisComp.height];																				// init compSize from new comp
 
 	panelSize = [Math.floor(thisComp.height/3), thisComp.height];														// set panelSize
 	leftEdge = thisComp.width;																															// set leftEdge
@@ -934,8 +724,6 @@ function getValChange(activeProp) {
 function valPosition(activeProp) {
 	var a = activeProp.startValue;																											// get the first key value
 	var b = activeProp.endValue;																												// get the last key value
-
-	var pixelMult = ddl_resolution.selection.index+1;																		// the pixel multiplier for distance in DP
 
 	//// distance vs abs position values
 	if (activeProp.threeDLayer) {
