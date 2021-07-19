@@ -31,14 +31,21 @@ var thisComp, inspectorFolder, margin, leftEdge, panelSize = [0, 0], dataSize = 
 
 var exp_counter = 'var sTime = marker.key("Start").time; var eTime = marker.key("End").time; var countTime = Math.max(time - sTime, 0); countTime = Math.min(countTime, eTime - sTime); var counter = Math.round( countTime * 1000); var playIcon = (time > sTime && time < eTime) ? "\u25ba " : "\u25a0 "; playIcon + counter + "ms";';
 
-var icons = {																																		// icon string for retina icons
-	build: ['104 26.478 104.82 32.260 104 38.043 116.39 35.565 115.56 40.521 123 32.260 115.56 24 116.39 28.956',
-					'93 48 93 57 34 57 34 43 32 43 32 39 34 39 34 38 30 38 30 34 34 34 34 7 36 7 36 34 69 34 69 38 36 38 36 39 80 39 80 43 36 43 36 55 91 55 91 48 63 48 63 44 91 44 91 16 38 16 38 12 91 12 91 9 36 9 36 7 93 7 93 12 96 12 96 16 93 16 93 44 98 44 98 48 93 48',
-					'45 23 91 23 91 27 45 27', '65 49 67 51 65 53 63 51', '76 17 78 19 76 21 74 19',
-					'40 17 42 19 40 21 38 19', '85 49 89 49 87.66 51 89 53 85 53 86.33 51', '69 28 73 28 71.66 30 73 32 69 32 70.33 30',
-					'50 28 54 28 52.66 30 54 32 50 32 51.33 30', '160 7 160 56 170 56 170 54 160 54 160 53 174 53 174 51 160 51 160 50 167 50 167 48 168 48 168 50 173 50 173 48 160 48 160 47 166 47 166 45 160 45 160 42 172 42 172 40 160 40 160 39 170 39 170 37 160 37 160 36 167 36 167 34 168 34 168 36 177 36 177 34 160 34 160 33 172 33 172 31 160 31 160 28 170 28 170 26 160 26 160 25 172 25 172 23 160 23 160 22 167 22 167 20 168 20 168 22 175 22 175 20 160 20 160 19 169 19 169 17 160 17 160 14 176 14 176 12 160 12 160 11 173 11 173 9 160 9 160 7 181 7 181 58 157 58 131 58 131 7 157 7 157 9 133 9 133 56 157 56 157 7'
-]};
-
+// icon string for retina icons
+var icons = {
+	build: [
+		'104 26.478 104.82 32.260 104 38.043 116.39 35.565 115.56 40.521 123 32.260 115.56 24 116.39 28.956',
+		'93 48 93 57 34 57 34 43 32 43 32 39 34 39 34 38 30 38 30 34 34 34 34 7 36 7 36 34 69 34 69 38 36 38 36 39 80 39 80 43 36 43 36 55 91 55 91 48 63 48 63 44 91 44 91 16 38 16 38 12 91 12 91 9 36 9 36 7 93 7 93 12 96 12 96 16 93 16 93 44 98 44 98 48 93 48',
+		'45 23 91 23 91 27 45 27',
+		'65 49 67 51 65 53 63 51',
+		'76 17 78 19 76 21 74 19',
+		'40 17 42 19 40 21 38 19',
+		'85 49 89 49 87.66 51 89 53 85 53 86.33 51',
+		'69 28 73 28 71.66 30 73 32 69 32 70.33 30',
+		'50 28 54 28 52.66 30 54 32 50 32 51.33 30',
+		'160 7 160 56 170 56 170 54 160 54 160 53 174 53 174 51 160 51 160 50 167 50 167 48 168 48 168 50 173 50 173 48 160 48 160 47 166 47 166 45 160 45 160 42 172 42 172 40 160 40 160 39 170 39 170 37 160 37 160 36 167 36 167 34 168 34 168 36 177 36 177 34 160 34 160 33 172 33 172 31 160 31 160 28 170 28 170 26 160 26 160 25 172 25 172 23 160 23 160 22 167 22 167 20 168 20 168 22 175 22 175 20 160 20 160 19 169 19 169 17 160 17 160 14 176 14 176 12 160 12 160 11 173 11 173 9 160 9 160 7 181 7 181 58 157 58 131 58 131 7 157 7 157 9 133 9 133 56 157 56 157 7'
+	]
+};
 
 // ================ FUNCTIONS =============
 
@@ -53,7 +60,7 @@ function setComp() {
 	thisComp = app.project.activeItem;
 	// Make sure a comp is selected
 	if (!thisComp || !(thisComp instanceof CompItem)) {
-		alert("Gotta select a comp first");
+		alert("Gotta select a comp first", scriptName);
 		return false;
 	}
 	// set the workStart var
@@ -62,7 +69,6 @@ function setComp() {
 	workEnd = workStart + thisComp.workAreaDuration;
 	return true;
 }
-
 
 /**
  * draw a text button with colored background
@@ -75,19 +81,19 @@ function setComp() {
 function buttonColorText(parentObj, accentColor, buttonText) {
 	// draw a regular button, make it pressable with ENTER key
 	var btn = parentObj.add('button', undefined, '', {name:'ok'});
-			btn.fillBrush = btn.graphics.newBrush( btn.graphics.BrushType.SOLID_COLOR, hexToArray(accentColor));
+		btn.fillBrush = btn.graphics.newBrush( btn.graphics.BrushType.SOLID_COLOR, hexToArray(accentColor));
 
-			// text to uppercase
-			btn.text = buttonText;
+		// text to uppercase
+		btn.text = buttonText;
 
-			btn.fillBrush = btn.graphics.newBrush(
-				// button color to accent color
-				btn.graphics.BrushType.SOLID_COLOR, hexToArray(accentColor));
-			btn.textPen = btn.graphics.newPen (
-				// text color white
-				btn.graphics.PenType.SOLID_COLOR,hexToArray('#ffffff'), 1);
-			// do the drawing of the colors
-			btn.onDraw = gfxDraw;
+		// button color to accent color
+		btn.fillBrush = btn.graphics.newBrush(btn.graphics.BrushType.SOLID_COLOR, hexToArray(accentColor));
+
+		// text color white
+		btn.textPen = btn.graphics.newPen(btn.graphics.PenType.SOLID_COLOR, hexToArray('#ffffff'), 1);
+
+		// do the drawing of the colors
+		btn.onDraw = gfxDraw;
 
 	// return the button for the listener
 	return btn;
@@ -100,12 +106,15 @@ function buttonColorText(parentObj, accentColor, buttonText) {
 			graphics.drawOSControl();
 			graphics.rectPath(0,0,size[0],size[1]);
 			graphics.fillPath(fillBrush);
-			if( text ) graphics.drawString(
-				text,
-				textPen,
-				(size[0]-graphics.measureString (text,graphics.font,size[0])[0])/2,
-				(size[1]-graphics.measureString (text,graphics.font,size[0])[1])/1.75,
-				graphics.font);
+			if ( text ) {
+				graphics.drawString(
+					text,
+					textPen,
+					(size[0]-graphics.measureString (text,graphics.font,size[0])[0])/2,
+					(size[1]-graphics.measureString (text,graphics.font,size[0])[1])/1.75,
+					graphics.font
+				);
+			}
 		}
 	}
 
@@ -118,8 +127,8 @@ function buttonColorText(parentObj, accentColor, buttonText) {
 	function hexToArray(hexString) {
 		var hexColor = hexString.replace('#', '');
 		var r = parseInt(hexColor.slice(0, 2), 16) / 255,
-				g = parseInt(hexColor.slice(2, 4), 16) / 255,
-				b = parseInt(hexColor.slice(4, 6), 16) / 255;
+			g = parseInt(hexColor.slice(2, 4), 16) / 255,
+			b = parseInt(hexColor.slice(4, 6), 16) / 255;
 		return [r, g, b, 1];
 	}
 }
@@ -138,11 +147,11 @@ function buttonColorVector(parentObj, iconVec, iconColor, size) {
 	// defines the artsize before resizing the button container
 	var artSize = size;
 	var vButton = parentObj.add('button', [0,0,size[0],size[1], undefined]);
-			vButton.coord = vecToPoints(iconVec);
-			vButton.fillColor = iconColor;
-			vButton.onDraw = vecDraw;
+		vButton.coord = vecToPoints(iconVec);
+		vButton.fillColor = iconColor;
+		vButton.onDraw = vecDraw;
 
-			return vButton;
+		return vButton;
 
 	/**
 	 * Converts SVG coordinates to ScriptUI voordinates
@@ -191,11 +200,10 @@ function buttonColorVector(parentObj, iconVec, iconColor, size) {
 	 function hexToArray(hexString) {
 		var hexColor = hexString.replace('#', '');
 		var r = parseInt(hexColor.slice(0, 2), 16) / 255,
-				g = parseInt(hexColor.slice(2, 4), 16) / 255,
-				b = parseInt(hexColor.slice(4, 6), 16) / 255;
+			g = parseInt(hexColor.slice(2, 4), 16) / 255,
+			b = parseInt(hexColor.slice(4, 6), 16) / 255;
 		return [r, g, b, 1];
 	}
-
 
 	/**
 	 * Draws a vector path button
@@ -232,17 +240,18 @@ function buttonColorVector(parentObj, iconVec, iconColor, size) {
  * @param {number} endTime   - time of last keyframe
  */
 function setTimeMarkers(layer, startTime, endTime) {
-		// new marker object
-		var layer_marker1 = new MarkerValue("Start");
-			layer_marker1.eventCuePoint = true;
-			var newMarkerParameters = new Object;
-			layer_marker1.setParameters(newMarkerParameters);
-			layer("ADBE Marker").setValueAtTime(startTime, layer_marker1);
-		var layer_marker2 = new MarkerValue("End");
-			layer_marker2.eventCuePoint = true;
-			var newMarkerParameters = new Object;
-			layer_marker2.setParameters(newMarkerParameters);
-			layer("ADBE Marker").setValueAtTime(endTime, layer_marker2);
+	// new marker object
+	var layer_marker1 = new MarkerValue("Start");
+		layer_marker1.eventCuePoint = true;
+		layer_marker1.setParameters({});
+
+	layer("ADBE Marker").setValueAtTime(startTime, layer_marker1);
+
+	var layer_marker2 = new MarkerValue("End");
+		layer_marker2.eventCuePoint = true;
+		layer_marker2.setParameters({});
+
+	layer("ADBE Marker").setValueAtTime(endTime, layer_marker2);
 }
 
 
@@ -265,34 +274,28 @@ function timeToMs(time) {
 function buildText_plain(str) {
 	// initialize propStr as empty string
 	var propStr = str;
-	try{
 
-	// create new text layer
-	var dynText = thisComp.layers.addText("Spec Layer Name");
-		// set the layer name
+	try {
+		// create new text layer
+		var dynText = thisComp.layers.addText("Spec Layer Name");
 		dynText.name = 'Spec Layer Name';
-		// add a comment
 		dynText.comment = scriptName + '_data';
-	// new text object
-	var dynText_TextProp = dynText("ADBE Text Properties")("ADBE Text Document");
-	// initialize dynText_TextDocument with values
-	var dynText_TextDocument = dynText_TextProp.value;
+
+		// new text object
+		var dynText_TextProp = dynText("ADBE Text Properties")("ADBE Text Document");
+		var dynText_TextDocument = dynText_TextProp.value;
+
 		// reset all text values
 		dynText_TextDocument.resetCharStyle();
 
-		// set font size
 		dynText_TextDocument.fontSize = Math.floor(dataSize[0] / 16);
-		// set font
 		dynText_TextDocument.font = "CourierNewPS-BoldMT";
-		// apply color
 		dynText_TextDocument.applyFill = true;
 		dynText_TextDocument.fillColor = [1,1,1];
-		// no stroke
 		dynText_TextDocument.applyStroke = false;
-		// justify left
 		dynText_TextDocument.justification = ParagraphJustification.LEFT_JUSTIFY;
-		// set tracking
 		dynText_TextDocument.tracking = -30;
+
 		if (parseFloat(app.version) >= 13.2 ) {
 			dynText_TextDocument.verticalScale = 1;
 			dynText_TextDocument.horizontalScale = 1;
@@ -302,13 +305,15 @@ function buildText_plain(str) {
 
 		// apply text properties
 		dynText_TextProp.setValue(dynText_TextDocument);
+
 		// apply text string
 		dynText_TextProp.setValue(propStr);
 
-	// define manualLineHeight
-	var manualLineHeight = 10;
-	// create a new text animator
-	var lineHeight = dynText("ADBE Text Properties")(4).addProperty("ADBE Text Animator");
+		// define manualLineHeight
+		var manualLineHeight = 10;
+
+		// create a new text animator
+		var lineHeight = dynText("ADBE Text Properties")(4).addProperty("ADBE Text Animator");
 			// name it line height
 			lineHeight.name = 'Line Height';
 			// add a Line Spacing element
@@ -318,16 +323,14 @@ function buildText_plain(str) {
 			// set value
 			lineHeight(2)("ADBE Text Line Spacing").setValue([0,manualLineHeight]);
 
-
-	//// Transforms
+		// Transforms
 		dynText("ADBE Transform Group")("ADBE Anchor Point").setValue([0, -dynText_TextDocument.fontSize*0.82, 0]);
 		dynText("ADBE Transform Group")("ADBE Position").setValue([leftEdge, margin, 0]);
 
 		return dynText;
-
-		} catch(e) {
-			alert(e.toString() + "\nError on line: " + e.line.toString());
-		}
+	} catch(e) {
+		alert(e.toString() + "\nError on line: " + e.line.toString(), scriptName);
+	}
 }
 
 /**
@@ -375,7 +378,7 @@ function getKeyRange() {
 						var prop = layer.selectedProperties[j];
 						for (var k = 0; k < prop.selectedKeys.length; k++) {
 								var key = prop.selectedKeys[k];
-								// alert(prop.keyTime(key))
+								// alert(prop.keyTime(key), scriptName)
 
 								// set firstKeyTime to first keyframe's start time
 								firstKeyTime = Math.min(firstKeyTime, prop.keyTime(key));
@@ -407,11 +410,14 @@ function getPropObj(opt_propObj) {
 		propObj = opt_propObj;
 	}
 
-
 	// set the viewer to active
 	app.activeViewer.setActive();
+
 	// check if theres a comp selected, stop if not
-	if (!setComp()) {return;}
+	if (!setComp()) {
+		return;
+	}
+
 	var selectedLayers = thisComp.selectedLayers;
 
 	// error check that keys are selected
@@ -456,9 +462,7 @@ function getPropObj(opt_propObj) {
 			}
 		}
 	} catch (e) {
-		// error alerts to select keys
-		alert('Select some keyframes dude.');
-		// exit this mess
+		alert('Select some keyframes.', scriptName);
 		return;
 	}
 
@@ -537,50 +541,48 @@ function getPropText(propObj) {
  * @returns {TextLayer} - Created text layer
  */
 function buildCounter() {
-	try{
-
-	// create new text layer
-	var dynText = thisComp.layers.addText("Spec Name");
+	try {
+		// create new text layer
+		var dynText = thisComp.layers.addText("Spec Name");
 			// set the layer name
 			dynText.name = 'Counter';
 			// add a comment
 			dynText.comment = scriptName + '_data';
-	// new text object
-	var dynText_TextProp = dynText("ADBE Text Properties")("ADBE Text Document");
-	// initialize dynText_TextDocument with values
-	var dynText_TextDocument = dynText_TextProp.value;
+
+		// new text object
+		var dynText_TextProp = dynText("ADBE Text Properties")("ADBE Text Document");
+
+		// initialize dynText_TextDocument with values
+		var dynText_TextDocument = dynText_TextProp.value;
 			// reset all text values
 			dynText_TextDocument.resetCharStyle();
 
-		// set font size
-		dynText_TextDocument.fontSize = thisComp.width/30;
-		// set font
-		dynText_TextDocument.font = "CourierNewPS-BoldMT";
-		// apply color
-		dynText_TextDocument.applyFill = true;
-		dynText_TextDocument.fillColor = [0.5,0.5,0.5];
-		// no stroke
-		dynText_TextDocument.applyStroke = false;
-		// justify left
-		dynText_TextDocument.justification = ParagraphJustification.LEFT_JUSTIFY;
-		// set tracking
-		dynText_TextDocument.tracking = -30;
-		if (parseFloat(app.version) >= 13.2 ) {
-			dynText_TextDocument.verticalScale = 1;
-			dynText_TextDocument.horizontalScale = 1;
-			dynText_TextDocument.baselineShift = 0;
-			dynText_TextDocument.tsume = 0;
-		}
+			dynText_TextDocument.fontSize = thisComp.width/30;
+			dynText_TextDocument.font = "CourierNewPS-BoldMT";
+			dynText_TextDocument.applyFill = true;
+			dynText_TextDocument.fillColor = [0.5,0.5,0.5];
+			dynText_TextDocument.applyStroke = false;
+			dynText_TextDocument.justification = ParagraphJustification.LEFT_JUSTIFY;
+			dynText_TextDocument.tracking = -30;
 
-		// apply text properties
-		dynText_TextProp.setValue(dynText_TextDocument);
-		// apply text string
-		dynText_TextProp.setValue('\u25ba');
+			if (parseFloat(app.version) >= 13.2 ) {
+				dynText_TextDocument.verticalScale = 1;
+				dynText_TextDocument.horizontalScale = 1;
+				dynText_TextDocument.baselineShift = 0;
+				dynText_TextDocument.tsume = 0;
+			}
 
-	// define manualLineHeight
-	var manualLineHeight = 10;
-	// create a new text animator
-	var lineHeight = dynText("ADBE Text Properties")(4).addProperty("ADBE Text Animator");
+			// apply text properties
+			dynText_TextProp.setValue(dynText_TextDocument);
+
+			// apply text string
+			dynText_TextProp.setValue('\u25ba');
+
+		// define manualLineHeight
+		var manualLineHeight = 10;
+
+		// create a new text animator
+		var lineHeight = dynText("ADBE Text Properties")(4).addProperty("ADBE Text Animator");
 			// name it line height
 			lineHeight.name = 'Line Height';
 			// add a Line Spacing element
@@ -590,15 +592,13 @@ function buildCounter() {
 			// set value
 			lineHeight(2)("ADBE Text Line Spacing").setValue([0,manualLineHeight]);
 
-
-	//// Transforms
+		// Transforms
 		dynText("ADBE Transform Group")("ADBE Position").setValue([100, 100]);
 
 		return dynText;
-
-		} catch(e) {
-			alert(e.toString() + "\nError on line: " + e.line.toString());
-		}
+	} catch(e) {
+		alert(e.toString() + "\nError on line: " + e.line.toString(), scriptName);
+	}
 }
 
 
@@ -608,56 +608,62 @@ function buildCounter() {
  * @param {Property} activeProp - property object
  */
 function getEase(activeProp) {
-	try{
-	// count the property dimension
-	var dims = (activeProp.obj.value instanceof Array) ? activeProp.obj.value.length : 1;
-	// initalize first key
-	var k1 = activeProp.startValue;
-	// initalize last key
-	var k2 = activeProp.endValue;
+	try {
+		// count the property dimension
+		var dims = (activeProp.obj.value instanceof Array) ? activeProp.obj.value.length : 1;
+		// initalize first key
+		var k1 = activeProp.startValue;
+		// initalize last key
+		var k2 = activeProp.endValue;
 
-	// value change logic
-	var valChange;
-	if (dims == 1 || activeProp.propertyType == PropertyType.PROPERTY) {
-		valChange = k2 - k1;
-	} else {
-		// alert(activeProp.matchName)
-		if (activeProp.matchName.indexOf('Size') != -1) {
-			valChange = 100000000000000;
+		// value change logic
+		var valChange;
+		if (dims == 1 || activeProp.propertyType == PropertyType.PROPERTY) {
+			valChange = k2 - k1;
 		} else {
-			valChange = Math.sqrt(Math.pow(k2[0] - k1[0], 2) + Math.pow(k2[1] - k1[1], 2));
+			if (activeProp.matchName.indexOf('Size') != -1) {
+				valChange = 100000000000000;
+			} else {
+				valChange = Math.sqrt(Math.pow(k2[0] - k1[0], 2) + Math.pow(k2[1] - k1[1], 2));
+			}
 		}
+
+		var keyOutSpeed = activeProp.startTemporalEase.speed;
+		var keyInSpeed = activeProp.endTemporalEase.speed;
+
+		if (keyOutSpeed < 0) {
+			keyOutSpeed *= -1;
+		}
+		if (keyInSpeed > 0) {
+			keyInSpeed *= -1;
+		}
+
+		var y1Mult = (activeProp.startTemporalEase.speed > 0) ? 1 : -1;
+		var y2Mult = (activeProp.endTemporalEase.speed > 0) ? 1 : -1;
+
+		var x1 = activeProp.startTemporalEase.influence / 100;
+		var y1 = (keyOutSpeed * x1) * (activeProp.duration / valChange) * y1Mult;
+		var x2 = 1 - activeProp.endTemporalEase.influence / 100;
+		var y2 = 1 - (keyInSpeed * (x2-1)) * (activeProp.duration / valChange) * y2Mult;
+
+		// check type of keys
+		if (activeProp.startEaseType == KeyframeInterpolationType.LINEAR && activeProp.endEaseType == KeyframeInterpolationType.LINEAR) {
+			// return if linear keys
+			return 'Linear';
+		} else if (activeProp.startEaseType == KeyframeInterpolationType.HOLD){
+			// return if no change
+			return 'Hold';
+		} else if (isNaN(y1)){
+			// return if no change
+			return 'No Change';
+		} else {
+			// return cubic bezier string
+			return '(' + round(x1) + ', ' + round(y1) + ', ' + round(x2) + ', ' + round(y2) + ')';
+		}
+		// error catch returns ()
+	} catch(e) {
+		return '()'
 	}
-
-	var keyOutSpeed = activeProp.startTemporalEase.speed;
-	var keyInSpeed = activeProp.endTemporalEase.speed;
-	if (keyOutSpeed < 0) { keyOutSpeed *= -1 }
-	if (keyInSpeed > 0) { keyInSpeed *= -1 }
-	var y1Mult = (activeProp.startTemporalEase.speed > 0) ? 1 : -1;
-	var y2Mult = (activeProp.endTemporalEase.speed > 0) ? 1 : -1;
-
-	var x1 = activeProp.startTemporalEase.influence / 100;
-	var y1 = (keyOutSpeed * x1) * (activeProp.duration / valChange) * y1Mult;
-	var x2 = 1 - activeProp.endTemporalEase.influence / 100;
-	var y2 = 1 - (keyInSpeed * (x2-1)) * (activeProp.duration / valChange) * y2Mult;
-
-
-	//// check type of keys
-	if (activeProp.startEaseType == KeyframeInterpolationType.LINEAR && activeProp.endEaseType == KeyframeInterpolationType.LINEAR) {
-		// return if linear keys
-		return 'Linear';
-	} else if (activeProp.startEaseType == KeyframeInterpolationType.HOLD){
-		// return if no change
-		return 'Hold';
-	} else if (isNaN(y1)){
-		// return if no change
-		return 'No Change';
-	} else {
-		// return cubic bezier string
-		return '(' + round(x1) + ', ' + round(y1) + ', ' + round(x2) + ', ' + round(y2) + ')';
-	}
-	// error catch returns ()
-}catch(e) {return '()'}
 }
 
 
@@ -687,6 +693,7 @@ function resizeCompNew(work_comp) {
 
 	// set panelSize
 	panelSize = [Math.floor(thisComp.height/3), thisComp.height];
+
 	// set leftEdge
 	leftEdge = thisComp.width;
 
@@ -702,22 +709,28 @@ function resizeCompNew(work_comp) {
 			compInfo.comment = scriptName + '_panel';
 			// set layer label to grey
 			compInfo.label = 0;
-			var shapeGroup = compInfo("ADBE Root Vectors Group").addProperty("ADBE Vector Group");
+
+		var shapeGroup = compInfo("ADBE Root Vectors Group").addProperty("ADBE Vector Group");
 			shapeGroup.name = "Rectangle 1";
-			var rect = shapeGroup(2).addProperty("ADBE Vector Shape - Rect");
+
+		var rect = shapeGroup(2).addProperty("ADBE Vector Shape - Rect");
 			rect("ADBE Vector Rect Size").setValue(panelSize);
 			rect("ADBE Vector Rect Position").setValue( panelSize/2 );
-			var stroke = shapeGroup(2).addProperty("ADBE Vector Graphic - Stroke");
+
+		var stroke = shapeGroup(2).addProperty("ADBE Vector Graphic - Stroke");
 			stroke.enabled = false;
 			stroke("ADBE Vector Stroke Width").setValue(6);
-			var fill = shapeGroup(2).addProperty("ADBE Vector Graphic - Fill");
+
+		var fill = shapeGroup(2).addProperty("ADBE Vector Graphic - Fill");
 			fill("ADBE Vector Fill Color").setValue([0.08203125, 0.5625, 0.91796875, 1]);
-			var shapeGroup2 = compInfo("ADBE Root Vectors Group").addProperty("ADBE Vector Group");
+
+		var shapeGroup2 = compInfo("ADBE Root Vectors Group").addProperty("ADBE Vector Group");
 			shapeGroup2.name = "Admin";
 			shapeGroup2(3)("ADBE Vector Scale").setValue(panelSize);
-			compInfo("ADBE Transform Group")("ADBE Position").setValue([leftEdge, 0]);
+
+		compInfo("ADBE Transform Group")("ADBE Position").setValue([leftEdge, 0]);
 	} catch(e) {
-		alert(e.toString() + "\nError on line: " + e.line.toString());
+		alert(e.toString() + "\nError on line: " + e.line.toString(), scriptName);
 	}
 
 	// update positioning variables
@@ -734,7 +747,6 @@ function resizeCompNew(work_comp) {
  * @param {number} [opt_decimals] - Number of decimals, optional
  */
 function round(value, opt_decimals) {
-	// if (value instanceof Array) {alert('ggggg')}
 	try{
 		// default to 2 decimal places if nothing is specified
 		var decimals = (opt_decimals !== undefined) ? opt_decimals : 2;
@@ -804,29 +816,29 @@ function getValChange(activeProp) {
 		case 'ADBE Scale':
 			// is Scale
 			return valScale(activeProp);
-			case 'ADBE Position_0':
-				// is seperated X position
+		case 'ADBE Position_0':
+			// is seperated X position
 			return valXPosition(activeProp);
-			case 'ADBE Position_1':
-				// is seperated Y position
+		case 'ADBE Position_1':
+			// is seperated Y position
 			return valXPosition(activeProp);
-			case 'ADBE Position':
-				// is Position array
+		case 'ADBE Position':
+			// is Position array
 			return valPosition(activeProp);
-			case 'ADBE Rotate Z':
-				// is Rotation
+		case 'ADBE Rotate Z':
+			// is Rotation
 			return valRotation(activeProp);
-			case 'ADBE Opacity':
-				// is Opacity
+		case 'ADBE Opacity':
+			// is Opacity
 			return valOpacity(activeProp);
-			case 'ADBE Mask Shape':
-				// is a Mask
+		case 'ADBE Mask Shape':
+			// is a Mask
 			return 'Mask data unsupported';
-			case 'ADBE Vector Shape':
-				// is a Path
+		case 'ADBE Vector Shape':
+			// is a Path
 			return 'Path data unsupported';
-			default:
-				// is anything else
+		default:
+			// is anything else
 			return valGeneric(activeProp);
 	}
 }
@@ -981,21 +993,26 @@ function valGeneric(activeProp) {
  */
 function buildIsoLayer() {
 	var isolationLayer = thisComp.layers.addShape();
-			isolationLayer.name = '\u2193\u2193 Isolation \u2193\u2193';
-			isolationLayer.label = 0;
-			isolationLayer.adjustmentLayer = true;
-			var shapeGroup = isolationLayer("ADBE Root Vectors Group").addProperty("ADBE Vector Group");
-			shapeGroup.name = "Rectangle 1";
-			var rect = shapeGroup(2).addProperty("ADBE Vector Shape - Rect");
-			rect("ADBE Vector Rect Size").setValue([thisComp.width, thisComp.height]);
-			var stroke = shapeGroup(2).addProperty("ADBE Vector Graphic - Stroke");
-			stroke.enabled = false;
-			stroke("ADBE Vector Stroke Width").setValue(3);
-			var fill = shapeGroup(2).addProperty("ADBE Vector Graphic - Fill");
-			fill("ADBE Vector Fill Color").setValue([0,0,0,1]);
-			var tint = isolationLayer("ADBE Effect Parade").addProperty("ADBE Tint");
-			tint("ADBE Tint-0001").setValue([0.3,0.3,0.3,1]);
-			tint("ADBE Tint-0002").setValue([0.35,0.35,0.35,1]);
+		isolationLayer.name = '\u2193\u2193 Isolation \u2193\u2193';
+		isolationLayer.label = 0;
+		isolationLayer.adjustmentLayer = true;
+
+	var shapeGroup = isolationLayer("ADBE Root Vectors Group").addProperty("ADBE Vector Group");
+		shapeGroup.name = "Rectangle 1";
+
+	var rect = shapeGroup(2).addProperty("ADBE Vector Shape - Rect");
+		rect("ADBE Vector Rect Size").setValue([thisComp.width, thisComp.height]);
+
+	var stroke = shapeGroup(2).addProperty("ADBE Vector Graphic - Stroke");
+		stroke.enabled = false;
+		stroke("ADBE Vector Stroke Width").setValue(3);
+
+	var fill = shapeGroup(2).addProperty("ADBE Vector Graphic - Fill");
+		fill("ADBE Vector Fill Color").setValue([0,0,0,1]);
+
+	var tint = isolationLayer("ADBE Effect Parade").addProperty("ADBE Tint");
+		tint("ADBE Tint-0001").setValue([0.3,0.3,0.3,1]);
+		tint("ADBE Tint-0002").setValue([0.35,0.35,0.35,1]);
 }
 
 
@@ -1004,57 +1021,59 @@ function buildIsoLayer() {
  */
 function buildPointer() {
 	try{
-	if (leftEdge == undefined) {
-		alert('Gotta create a spec panel first.'); return;
-	}
+		if (leftEdge == undefined) {
+			alert('Gotta create a spec panel first.', scriptName);
+			return;
+		}
 
-	// new shape layer
-	var pointer1 = thisComp.layers.addShape();
+		// new shape layer
+		var pointer1 = thisComp.layers.addShape();
 			// name shape layer
 			pointer1.name = "Pointer 1";
 			// set label color
 			pointer1.label = 2;
 
-			var shapeGroup = pointer1("ADBE Root Vectors Group").addProperty("ADBE Vector Group");
+		var shapeGroup = pointer1("ADBE Root Vectors Group").addProperty("ADBE Vector Group");
 			shapeGroup.name = "Pointer";
 			shapeGroup(2).addProperty("ADBE Vector Shape - Rect");
 
-			var trim = shapeGroup(2).addProperty("ADBE Vector Filter - Trim");
+		var trim = shapeGroup(2).addProperty("ADBE Vector Filter - Trim");
 			trim("ADBE Vector Trim End").setValue(25);
 			trim("ADBE Vector Trim Offset").setValue(-90);
 
-			var gradFill = shapeGroup(2).addProperty("ADBE Vector Graphic - G-Fill");
+		var gradFill = shapeGroup(2).addProperty("ADBE Vector Graphic - G-Fill");
 			gradFill.enabled = false;
-			shapeGroup(3)("ADBE Vector Anchor").setValue([0,-50]);
-			shapeGroup(3)("ADBE Vector Position").setValue([-580,0]);
-			shapeGroup(3)("ADBE Vector Scale").setValue([100,100]);
 
-			var shapeGroup2 = pointer1("ADBE Root Vectors Group").addProperty("ADBE Vector Group");
+		shapeGroup(3)("ADBE Vector Anchor").setValue([0,-50]);
+		shapeGroup(3)("ADBE Vector Position").setValue([-580,0]);
+		shapeGroup(3)("ADBE Vector Scale").setValue([100,100]);
+
+		var shapeGroup2 = pointer1("ADBE Root Vectors Group").addProperty("ADBE Vector Group");
 			shapeGroup2.name = "Arm";
 			shapeGroup2(2).addProperty("ADBE Vector Shape - Rect");
 
-			var trim2 = shapeGroup2(2).addProperty("ADBE Vector Filter - Trim");
+		var trim2 = shapeGroup2(2).addProperty("ADBE Vector Filter - Trim");
 			trim2("ADBE Vector Trim End").setValue(50);
 			trim2("ADBE Vector Trim Offset").setValue(180);
 
-			var gradFill2 = shapeGroup2(2).addProperty("ADBE Vector Graphic - G-Fill");
+		var gradFill2 = shapeGroup2(2).addProperty("ADBE Vector Graphic - G-Fill");
 			gradFill2.enabled = false;
 			shapeGroup2(3)("ADBE Vector Anchor").setValue([50,-50]);
 			shapeGroup2(3)("ADBE Vector Scale").setValue([564,349]);
 
-			var stroke = pointer1("ADBE Root Vectors Group").addProperty("ADBE Vector Graphic - Stroke");
+		var stroke = pointer1("ADBE Root Vectors Group").addProperty("ADBE Vector Graphic - Stroke");
 			stroke("ADBE Vector Stroke Width").setValue(6);
 			stroke("ADBE Vector Stroke Color").setValue([0.4795,0.4795,0.4795,1]);
 
-			var fxPoint = pointer1("ADBE Effect Parade").addProperty("ADBE Point Control");
+		var fxPoint = pointer1("ADBE Effect Parade").addProperty("ADBE Point Control");
 			fxPoint.name = "Arm Length";
 			fxPoint("ADBE Point Control-0001").setValue([775,200]);
 
-			var fxSize = pointer1("ADBE Effect Parade").addProperty("ADBE Slider Control");
+		var fxSize = pointer1("ADBE Effect Parade").addProperty("ADBE Slider Control");
 			fxSize.name = "Pointer Size";
 			fxSize("ADBE Slider Control-0001").setValue(200);
 
-			pointer1("ADBE Transform Group")("ADBE Position").setValue([leftEdge - margin*2,192,0]);
+		pointer1("ADBE Transform Group")("ADBE Position").setValue([leftEdge - margin*2,192,0]);
 
 		// Apply expressions to properties
 		try {
@@ -1064,9 +1083,8 @@ function buildPointer() {
 					"[s, s]";
 			pointer1("ADBE Root Vectors Group")(2)(3)("ADBE Vector Scale").expression = "effect(\"Arm Length\")(\"Point\")";
 		} catch (err) {}
-
 	} catch(e) {
-		alert(e.toString() + "\nError on line: " + e.line.toString());
+		alert(e.toString() + "\nError on line: " + e.line.toString(), scriptName);
 	}
 }
 
@@ -1105,31 +1123,30 @@ if (mainPalette === null) {
 // ============ ADD UI CONTENT HERE =================
 // content group
 var content = mainPalette.add('group');
-		content.alignChildren = ['fill','fill'];
-		content.orientation = 'column';
-		// content.margins = 0;
-		content.spacing = 5;
+	content.alignChildren = ['fill','fill'];
+	content.orientation = 'column';
+	// content.margins = 0;
+	content.spacing = 5;
 
 // main button
 var btnLaunch = buttonColorVector(content, icons.build, '#5B8BA3', [224,64]);
 	btnLaunch.maximumSize.height = 64;
 	btnLaunch.minimumSize.height = 64;
-	// tooltip
 	btnLaunch.helpTip = 'Select keyframe pairs to build spec panel';
 
-	// button for isolation layer
+// button for isolation layer
 // var btn_dataPanel = buttonColorText(content, '#5B8BA3', 'Panel');
 
 var grp_options = content.add('group');
-		grp_options.orientation = 'row';
-		grp_options.alignChildren = ['fill', 'top'];
-		grp_options.margins = 0;
+	grp_options.orientation = 'row';
+	grp_options.alignChildren = ['fill', 'top'];
+	grp_options.margins = 0;
 
 var settings = grp_options.add('group');
-		settings.alignment = 'fill';
-		settings.alignChildren = ['fill', 'top'];
-		settings.orientation = 'column';
-		settings.margins = [0,6,0,0];
+	settings.alignment = 'fill';
+	settings.alignChildren = ['fill', 'top'];
+	settings.orientation = 'column';
+	settings.margins = [0,6,0,0];
 
 // radio pane for coods vs distance
 var grp_pos = settings.add('panel', undefined, 'Position');
@@ -1140,43 +1157,43 @@ var grp_pos = settings.add('panel', undefined, 'Position');
 	grp_pos.margins = [8, 10, 0, 6];
 	grp_pos.maximumSize.width = 110;
 	grp_pos.minimumSize.width = 110;
+
 var rad_pos = grp_pos.add('group');
+
 // radio coord
 var posCoord = rad_pos.add('radiobutton', undefined, 'Pixel');
-	// tooltip
 	posCoord.helpTip = 'Print position as pixel coordinates';
+
 // radio distance
 var posDistance = rad_pos.add('radiobutton', undefined, 'DP');
-	// tooltip
 	posDistance.helpTip = 'Print position as dp movement';
 	posDistance.value = true;
+
 // dropdown list for
 var ddl_resolution = settings.add('dropdownlist', undefined, ['1x', '2x', '3x']);
 	ddl_resolution.selection = 2;
 	ddl_resolution.maximumSize.width = 110;
 	ddl_resolution.minimumSize.width = 110;
 	ddl_resolution.alignment = 'left';
-	// tooltip
 	ddl_resolution.helpTip = 'Dp multiplier';
-
 
 var grp_buttons = grp_options.add('group');
 	grp_buttons.alignChildren = ['fill', 'top'];
 	grp_buttons.orientation = 'column';
 	grp_buttons.margins = 0;
 	grp_buttons.spacing = 1;
+
 // button for isolation layer
 var btn_isolation = buttonColorText(grp_buttons, '#37474F', 'Iso Layer');
-		// tooltip
-		btn_isolation.helpTip = 'Create a color adjustment layer\nthe drag below targeted layers';
+	btn_isolation.helpTip = 'Create a color adjustment layer\nthe drag below targeted layers';
+
 // button for pointer layer
 var btn_pointer = buttonColorText(grp_buttons, '#37474F', 'Pointer');
-		// tooltip
-		btn_pointer.helpTip = 'Create an adjustable pointer \nline to connect text to element';
+	btn_pointer.helpTip = 'Create an adjustable pointer \nline to connect text to element';
+
 // button for counter layer
 var btn_counter = buttonColorText(grp_buttons, '#37474F', 'Counter');
-		// tooltip
-		btn_counter.helpTip = 'Create text counter without building a spec';
+	btn_counter.helpTip = 'Create text counter without building a spec';
 
 var btn_aboutScript = buttonColorText(grp_buttons, '#263238', '?');
 	btn_aboutScript.helpTip = 'About ' + scriptName;
@@ -1193,40 +1210,41 @@ posDistance.onClick = function() {
 	ddl_resolution.visible =  true;
 };
 btn_aboutScript.onClick = function() {
-		// new dialog window
-		var w = new Window ('dialog', 'About ' + scriptName);
-			w.spacing = 0;
-			w.margins = 0;
-		// group to hold intry box
-		var content = w.add('group', undefined, '');
-				content.alignChildren = ['fill','fill'];
-				content.orientation = 'column';
-				content.alignment = ['left', 'top'];
-				content.margins = 16;
-				// content metrics
-				content.spacing = 8;
+	// new dialog window
+	var w = new Window ('dialog', 'About ' + scriptName);
+		w.spacing = 0;
+		w.margins = 0;
 
-		var btn_url = buttonColorVector(content, icons.build, '#EF5350', [224,64]);
+	// group to hold intry box
+	var content = w.add('group', undefined, '');
+		content.alignChildren = ['fill','fill'];
+		content.orientation = 'column';
+		content.alignment = ['left', 'top'];
+		content.margins = 16;
+		// content metrics
+		content.spacing = 8;
 
-		content.add('statictext', [0,0,400,340],
-			'Speed up the creation of animation specs for engineering while reducing miscommunication. One click to collect selected keyframe pair data to a text panel. Copy/paste this text out or build a panel along side the comp for easy reference.' +
-			'\n\n' +
-			'Usage:\n' +
-			'• Click the big button to open the property collection panel. \n' +
-			'• Additional key pairs will be added to the list, grouped by layer. The total duration and individual propery delays will update. \n' +
-			'• Copy out this text or create a panel along side a duplicate of your comp. \n\n' +
-			'Add ons:\n' +
-			'• Pixel/DP: This data can be communicated as coordinates or in DP. Set the density dropdown based on resolution of your comp.\n' +
-			'• ISO LAYER: Creates an adjustment layer below the selected layer to dims other layers. This allows layers to be hilighted while keeping things in context.\n' +
-			'• POINTER: Creates an editable arrow to quickly draw a line from the text spec to on-screen element.\n\n' +
-			scriptName +' - v'+ scriptVersion +' \nCreated by Adam Plouff at Google',
-			{multiline: true});
+	var btn_url = buttonColorVector(content, icons.build, '#EF5350', [224,64]);
 
-		buttonColorText(content, '#406280', 'Close');
-		btn_url.onClick = function() {
-			visitURL('http://google.github.io/inspectorspacetime');
-		}
-		w.show();
+	content.add('statictext', [0,0,400,340],
+		'Speed up the creation of animation specs for engineering while reducing miscommunication. One click to collect selected keyframe pair data to a text panel. Copy/paste this text out or build a panel along side the comp for easy reference.' +
+		'\n\n' +
+		'Usage:\n' +
+		'• Click the big button to open the property collection panel. \n' +
+		'• Additional key pairs will be added to the list, grouped by layer. The total duration and individual propery delays will update. \n' +
+		'• Copy out this text or create a panel along side a duplicate of your comp. \n\n' +
+		'Add ons:\n' +
+		'• Pixel/DP: This data can be communicated as coordinates or in DP. Set the density dropdown based on resolution of your comp.\n' +
+		'• ISO LAYER: Creates an adjustment layer below the selected layer to dims other layers. This allows layers to be hilighted while keeping things in context.\n' +
+		'• POINTER: Creates an editable arrow to quickly draw a line from the text spec to on-screen element.\n\n' +
+		scriptName +' - v'+ scriptVersion +' \nCreated by Adam Plouff at Google',
+		{multiline: true});
+
+	buttonColorText(content, '#406280', 'Close');
+	btn_url.onClick = function() {
+		visitURL('http://google.github.io/inspectorspacetime');
+	}
+	w.show();
 }
 
 btn_isolation.onClick = function() {
@@ -1271,130 +1289,129 @@ btn_counter.onClick = function() {
 
 btnLaunch.onClick = function() {
 	try {
-	var w = new Window('palette', scriptName, undefined, {resizeable:true});
-	w.alignChildren = ['fill', 'fill'];
+		var w = new Window('palette', scriptName, undefined, {resizeable:true});
+		w.alignChildren = ['fill', 'fill'];
 
-	var propObj = getPropObj();
-	var propText = getPropText(propObj);
+		var propObj = getPropObj();
+		var propText = getPropText(propObj);
 
-	//// tabs
-	var tpanel = w.add ('tabbedpanel');
-		tpanel.alignChildren = ['fill', 'fill'];
-		tpanel.minimumSize = [350,300];
-		tpanel.maximumSize.height = 800;
+		// tabs
+		var tpanel = w.add ('tabbedpanel');
+			tpanel.alignChildren = ['fill', 'fill'];
+			tpanel.minimumSize = [350,300];
+			tpanel.maximumSize.height = 800;
 
-	var tab_text = tpanel.add ('tab', undefined, 'Text');
-		tab_text.alignChildren = ['fill', 'fill'];
+		var tab_text = tpanel.add ('tab', undefined, 'Text');
+			tab_text.alignChildren = ['fill', 'fill'];
 
-	var textField = tab_text.add('edittext', undefined, '', {multiline: true});
-		textField.text = propText;
+		var textField = tab_text.add('edittext', undefined, '', {multiline: true});
+			textField.text = propText;
 
 
-	var tab_json = tpanel.add ('tab', undefined, 'JSON');
-		tab_json.alignChildren = ['fill', 'fill'];
+		var tab_json = tpanel.add ('tab', undefined, 'JSON');
+			tab_json.alignChildren = ['fill', 'fill'];
 
-	var jsonField = tab_json.add('edittext', [0,0,350,300], '', {multiline: true});
-		jsonField.text = JSON.stringify(propObj, replacer, 2);
+		var jsonField = tab_json.add('edittext', [0,0,350,300], '', {multiline: true});
+			jsonField.text = JSON.stringify(propObj, replacer, 2);
 
-	// clear props if no keys selected on initialize
-	if (propObj.firstKeyTime == 9999999) {
-		clearProps()
-	}
+		// clear props if no keys selected on initialize
+		if (propObj.firstKeyTime == 9999999) {
+			clearProps()
+		}
 
-	//// buttons
-	var buttons = w.add ('group');
-		buttons.alignment = 'right';
-		buttons.minimumSize.height = 28;
-		buttons.maximumSize.height = 28;
-	var btn_clearProp = buttons.add ('button', undefined, '⊗ Clear ⊗');
-	var btn_addProp = buttons.add ('button', undefined, '↑ Add property ↑');
-	var btn_newSidePanel = buttons.add ('button', undefined, '→ Create side panel →');
+		// buttons
+		var buttons = w.add ('group');
+			buttons.alignment = 'right';
+			buttons.minimumSize.height = 28;
+			buttons.maximumSize.height = 28;
+		var btn_clearProp = buttons.add ('button', undefined, '⊗ Clear ⊗');
+		var btn_addProp = buttons.add ('button', undefined, '↑ Add property ↑');
+		var btn_newSidePanel = buttons.add ('button', undefined, '→ Create side panel →');
 
-	btn_clearProp.onClick = function() {
-		clearProps();
-	}
-	btn_addProp.onClick = function() {
+		btn_clearProp.onClick = function() {
+			clearProps();
+		}
+		btn_addProp.onClick = function() {
 
-		propObj = getPropObj(propObj);
-		jsonField.text = JSON.stringify(propObj, replacer, 2);
+			propObj = getPropObj(propObj);
+			jsonField.text = JSON.stringify(propObj, replacer, 2);
 
-		propText = getPropText(propObj);
-		textField.text = propText;
-	}
+			propText = getPropText(propObj);
+			textField.text = propText;
+		}
 
-	btn_newSidePanel.onClick = function () {
-		try {
-		// start undo group
-		app.beginUndoGroup('Create ' + scriptName + 'Elements');
+		btn_newSidePanel.onClick = function () {
+			try {
+				// start undo group
+				app.beginUndoGroup('Create ' + scriptName + 'Elements');
 
-		// resize the comp
-		resizeCompNew(thisComp);
+				// resize the comp
+				resizeCompNew(thisComp);
 
-		// set the panel size in relation to the comp size
-		getPanelSize();
+				// set the panel size in relation to the comp size
+				getPanelSize();
 
-		buildText_plain(textField.text);
+				buildText_plain(textField.text);
 
-		// close twirled layers
-		app.executeCommand(2771);
-		app.executeCommand(2771);
+				// close twirled layers
+				app.executeCommand(2771);
+				app.executeCommand(2771);
 
-		app.endUndoGroup();
+				app.endUndoGroup();
+			} catch(e) {
+				alert(e.toString() + "\nError on line: " + e.line.toString(), scriptName);
+			}
+		}
 
-		} catch(e) {alert(e.toString() + "\nError on line: " + e.line.toString()); }
-	}
-
-	/**
-	 * JSON replacer filter
-	 *
-	 * @param {string} key - Object key
-	 * @param {any} val    - Object value
-	 * @return {any}       - Object value
-	 */
-	function replacer(key, val) {
-		if (key === 'obj') {
-			return undefined
-		} else {
-			return val
+		/**
+		 * JSON replacer filter
+		 *
+		 * @param {string} key - Object key
+		 * @param {any} val    - Object value
+		 * @return {any}       - Object value
+		 */
+		function replacer(key, val) {
+			if (key === 'obj') {
+				return undefined
+			} else {
+				return val
+			};
 		};
-	};
 
-	/**
-	 * Clears global variables
-	 */
-	function clearProps() {
-		propObj = null;
-		propText = null;
+		/**
+		 * Clears global variables
+		 */
+		function clearProps() {
+			propObj = null;
+			propText = null;
 
-		jsonField.text = '';
-		textField.text = '';
-	}
+			jsonField.text = '';
+			textField.text = '';
+		}
 
-	//// visibility
-	// tpanel.selection = 1;
-	w.layout.layout(true);
-	w.layout.resize();
-	w.onResizing = w.onResize = function () {w.layout.resize();};
-	w.show ();
+		// visibility
+		// tpanel.selection = 1;
+		w.layout.layout(true);
+		w.layout.resize();
+		w.onResizing = w.onResize = function () {w.layout.resize();};
+		w.show ();
 	} catch (e) {
 		alert(e.toString() + "\nError on line: " + e.line.toString());
 	}
 }
 
-
-// ==================================================
-
 //__________ SHOW UI ___________
-	// Set layout, and resize it on resize of the Panel/Window
-	mainPalette.layout.layout(true);
+// Set layout, and resize it on resize of the Panel/Window
+mainPalette.layout.layout(true);
+mainPalette.layout.resize();
+mainPalette.onResizing = mainPalette.onResize = function () {
 	mainPalette.layout.resize();
-	mainPalette.onResizing = mainPalette.onResize = function () {
-		mainPalette.layout.resize();
-	};
-	//if the script is not a Panel (launched from File/Scripts/Run script...) we need to show it
-	if (!(mainPalette instanceof Panel)) {
-		mainPalette.show();
-	}
+};
+
+//if the script is not a Panel (launched from File/Scripts/Run script...) we need to show it
+if (!(mainPalette instanceof Panel)) {
+	mainPalette.show();
+}
 //______________________________
 
 })(this);
