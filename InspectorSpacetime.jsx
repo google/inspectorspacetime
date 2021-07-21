@@ -1416,6 +1416,8 @@ btnLaunch.onClick = function() {
 
 		btn_exportJson.onClick = function () {
 			var propObj = getPropObj(propObj);
+			propObj.istVersion = scriptVersion;
+			propObj.aeVersion = app.version;
 
 			var outputFile = getUserFile("spec.spacetime", "spacetime:*.spacetime;");
 
