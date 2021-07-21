@@ -330,7 +330,10 @@ function buildText_plain(str) {
 
 		return dynText;
 	} catch(e) {
-		alert(e.toString() + '\nError on line: ' + e.line.toString(), scriptName);
+		alert([
+			e.toString(),
+			'Error on line: ' + e.line.toString()
+		].join('\n'), scriptName);
 	}
 }
 
@@ -534,13 +537,11 @@ function getPropObj(opt_propObj) {
  * @return {string}        - Text string
  */
 function getPropText(propObj) {
-	var propStr = '';
-
-	propStr += 'Total Dur: ' + timeToMs(propObj.lastKeyTime - propObj.firstKeyTime) + '\n\n';
-
-	propStr += buildTextBlock(propObj);
-
-	return propStr;
+	return [
+		'Total Dur: ' + timeToMs(propObj.lastKeyTime - propObj.firstKeyTime),
+		'',
+		buildTextBlock(propObj)
+	].join('\n')
 }
 
 /**
@@ -605,7 +606,10 @@ function buildCounter() {
 
 		return dynText;
 	} catch(e) {
-		alert(e.toString() + '\nError on line: ' + e.line.toString(), scriptName);
+		alert([
+			e.toString(),
+			'Error on line: ' + e.line.toString()
+		].join('\n'), scriptName);
 	}
 }
 
@@ -738,7 +742,10 @@ function resizeCompNew(work_comp) {
 
 		compInfo('ADBE Transform Group')('ADBE Position').setValue([leftEdge, 0]);
 	} catch(e) {
-		alert(e.toString() + '\nError on line: ' + e.line.toString(), scriptName);
+		alert([
+			e.toString(),
+			'Error on line: ' + e.line.toString()
+		].join('\n'), scriptName);
 	}
 
 	// update positioning variables
@@ -1121,14 +1128,21 @@ function buildPointer() {
 
 		// Apply expressions to properties
 		try {
-			pointer1('ADBE Root Vectors Group')(1)(3)('ADBE Vector Position').expression = 'p = effect("Arm Length")("Point");' + '\n' +
-					'[-p[0], p[1]]';
-			pointer1('ADBE Root Vectors Group')(1)(3)('ADBE Vector Scale').expression = 's = effect("Pointer Size")("Slider");' + '\n' +
-					'[s, s]';
+			pointer1('ADBE Root Vectors Group')(1)(3)('ADBE Vector Position').expression = [
+				'p = effect("Arm Length")("Point");',
+				'[-p[0], p[1]]'
+			].join('\n');
+			pointer1('ADBE Root Vectors Group')(1)(3)('ADBE Vector Scale').expression = [
+				's = effect("Pointer Size")("Slider");',
+				'[s, s]'
+			].join('\n');
 			pointer1('ADBE Root Vectors Group')(2)(3)('ADBE Vector Scale').expression = 'effect("Arm Length")("Point")';
 		} catch (err) {}
 	} catch(e) {
-		alert(e.toString() + '\nError on line: ' + e.line.toString(), scriptName);
+		alert([
+			e.toString(),
+			'Error on line: ' + e.line.toString()
+		].join('\n'), scriptName);
 	}
 }
 
@@ -1285,11 +1299,17 @@ var grp_buttons = grp_options.add('group');
 
 // button for isolation layer
 var btn_isolation = buttonColorText(grp_buttons, '#37474F', 'Iso Layer');
-	btn_isolation.helpTip = 'Create a color adjustment layer\nthe drag below targeted layers';
+	btn_isolation.helpTip = [
+		'Create a color adjustment layer',
+		'the drag below targeted layers'
+	].join('\n');
 
 // button for pointer layer
 var btn_pointer = buttonColorText(grp_buttons, '#37474F', 'Pointer');
-	btn_pointer.helpTip = 'Create an adjustable pointer \nline to connect text to element';
+	btn_pointer.helpTip = [
+		'Create an adjustable pointer',
+		'line to connect text to element'
+	].join('\n');
 
 // button for counter layer
 var btn_counter = buttonColorText(grp_buttons, '#37474F', 'Counter');
@@ -1327,18 +1347,26 @@ btn_aboutScript.onClick = function() {
 	var btn_url = buttonColorVector(content, icons.build, '#EF5350', [224, 64]);
 
 	content.add('statictext', [0, 0, 400, 340],
-		'Speed up the creation of animation specs for engineering while reducing miscommunication. One click to collect selected keyframe pair data to a text panel. Copy/paste this text out or build a panel along side the comp for easy reference.' +
-		'\n\n' +
-		'Usage:\n' +
-		'• Click the big button to open the property collection panel. \n' +
-		'• Additional key pairs will be added to the list, grouped by layer. The total duration and individual propery delays will update. \n' +
-		'• Copy out this text or create a panel along side a duplicate of your comp. \n\n' +
-		'Add ons:\n' +
-		'• Pixel/DP: This data can be communicated as coordinates or in DP. Set the density dropdown based on resolution of your comp.\n' +
-		'• ISO LAYER: Creates an adjustment layer below the selected layer to dims other layers. This allows layers to be hilighted while keeping things in context.\n' +
-		'• POINTER: Creates an editable arrow to quickly draw a line from the text spec to on-screen element.\n\n' +
-		scriptName +' - v'+ scriptVersion +' \nCreated by Adam Plouff at Google',
-		{multiline: true});
+		[
+			'Speed up the creation of animation specs for engineering while reducing miscommunication. One click to collect selected keyframe pair data to a text panel. Copy/paste this text out or build a panel along side the comp for easy reference.',
+			'',
+			'Usage:',
+			'• Click the big button to open the property collection panel.',
+			'• Additional key pairs will be added to the list, grouped by layer. The total duration and individual propery delays will update.',
+			'• Copy out this text or create a panel along side a duplicate of your comp.',
+			'',
+			'Add ons:',
+			'• Pixel/DP: This data can be communicated as coordinates or in DP. Set the density dropdown based on resolution of your comp.',
+			'• ISO LAYER: Creates an adjustment layer below the selected layer to dims other layers. This allows layers to be hilighted while keeping things in context.',
+			'• POINTER: Creates an editable arrow to quickly draw a line from the text spec to on-screen element.',
+			'',
+			scriptName + ' - v' + scriptVersion,
+			'Created by Adam Plouff at Google'
+		].join('\n'),
+		{
+			multiline: true
+		}
+	);
 
 	buttonColorText(content, '#406280', 'Close');
 	btn_url.onClick = function() {
@@ -1461,7 +1489,10 @@ btnLaunch.onClick = function() {
 
 				app.endUndoGroup();
 			} catch(e) {
-				alert(e.toString() + '\nError on line: ' + e.line.toString(), scriptName);
+				alert([
+					e.toString(),
+					'Error on line: ' + e.line.toString()
+				].join('\n'), scriptName);
 			}
 		}
 
@@ -1502,7 +1533,10 @@ btnLaunch.onClick = function() {
 		w.onResizing = w.onResize = function () {w.layout.resize();};
 		w.show ();
 	} catch (e) {
-		alert(e.toString() + '\nError on line: ' + e.line.toString());
+		alert([
+			e.toString(),
+			'Error on line: ' + e.line.toString()
+		].join('\n'));
 	}
 }
 
