@@ -60,7 +60,7 @@ function setComp() {
 	thisComp = app.project.activeItem;
 	// Make sure a comp is selected
 	if (!thisComp || !(thisComp instanceof CompItem)) {
-		alert("Gotta select a comp first", scriptName);
+		alert('Gotta select a comp first', scriptName);
 		return false;
 	}
 	// set the workStart var
@@ -242,17 +242,17 @@ function buttonColorVector(parentObj, iconVec, iconColor, size) {
  */
 function setTimeMarkers(layer, startTime, endTime) {
 	// new marker object
-	var layer_marker1 = new MarkerValue("Start");
+	var layer_marker1 = new MarkerValue('Start');
 		layer_marker1.eventCuePoint = true;
 		layer_marker1.setParameters({});
 
-	layer("ADBE Marker").setValueAtTime(startTime, layer_marker1);
+	layer('ADBE Marker').setValueAtTime(startTime, layer_marker1);
 
-	var layer_marker2 = new MarkerValue("End");
+	var layer_marker2 = new MarkerValue('End');
 		layer_marker2.eventCuePoint = true;
 		layer_marker2.setParameters({});
 
-	layer("ADBE Marker").setValueAtTime(endTime, layer_marker2);
+	layer('ADBE Marker').setValueAtTime(endTime, layer_marker2);
 }
 
 
@@ -278,19 +278,19 @@ function buildText_plain(str) {
 
 	try {
 		// create new text layer
-		var dynText = thisComp.layers.addText("Spec Layer Name");
+		var dynText = thisComp.layers.addText('Spec Layer Name');
 		dynText.name = 'Spec Layer Name';
 		dynText.comment = scriptName + '_data';
 
 		// new text object
-		var dynText_TextProp = dynText("ADBE Text Properties")("ADBE Text Document");
+		var dynText_TextProp = dynText('ADBE Text Properties')('ADBE Text Document');
 		var dynText_TextDocument = dynText_TextProp.value;
 
 		// reset all text values
 		dynText_TextDocument.resetCharStyle();
 
 		dynText_TextDocument.fontSize = Math.floor(dataSize[0] / 16);
-		dynText_TextDocument.font = "CourierNewPS-BoldMT";
+		dynText_TextDocument.font = 'CourierNewPS-BoldMT';
 		dynText_TextDocument.applyFill = true;
 		dynText_TextDocument.fillColor = [1, 1, 1];
 		dynText_TextDocument.applyStroke = false;
@@ -314,23 +314,23 @@ function buildText_plain(str) {
 		var manualLineHeight = 10;
 
 		// create a new text animator
-		var lineHeight = dynText("ADBE Text Properties")(4).addProperty("ADBE Text Animator");
+		var lineHeight = dynText('ADBE Text Properties')(4).addProperty('ADBE Text Animator');
 			// name it line height
 			lineHeight.name = 'Line Height';
 			// add a Line Spacing element
-			lineHeight("ADBE Text Animator Properties").addProperty("ADBE Text Line Spacing");
+			lineHeight('ADBE Text Animator Properties').addProperty('ADBE Text Line Spacing');
 			// add a selector
-			lineHeight(1).addProperty("ADBE Text Selector");
+			lineHeight(1).addProperty('ADBE Text Selector');
 			// set value
-			lineHeight(2)("ADBE Text Line Spacing").setValue([0, manualLineHeight]);
+			lineHeight(2)('ADBE Text Line Spacing').setValue([0, manualLineHeight]);
 
 		// Transforms
-		dynText("ADBE Transform Group")("ADBE Anchor Point").setValue([0, -dynText_TextDocument.fontSize * 0.82, 0]);
-		dynText("ADBE Transform Group")("ADBE Position").setValue([leftEdge, margin, 0]);
+		dynText('ADBE Transform Group')('ADBE Anchor Point').setValue([0, -dynText_TextDocument.fontSize * 0.82, 0]);
+		dynText('ADBE Transform Group')('ADBE Position').setValue([leftEdge, margin, 0]);
 
 		return dynText;
 	} catch(e) {
-		alert(e.toString() + "\nError on line: " + e.line.toString(), scriptName);
+		alert(e.toString() + '\nError on line: ' + e.line.toString(), scriptName);
 	}
 }
 
@@ -551,14 +551,14 @@ function getPropText(propObj) {
 function buildCounter() {
 	try {
 		// create new text layer
-		var dynText = thisComp.layers.addText("Spec Name");
+		var dynText = thisComp.layers.addText('Spec Name');
 			// set the layer name
 			dynText.name = 'Counter';
 			// add a comment
 			dynText.comment = scriptName + '_data';
 
 		// new text object
-		var dynText_TextProp = dynText("ADBE Text Properties")("ADBE Text Document");
+		var dynText_TextProp = dynText('ADBE Text Properties')('ADBE Text Document');
 
 		// initialize dynText_TextDocument with values
 		var dynText_TextDocument = dynText_TextProp.value;
@@ -566,7 +566,7 @@ function buildCounter() {
 			dynText_TextDocument.resetCharStyle();
 
 			dynText_TextDocument.fontSize = thisComp.width / 30;
-			dynText_TextDocument.font = "CourierNewPS-BoldMT";
+			dynText_TextDocument.font = 'CourierNewPS-BoldMT';
 			dynText_TextDocument.applyFill = true;
 			dynText_TextDocument.fillColor = [0.5, 0.5, 0.5];
 			dynText_TextDocument.applyStroke = false;
@@ -590,22 +590,22 @@ function buildCounter() {
 		var manualLineHeight = 10;
 
 		// create a new text animator
-		var lineHeight = dynText("ADBE Text Properties")(4).addProperty("ADBE Text Animator");
+		var lineHeight = dynText('ADBE Text Properties')(4).addProperty('ADBE Text Animator');
 			// name it line height
 			lineHeight.name = 'Line Height';
 			// add a Line Spacing element
-			lineHeight("ADBE Text Animator Properties").addProperty("ADBE Text Line Spacing");
+			lineHeight('ADBE Text Animator Properties').addProperty('ADBE Text Line Spacing');
 			// add a selector
-			lineHeight(1).addProperty("ADBE Text Selector");
+			lineHeight(1).addProperty('ADBE Text Selector');
 			// set value
-			lineHeight(2)("ADBE Text Line Spacing").setValue([0,manualLineHeight]);
+			lineHeight(2)('ADBE Text Line Spacing').setValue([0,manualLineHeight]);
 
 		// Transforms
-		dynText("ADBE Transform Group")("ADBE Position").setValue([100, 100]);
+		dynText('ADBE Transform Group')('ADBE Position').setValue([100, 100]);
 
 		return dynText;
 	} catch(e) {
-		alert(e.toString() + "\nError on line: " + e.line.toString(), scriptName);
+		alert(e.toString() + '\nError on line: ' + e.line.toString(), scriptName);
 	}
 }
 
@@ -718,27 +718,27 @@ function resizeCompNew(work_comp) {
 			// set layer label to grey
 			compInfo.label = 0;
 
-		var shapeGroup = compInfo("ADBE Root Vectors Group").addProperty("ADBE Vector Group");
-			shapeGroup.name = "Rectangle 1";
+		var shapeGroup = compInfo('ADBE Root Vectors Group').addProperty('ADBE Vector Group');
+			shapeGroup.name = 'Rectangle 1';
 
-		var rect = shapeGroup(2).addProperty("ADBE Vector Shape - Rect");
-			rect("ADBE Vector Rect Size").setValue(panelSize);
-			rect("ADBE Vector Rect Position").setValue(panelSize / 2);
+		var rect = shapeGroup(2).addProperty('ADBE Vector Shape - Rect');
+			rect('ADBE Vector Rect Size').setValue(panelSize);
+			rect('ADBE Vector Rect Position').setValue(panelSize / 2);
 
-		var stroke = shapeGroup(2).addProperty("ADBE Vector Graphic - Stroke");
+		var stroke = shapeGroup(2).addProperty('ADBE Vector Graphic - Stroke');
 			stroke.enabled = false;
-			stroke("ADBE Vector Stroke Width").setValue(6);
+			stroke('ADBE Vector Stroke Width').setValue(6);
 
-		var fill = shapeGroup(2).addProperty("ADBE Vector Graphic - Fill");
-			fill("ADBE Vector Fill Color").setValue([0.08203125, 0.5625, 0.91796875, 1]);
+		var fill = shapeGroup(2).addProperty('ADBE Vector Graphic - Fill');
+			fill('ADBE Vector Fill Color').setValue([0.08203125, 0.5625, 0.91796875, 1]);
 
-		var shapeGroup2 = compInfo("ADBE Root Vectors Group").addProperty("ADBE Vector Group");
-			shapeGroup2.name = "Admin";
-			shapeGroup2(3)("ADBE Vector Scale").setValue(panelSize);
+		var shapeGroup2 = compInfo('ADBE Root Vectors Group').addProperty('ADBE Vector Group');
+			shapeGroup2.name = 'Admin';
+			shapeGroup2(3)('ADBE Vector Scale').setValue(panelSize);
 
-		compInfo("ADBE Transform Group")("ADBE Position").setValue([leftEdge, 0]);
+		compInfo('ADBE Transform Group')('ADBE Position').setValue([leftEdge, 0]);
 	} catch(e) {
-		alert(e.toString() + "\nError on line: " + e.line.toString(), scriptName);
+		alert(e.toString() + '\nError on line: ' + e.line.toString(), scriptName);
 	}
 
 	// update positioning variables
@@ -827,9 +827,9 @@ function getPanelSize() {
 		// if layer has a panel comment
 		if (thisComp.layer(i).comment == scriptName + '_panel') {
 			// update vars
-			panelSize = thisComp.layer(i)("ADBE Root Vectors Group")(2)(3)("ADBE Vector Scale").value;
+			panelSize = thisComp.layer(i)('ADBE Root Vectors Group')(2)(3)('ADBE Vector Scale').value;
 			margin = Math.floor(panelSize[0] / 18)
-			leftEdge = thisComp.layer(i)("ADBE Transform Group")("ADBE Position").value[0] + margin;
+			leftEdge = thisComp.layer(i)('ADBE Transform Group')('ADBE Position').value[0] + margin;
 			dataSize = [panelSize[0] - margin * 2, panelSize[1] - margin * 2];
 			// stop looping
 			return;
@@ -1041,22 +1041,22 @@ function buildIsoLayer() {
 		isolationLayer.label = 0;
 		isolationLayer.adjustmentLayer = true;
 
-	var shapeGroup = isolationLayer("ADBE Root Vectors Group").addProperty("ADBE Vector Group");
-		shapeGroup.name = "Rectangle 1";
+	var shapeGroup = isolationLayer('ADBE Root Vectors Group').addProperty('ADBE Vector Group');
+		shapeGroup.name = 'Rectangle 1';
 
-	var rect = shapeGroup(2).addProperty("ADBE Vector Shape - Rect");
-		rect("ADBE Vector Rect Size").setValue([thisComp.width, thisComp.height]);
+	var rect = shapeGroup(2).addProperty('ADBE Vector Shape - Rect');
+		rect('ADBE Vector Rect Size').setValue([thisComp.width, thisComp.height]);
 
-	var stroke = shapeGroup(2).addProperty("ADBE Vector Graphic - Stroke");
+	var stroke = shapeGroup(2).addProperty('ADBE Vector Graphic - Stroke');
 		stroke.enabled = false;
-		stroke("ADBE Vector Stroke Width").setValue(3);
+		stroke('ADBE Vector Stroke Width').setValue(3);
 
-	var fill = shapeGroup(2).addProperty("ADBE Vector Graphic - Fill");
-		fill("ADBE Vector Fill Color").setValue([0, 0, 0, 1]);
+	var fill = shapeGroup(2).addProperty('ADBE Vector Graphic - Fill');
+		fill('ADBE Vector Fill Color').setValue([0, 0, 0, 1]);
 
-	var tint = isolationLayer("ADBE Effect Parade").addProperty("ADBE Tint");
-		tint("ADBE Tint-0001").setValue([0.3, 0.3, 0.3, 1]);
-		tint("ADBE Tint-0002").setValue([0.35, 0.35, 0.35, 1]);
+	var tint = isolationLayer('ADBE Effect Parade').addProperty('ADBE Tint');
+		tint('ADBE Tint-0001').setValue([0.3, 0.3, 0.3, 1]);
+		tint('ADBE Tint-0002').setValue([0.35, 0.35, 0.35, 1]);
 }
 
 
@@ -1073,62 +1073,62 @@ function buildPointer() {
 		// new shape layer
 		var pointer1 = thisComp.layers.addShape();
 			// name shape layer
-			pointer1.name = "Pointer 1";
+			pointer1.name = 'Pointer 1';
 			// set label color
 			pointer1.label = 2;
 
-		var shapeGroup = pointer1("ADBE Root Vectors Group").addProperty("ADBE Vector Group");
-			shapeGroup.name = "Pointer";
-			shapeGroup(2).addProperty("ADBE Vector Shape - Rect");
+		var shapeGroup = pointer1('ADBE Root Vectors Group').addProperty('ADBE Vector Group');
+			shapeGroup.name = 'Pointer';
+			shapeGroup(2).addProperty('ADBE Vector Shape - Rect');
 
-		var trim = shapeGroup(2).addProperty("ADBE Vector Filter - Trim");
-			trim("ADBE Vector Trim End").setValue(25);
-			trim("ADBE Vector Trim Offset").setValue(-90);
+		var trim = shapeGroup(2).addProperty('ADBE Vector Filter - Trim');
+			trim('ADBE Vector Trim End').setValue(25);
+			trim('ADBE Vector Trim Offset').setValue(-90);
 
-		var gradFill = shapeGroup(2).addProperty("ADBE Vector Graphic - G-Fill");
+		var gradFill = shapeGroup(2).addProperty('ADBE Vector Graphic - G-Fill');
 			gradFill.enabled = false;
 
-		shapeGroup(3)("ADBE Vector Anchor").setValue([0, -50]);
-		shapeGroup(3)("ADBE Vector Position").setValue([-580, 0]);
-		shapeGroup(3)("ADBE Vector Scale").setValue([100, 100]);
+		shapeGroup(3)('ADBE Vector Anchor').setValue([0, -50]);
+		shapeGroup(3)('ADBE Vector Position').setValue([-580, 0]);
+		shapeGroup(3)('ADBE Vector Scale').setValue([100, 100]);
 
-		var shapeGroup2 = pointer1("ADBE Root Vectors Group").addProperty("ADBE Vector Group");
-			shapeGroup2.name = "Arm";
-			shapeGroup2(2).addProperty("ADBE Vector Shape - Rect");
+		var shapeGroup2 = pointer1('ADBE Root Vectors Group').addProperty('ADBE Vector Group');
+			shapeGroup2.name = 'Arm';
+			shapeGroup2(2).addProperty('ADBE Vector Shape - Rect');
 
-		var trim2 = shapeGroup2(2).addProperty("ADBE Vector Filter - Trim");
-			trim2("ADBE Vector Trim End").setValue(50);
-			trim2("ADBE Vector Trim Offset").setValue(180);
+		var trim2 = shapeGroup2(2).addProperty('ADBE Vector Filter - Trim');
+			trim2('ADBE Vector Trim End').setValue(50);
+			trim2('ADBE Vector Trim Offset').setValue(180);
 
-		var gradFill2 = shapeGroup2(2).addProperty("ADBE Vector Graphic - G-Fill");
+		var gradFill2 = shapeGroup2(2).addProperty('ADBE Vector Graphic - G-Fill');
 			gradFill2.enabled = false;
-			shapeGroup2(3)("ADBE Vector Anchor").setValue([50, -50]);
-			shapeGroup2(3)("ADBE Vector Scale").setValue([564, 349]);
+			shapeGroup2(3)('ADBE Vector Anchor').setValue([50, -50]);
+			shapeGroup2(3)('ADBE Vector Scale').setValue([564, 349]);
 
-		var stroke = pointer1("ADBE Root Vectors Group").addProperty("ADBE Vector Graphic - Stroke");
-			stroke("ADBE Vector Stroke Width").setValue(6);
-			stroke("ADBE Vector Stroke Color").setValue([0.4795, 0.4795, 0.4795, 1]);
+		var stroke = pointer1('ADBE Root Vectors Group').addProperty('ADBE Vector Graphic - Stroke');
+			stroke('ADBE Vector Stroke Width').setValue(6);
+			stroke('ADBE Vector Stroke Color').setValue([0.4795, 0.4795, 0.4795, 1]);
 
-		var fxPoint = pointer1("ADBE Effect Parade").addProperty("ADBE Point Control");
-			fxPoint.name = "Arm Length";
-			fxPoint("ADBE Point Control-0001").setValue([775, 200]);
+		var fxPoint = pointer1('ADBE Effect Parade').addProperty('ADBE Point Control');
+			fxPoint.name = 'Arm Length';
+			fxPoint('ADBE Point Control-0001').setValue([775, 200]);
 
-		var fxSize = pointer1("ADBE Effect Parade").addProperty("ADBE Slider Control");
-			fxSize.name = "Pointer Size";
-			fxSize("ADBE Slider Control-0001").setValue(200);
+		var fxSize = pointer1('ADBE Effect Parade').addProperty('ADBE Slider Control');
+			fxSize.name = 'Pointer Size';
+			fxSize('ADBE Slider Control-0001').setValue(200);
 
-		pointer1("ADBE Transform Group")("ADBE Position").setValue([leftEdge - margin * 2, 192, 0]);
+		pointer1('ADBE Transform Group')('ADBE Position').setValue([leftEdge - margin * 2, 192, 0]);
 
 		// Apply expressions to properties
 		try {
-			pointer1("ADBE Root Vectors Group")(1)(3)("ADBE Vector Position").expression = "p = effect(\"Arm Length\")(\"Point\");" + "\n" +
-					"[-p[0], p[1]]";
-			pointer1("ADBE Root Vectors Group")(1)(3)("ADBE Vector Scale").expression = "s = effect(\"Pointer Size\")(\"Slider\");" + "\n" +
-					"[s, s]";
-			pointer1("ADBE Root Vectors Group")(2)(3)("ADBE Vector Scale").expression = "effect(\"Arm Length\")(\"Point\")";
+			pointer1('ADBE Root Vectors Group')(1)(3)('ADBE Vector Position').expression = 'p = effect("Arm Length")("Point");' + '\n' +
+					'[-p[0], p[1]]';
+			pointer1('ADBE Root Vectors Group')(1)(3)('ADBE Vector Scale').expression = 's = effect("Pointer Size")("Slider");' + '\n' +
+					'[s, s]';
+			pointer1('ADBE Root Vectors Group')(2)(3)('ADBE Vector Scale').expression = 'effect("Arm Length")("Point")';
 		} catch (err) {}
 	} catch(e) {
-		alert(e.toString() + "\nError on line: " + e.line.toString(), scriptName);
+		alert(e.toString() + '\nError on line: ' + e.line.toString(), scriptName);
 	}
 }
 
@@ -1139,7 +1139,7 @@ function buildPointer() {
  * @param {string} url - web url
  */
 function visitURL(url) {
-	if ($.os.indexOf("Windows") != -1) {
+	if ($.os.indexOf('Windows') != -1) {
 		system.callSystem('cmd /c "' + Folder.commonFiles.parent.fsName + "\\Internet Explorer\\iexplore.exe" + '" ' + url);
 	} else {
 		var cmd = 'open "' + url + '"';
@@ -1193,12 +1193,12 @@ function getUserFile(filename, filter) {
 function writeFile(path, contents) {
 	var file = path instanceof File ? path : new File(path);
 
-	file.open("w");
+	file.open('w');
 	var writeSuccess = file.write(contents);
 	file.close();
 
 	if (!writeSuccess) {
-		throw new Error("Could not write file " + file.toString());
+		throw new Error('Could not write file ' + file.toString());
 	}
 
 	return file;
@@ -1379,7 +1379,7 @@ btn_counter.onClick = function() {
 	var textLayer = buildCounter();
 	// set markers
 	setTimeMarkers(textLayer, keyRange[0], keyRange[1]);
-	textLayer("ADBE Text Properties")("ADBE Text Document").expression = exp_counter;
+	textLayer('ADBE Text Properties')('ADBE Text Document').expression = exp_counter;
 
 	// close twirled layers
 	app.executeCommand(2771);
@@ -1461,7 +1461,7 @@ btnLaunch.onClick = function() {
 
 				app.endUndoGroup();
 			} catch(e) {
-				alert(e.toString() + "\nError on line: " + e.line.toString(), scriptName);
+				alert(e.toString() + '\nError on line: ' + e.line.toString(), scriptName);
 			}
 		}
 
@@ -1470,7 +1470,7 @@ btnLaunch.onClick = function() {
 			propObj.spacetimeVersion = scriptVersion;
 			propObj.aeVersion = app.version;
 
-			var outputFile = getUserFile("spec.spacetime.json", "spacetime:*.spacetime.json;");
+			var outputFile = getUserFile('spec.spacetime.json', 'spacetime:*.spacetime.json;');
 
 			if (!outputFile) {
 				return;
@@ -1478,7 +1478,7 @@ btnLaunch.onClick = function() {
 
 			try {
 				var writtenFile = writeFile(outputFile, JSON.stringify(propObj, replacer));
-				alert("Wrote file to " + writtenFile.fsName, scriptName);
+				alert('Wrote file to ' + writtenFile.fsName, scriptName);
 			} catch(e) {
 				alert(e, scriptName);
 			}
@@ -1502,7 +1502,7 @@ btnLaunch.onClick = function() {
 		w.onResizing = w.onResize = function () {w.layout.resize();};
 		w.show ();
 	} catch (e) {
-		alert(e.toString() + "\nError on line: " + e.line.toString());
+		alert(e.toString() + '\nError on line: ' + e.line.toString());
 	}
 }
 
