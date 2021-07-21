@@ -865,11 +865,23 @@ function valPosition(activeProp) {
 
 	// distance vs abs position values
 	if (activeProp.threeDLayer) {
-		return ('[' + Math.round(a[0]) + ',' + Math.round(a[1]) + ',' + Math.round(a[2]) + ']››[' +
-					  Math.round(b[0]) + ',' + Math.round(b[1]) + ',' + Math.round(b[2]) + ']');
+		return JSON.stringify([
+			Math.round(a[0]),
+			Math.round(a[1]),
+			Math.round(a[2])
+		]) + '››' + JSON.stringify([
+			Math.round(b[0]),
+			Math.round(b[1]),
+			Math.round(b[2])
+		]);
 	} else {
-		return ('[' + Math.round(a[0]) + ',' + Math.round(a[1]) + ']››[' +
-					  Math.round(b[0]) + ',' + Math.round(b[1]) + ']');
+		return JSON.stringify([
+			Math.round(a[0]),
+			Math.round(a[1])
+		]) + '››' + JSON.stringify([
+			Math.round(b[0]),
+			Math.round(b[1])
+		]);
 	}
 }
 
@@ -956,7 +968,13 @@ function valScale(activeProp) {
 		return (round(a[0]) + '% ›› ' + round(b[0]) + '%');
 	} else {
 		// else print arrays
-		return ('[' + round(a[0]) + ',' + round(a[1]) + ']%››[' + round(b[0]) + ',' + round(b[1]) + ']%');
+		return JSON.stringify([
+			round(a[0], 0),
+			round(a[1], 0)
+		]) + '%››' + JSON.stringify([
+			round(b[0], 0),
+			round(b[1], 0)
+		]) + '%';
 	}
 }
 
@@ -979,15 +997,27 @@ function valGeneric(activeProp) {
 
 		if (activeProp.threeDLayer) {
 			// return coodinates
-			return ('[' + Math.round(a[0]) + ',' + Math.round(a[1]) + ',' + Math.round(a[2]) + ']››[' +
-						  Math.round(b[0]) + ',' + Math.round(b[1]) + ',' + Math.round(b[2]) + ']');
+			return JSON.stringify([
+				Math.round(a[0]),
+				Math.round(a[1]),
+				Math.round(a[2])
+			]) + '››' + JSON.stringify([
+				Math.round(b[0]),
+				Math.round(b[1]),
+				Math.round(b[2])
+			]);
 		} else if (single) {
 			// if values match, print single vals with percentage
 			return (round(a[0]) + ' ›› ' + round(b[0]));
 		} else {
 			// Else format as array
-			return ('[' + round(a[0], 0) + ',' + round(a[1], 0) + ']››['
-						+ round(b[0], 0) + ',' + round(b[1],0) + ']');
+			return JSON.stringify([
+				round(a[0], 0),
+				round(a[1], 0)
+			]) + '››' + JSON.stringify([
+				round(b[0], 0),
+				round(b[1], 0)
+			]);
 		}
 	} else {
 		// its not an array value, return value
