@@ -1112,6 +1112,21 @@ function visitURL(url) {
 }
 
 /**
+ * JSON replacer filter
+ *
+ * @param {string} key - Object key
+ * @param {any} val    - Object value
+ * @return {any}       - Object value
+ */
+function replacer(key, val) {
+	if (key === 'obj') {
+		return undefined;
+	} else {
+		return val;
+	};
+};
+
+/**
  * Prompts user to select a file path
  *
  * @param {string} filename - Default filename to prompt
@@ -1432,21 +1447,6 @@ btnLaunch.onClick = function() {
 				alert(e, scriptName);
 			}
 		}
-
-		/**
-		 * JSON replacer filter
-		 *
-		 * @param {string} key - Object key
-		 * @param {any} val    - Object value
-		 * @return {any}       - Object value
-		 */
-		function replacer(key, val) {
-			if (key === 'obj') {
-				return undefined;
-			} else {
-				return val;
-			};
-		};
 
 		/**
 		 * Clears global variables
