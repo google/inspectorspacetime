@@ -753,6 +753,7 @@ function resizeCompNew(work_comp) {
  *
  * @param {number} value          - Value to round
  * @param {number} [opt_decimals] - Number of decimals, optional
+ * @return {number}               - Rounded value
  */
 function round(value, opt_decimals) {
 	try{
@@ -762,6 +763,30 @@ function round(value, opt_decimals) {
 	} catch (e) {
 		return value;
 	}
+}
+
+/**
+ * Rounds all values in an array
+ *
+ * @param {number[]} array        - Array to round
+ * @param {number} [opt_decimals] - Number of decimals, optional
+ * @return {number[]}             - Rounded array
+ */
+function roundArray(array, opt_decimals) {
+	if (!(array instanceof Array)) {
+		return round(array, opt_decimals);
+	}
+
+	var rounded = [];
+
+	for (var i = 0; i < array.length; i++) {
+		var element = array[i];
+		var roundedElement = round(element, opt_decimals);
+
+		rounded.push(roundedElement);
+	}
+
+	return rounded;
 }
 
 /**
@@ -864,25 +889,15 @@ function valPosition(activeProp) {
 	var b = activeProp.endValue;
 
 	// distance vs abs position values
-	if (activeProp.threeDLayer) {
-		return JSON.stringify([
-			Math.round(a[0]),
-			Math.round(a[1]),
-			Math.round(a[2])
-		]) + '››' + JSON.stringify([
-			Math.round(b[0]),
-			Math.round(b[1]),
-			Math.round(b[2])
-		]);
-	} else {
-		return JSON.stringify([
-			Math.round(a[0]),
-			Math.round(a[1])
-		]) + '››' + JSON.stringify([
-			Math.round(b[0]),
-			Math.round(b[1])
-		]);
+	var aRounded = roundArray(a);
+	var bRounded = roundArray(b);
+
+	if (!activeProp.threeDLayer) {
+		aRounded.length = 2;
+		bRounded.length = 2;
 	}
+
+	return JSON.stringify(aRounded) + '››' + JSON.stringify(bRounded);
 }
 
 /**
@@ -967,14 +982,15 @@ function valScale(activeProp) {
 		// if values match, print single vals with percentage
 		return (round(a[0]) + '% ›› ' + round(b[0]) + '%');
 	} else {
-		// else print arrays
-		return JSON.stringify([
-			round(a[0], 0),
-			round(a[1], 0)
-		]) + '%››' + JSON.stringify([
-			round(b[0], 0),
-			round(b[1], 0)
-		]) + '%';
+		var aRounded = roundArray(a);
+		var bRounded = roundArray(b);
+
+		if (!activeProp.threeDLayer) {
+			aRounded.length = 2;
+			bRounded.length = 2;
+		}
+
+		return JSON.stringify(aRounded) + '%››' + JSON.stringify(bRounded) + '%';
 	}
 }
 
@@ -995,33 +1011,23 @@ function valGeneric(activeProp) {
 	if (a instanceof Array) {
 		var single = (round(a[0]) == round(a[1]) && round(b[0]) == round(b[1])) ? true : false;
 
-		if (activeProp.threeDLayer) {
-			// return coodinates
-			return JSON.stringify([
-				Math.round(a[0]),
-				Math.round(a[1]),
-				Math.round(a[2])
-			]) + '››' + JSON.stringify([
-				Math.round(b[0]),
-				Math.round(b[1]),
-				Math.round(b[2])
-			]);
-		} else if (single) {
+		if (single) {
 			// if values match, print single vals with percentage
 			return (round(a[0]) + ' ›› ' + round(b[0]));
 		} else {
-			// Else format as array
-			return JSON.stringify([
-				round(a[0], 0),
-				round(a[1], 0)
-			]) + '››' + JSON.stringify([
-				round(b[0], 0),
-				round(b[1], 0)
-			]);
+			var aRounded = roundArray(a);
+			var bRounded = roundArray(b);
+
+			if (!activeProp.threeDLayer) {
+				aRounded.length = 2;
+				bRounded.length = 2;
+			}
+
+			return JSON.stringify(aRounded) + '››' + JSON.stringify(bRounded);
 		}
 	} else {
 		// its not an array value, return value
-		return (round(a, 2).toString() + '››' + round(b, 2).toString());
+		return (round(a, 2) + '››' + round(b, 2));
 	}
 }
 
