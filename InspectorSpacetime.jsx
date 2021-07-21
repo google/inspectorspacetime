@@ -29,7 +29,7 @@ var scriptName = 'Inspector Spacetime';
 var scriptVersion = '2.1';
 var thisComp, inspectorFolder, margin, leftEdge, panelSize = [0, 0], dataSize = [0, 0];
 
-var exp_counter = 'var sTime = marker.key("Start").time; var eTime = marker.key("End").time; var countTime = Math.max(time - sTime, 0); countTime = Math.min(countTime, eTime - sTime); var counter = Math.round( countTime * 1000); var playIcon = (time > sTime && time < eTime) ? "\u25ba " : "\u25a0 "; playIcon + counter + "ms";';
+var exp_counter = 'var sTime = marker.key("Start").time; var eTime = marker.key("End").time; var countTime = Math.max(time - sTime, 0); countTime = Math.min(countTime, eTime - sTime); var counter = Math.round(countTime * 1000); var playIcon = (time > sTime && time < eTime) ? "\u25ba " : "\u25a0 "; playIcon + counter + "ms";';
 
 // icon string for retina icons
 var icons = {
@@ -81,7 +81,7 @@ function setComp() {
 function buttonColorText(parentObj, accentColor, buttonText) {
 	// draw a regular button, make it pressable with ENTER key
 	var btn = parentObj.add('button', undefined, '', {name:'ok'});
-		btn.fillBrush = btn.graphics.newBrush( btn.graphics.BrushType.SOLID_COLOR, hexToArray(accentColor));
+		btn.fillBrush = btn.graphics.newBrush(btn.graphics.BrushType.SOLID_COLOR, hexToArray(accentColor));
 
 		// text to uppercase
 		btn.text = buttonText;
@@ -104,14 +104,14 @@ function buttonColorText(parentObj, accentColor, buttonText) {
 	function gfxDraw() {
 		with (this) {
 			graphics.drawOSControl();
-			graphics.rectPath(0,0,size[0],size[1]);
+			graphics.rectPath(0, 0, size[0], size[1]);
 			graphics.fillPath(fillBrush);
-			if ( text ) {
+			if (text) {
 				graphics.drawString(
 					text,
 					textPen,
-					(size[0]-graphics.measureString (text,graphics.font,size[0])[0])/2,
-					(size[1]-graphics.measureString (text,graphics.font,size[0])[1])/1.75,
+					(size[0] - graphics.measureString(text, graphics.font, size[0])[0]) / 2,
+					(size[1] - graphics.measureString(text, graphics.font, size[0])[1]) / 1.75,
 					graphics.font
 				);
 			}
@@ -146,7 +146,7 @@ function buttonColorText(parentObj, accentColor, buttonText) {
 function buttonColorVector(parentObj, iconVec, iconColor, size) {
 	// defines the artsize before resizing the button container
 	var artSize = size;
-	var vButton = parentObj.add('button', [0,0,size[0],size[1], undefined]);
+	var vButton = parentObj.add('button', [0, 0, size[0], size[1], undefined]);
 		vButton.coord = vecToPoints(iconVec);
 		vButton.fillColor = iconColor;
 		vButton.onDraw = vecDraw;
@@ -164,16 +164,16 @@ function buttonColorVector(parentObj, iconVec, iconColor, size) {
 		var n;
 
 		// loop through the paths in a multi path icon
-		for(var i = 0; i < vecCoord.length; i++) {
+		for (var i = 0; i < vecCoord.length; i++) {
 			// create an array of all the numbers
 			var eachNum = vecCoord[i].split(' ');
 			var coordinates = [];
 			var sets = [];
 
 			// AI adds commas between coords, sketch just spaces
-			for (var k = 0; k < eachNum.length; k+=2) {
+			for (var k = 0; k < eachNum.length; k += 2) {
 				// add pairs of numbers to an array
-				sets.push(eachNum[k] + ',' + eachNum[k+1]);
+				sets.push(eachNum[k] + ',' + eachNum[k + 1]);
 			}
 
 			// loop through all sets
@@ -184,8 +184,9 @@ function buttonColorVector(parentObj, iconVec, iconColor, size) {
 				coordinates[j][0] = (parseFloat(coordinates[j][0]));
 				coordinates[j][1] = (parseFloat(coordinates[j][1]));
 			}
-		// combine each x,y as a 2D array
-		points.push(coordinates);
+
+			// combine each x,y as a 2D array
+			points.push(coordinates);
 		}
 		// return the 2D array
 		return points;
@@ -209,11 +210,11 @@ function buttonColorVector(parentObj, iconVec, iconColor, size) {
 	 * Draws a vector path button
 	 */
 	function vecDraw() {
-		with ( this ) {
+		with (this) {
 			graphics.drawOSControl();
 
 			// draw background
-			graphics.rectPath(0,0,size[0],size[1]);
+			graphics.rectPath(0, 0, size[0], size[1]);
 			graphics.fillPath(graphics.newBrush(graphics.BrushType.SOLID_COLOR, hexToArray(fillColor)));
 
 			// draw shape
@@ -221,11 +222,11 @@ function buttonColorVector(parentObj, iconVec, iconColor, size) {
 				var line = coord[i];
 
 				graphics.newPath();
-				graphics.moveTo(line[0][0] + (size[0]/2 - artSize[0]/2), line[0][1]);
+				graphics.moveTo(line[0][0] + (size[0] / 2 - artSize[0] / 2), line[0][1]);
 				for (var j = 0; j < line.length; j++) {
-					graphics.lineTo(line[j][0] + (size[0]/2 - artSize[0]/2), line[j][1]);
+					graphics.lineTo(line[j][0] + (size[0] / 2 - artSize[0] / 2), line[j][1]);
 				}
-				graphics.fillPath(graphics.newBrush(graphics.BrushType.SOLID_COLOR, [1,1,1,0.75]));
+				graphics.fillPath(graphics.newBrush(graphics.BrushType.SOLID_COLOR, [1, 1, 1, 0.75]));
 			}
 		}
 	}
@@ -291,12 +292,12 @@ function buildText_plain(str) {
 		dynText_TextDocument.fontSize = Math.floor(dataSize[0] / 16);
 		dynText_TextDocument.font = "CourierNewPS-BoldMT";
 		dynText_TextDocument.applyFill = true;
-		dynText_TextDocument.fillColor = [1,1,1];
+		dynText_TextDocument.fillColor = [1, 1, 1];
 		dynText_TextDocument.applyStroke = false;
 		dynText_TextDocument.justification = ParagraphJustification.LEFT_JUSTIFY;
 		dynText_TextDocument.tracking = -30;
 
-		if (parseFloat(app.version) >= 13.2 ) {
+		if (parseFloat(app.version) >= 13.2) {
 			dynText_TextDocument.verticalScale = 1;
 			dynText_TextDocument.horizontalScale = 1;
 			dynText_TextDocument.baselineShift = 0;
@@ -321,10 +322,10 @@ function buildText_plain(str) {
 			// add a selector
 			lineHeight(1).addProperty("ADBE Text Selector");
 			// set value
-			lineHeight(2)("ADBE Text Line Spacing").setValue([0,manualLineHeight]);
+			lineHeight(2)("ADBE Text Line Spacing").setValue([0, manualLineHeight]);
 
 		// Transforms
-		dynText("ADBE Transform Group")("ADBE Anchor Point").setValue([0, -dynText_TextDocument.fontSize*0.82, 0]);
+		dynText("ADBE Transform Group")("ADBE Anchor Point").setValue([0, -dynText_TextDocument.fontSize * 0.82, 0]);
 		dynText("ADBE Transform Group")("ADBE Position").setValue([leftEdge, margin, 0]);
 
 		return dynText;
@@ -342,21 +343,27 @@ function buildText_plain(str) {
 function buildTextBlock(p) {
 	var firstKeyTime = p.firstKeyTime;
 	var str = '';
+
 	// loop through collected props
 	for (var j = 0; j < p.layers.length; j++) {
 		layer = p.layers[j];
+
 		// add prop name to text string
 		str += '\u2261 ' + layer.name + ' \u2261\n';
 
 		for (var i = 0; i < layer.props.length; i++) {
 			prop = layer.props[i];
 			str += '- ' + prop.name + ' -\n';
+
 			// add start time
 			// str += 'Start: ' + timeToMs(prop.startTime) + '\n';
+
 			str += 'Delay: ' + timeToMs(prop.startTime - firstKeyTime) + '\n';
 			str += 'Dur: ' + timeToMs(prop.dur) + '\n';
 			str += 'Val: ' + getValChange(prop) + '\n';
-			str += getEase(prop) + '\n\n';		// add interpolation value
+
+			// add interpolation value
+			str += getEase(prop) + '\n\n';
 		}
 	}
 
@@ -373,19 +380,20 @@ function getKeyRange() {
 		var lastKeyTime = 0;
 
 		for (var i = 0; i < thisComp.selectedLayers.length; i++) {
-				var layer = thisComp.selectedLayers[i];
-				for (var j = 0; j < layer.selectedProperties.length; j++) {
-						var prop = layer.selectedProperties[j];
-						for (var k = 0; k < prop.selectedKeys.length; k++) {
-								var key = prop.selectedKeys[k];
-								// alert(prop.keyTime(key), scriptName)
+			var layer = thisComp.selectedLayers[i];
+			for (var j = 0; j < layer.selectedProperties.length; j++) {
+				var prop = layer.selectedProperties[j];
+				for (var k = 0; k < prop.selectedKeys.length; k++) {
+					var key = prop.selectedKeys[k];
+					// alert(prop.keyTime(key), scriptName)
 
-								// set firstKeyTime to first keyframe's start time
-								firstKeyTime = Math.min(firstKeyTime, prop.keyTime(key));
-				lastKeyTime = Math.max(lastKeyTime, prop.keyTime(key));
-						}
+					// set firstKeyTime to first keyframe's start time
+					firstKeyTime = Math.min(firstKeyTime, prop.keyTime(key));
+					lastKeyTime = Math.max(lastKeyTime, prop.keyTime(key));
 				}
+			}
 		}
+
 		return [firstKeyTime, lastKeyTime];
 }
 
@@ -490,24 +498,24 @@ function getPropObj(opt_propObj) {
 				var selKeys = prop.selectedKeys;
 
 				for (var m = 0; m < selKeys.length-1; m++) {
-					propCollect.push( {
+					propCollect.push({
 						obj: prop,
 						threeDLayer: layer.threeDLayer || (layer instanceof CameraLayer),
 						propertyValueType: prop.propertyValueType,
 						name: prop.name,
 						matchName: prop.matchName,
-						dur: prop.keyTime(selKeys[m+1]) - prop.keyTime(selKeys[m]),
+						dur: prop.keyTime(selKeys[m + 1]) - prop.keyTime(selKeys[m]),
 						// val: 0,
 						startTime: prop.keyTime(selKeys[m]),
 						startValue: prop.keyValue(selKeys[m]),
 						startTemporalEase: prop.keyOutTemporalEase(selKeys[m])[0],
 						startEaseType: prop.keyOutInterpolationType(selKeys[m]),
-						endTime: prop.keyTime(selKeys[m+1]),
-						endValue: prop.keyValue(selKeys[m+1]),
-						endTemporalEase: prop.keyInTemporalEase(selKeys[m+1])[0],
-						endEaseType: prop.keyInInterpolationType(selKeys[m+1]),
-						duration: prop.keyTime(selKeys[m+1]) - prop.keyTime(selKeys[m]),
-					} );
+						endTime: prop.keyTime(selKeys[m + 1]),
+						endValue: prop.keyValue(selKeys[m + 1]),
+						endTemporalEase: prop.keyInTemporalEase(selKeys[m + 1])[0],
+						endEaseType: prop.keyInInterpolationType(selKeys[m + 1]),
+						duration: prop.keyTime(selKeys[m + 1]) - prop.keyTime(selKeys[m]),
+					});
 				}
 				// set firstKeyTime to first keyframe's start time
 				firstKeyTime = Math.min(firstKeyTime, propCollect[0].startTime);
@@ -557,15 +565,15 @@ function buildCounter() {
 			// reset all text values
 			dynText_TextDocument.resetCharStyle();
 
-			dynText_TextDocument.fontSize = thisComp.width/30;
+			dynText_TextDocument.fontSize = thisComp.width / 30;
 			dynText_TextDocument.font = "CourierNewPS-BoldMT";
 			dynText_TextDocument.applyFill = true;
-			dynText_TextDocument.fillColor = [0.5,0.5,0.5];
+			dynText_TextDocument.fillColor = [0.5, 0.5, 0.5];
 			dynText_TextDocument.applyStroke = false;
 			dynText_TextDocument.justification = ParagraphJustification.LEFT_JUSTIFY;
 			dynText_TextDocument.tracking = -30;
 
-			if (parseFloat(app.version) >= 13.2 ) {
+			if (parseFloat(app.version) >= 13.2) {
 				dynText_TextDocument.verticalScale = 1;
 				dynText_TextDocument.horizontalScale = 1;
 				dynText_TextDocument.baselineShift = 0;
@@ -692,7 +700,7 @@ function resizeCompNew(work_comp) {
 	thisComp.openInViewer();
 
 	// set panelSize
-	panelSize = [Math.floor(thisComp.height/3), thisComp.height];
+	panelSize = [Math.floor(thisComp.height / 3), thisComp.height];
 
 	// set leftEdge
 	leftEdge = thisComp.width;
@@ -715,7 +723,7 @@ function resizeCompNew(work_comp) {
 
 		var rect = shapeGroup(2).addProperty("ADBE Vector Shape - Rect");
 			rect("ADBE Vector Rect Size").setValue(panelSize);
-			rect("ADBE Vector Rect Position").setValue( panelSize/2 );
+			rect("ADBE Vector Rect Position").setValue(panelSize / 2);
 
 		var stroke = shapeGroup(2).addProperty("ADBE Vector Graphic - Stroke");
 			stroke.enabled = false;
@@ -790,14 +798,14 @@ function createISTfolder() {
  */
 function getPanelSize() {
 	// loop through layers
-	for(var i = 1; i <= thisComp.layers.length; i++) {
+	for (var i = 1; i <= thisComp.layers.length; i++) {
 		// if layer has a panel comment
 		if (thisComp.layer(i).comment == scriptName + '_panel') {
 			// update vars
 			panelSize = thisComp.layer(i)("ADBE Root Vectors Group")(2)(3)("ADBE Vector Scale").value;
 			margin = Math.floor(panelSize[0] / 18)
 			leftEdge = thisComp.layer(i)("ADBE Transform Group")("ADBE Position").value[0] + margin;
-			dataSize = [panelSize[0] - margin*2, panelSize[1] - margin*2];
+			dataSize = [panelSize[0] - margin * 2, panelSize[1] - margin * 2];
 			// stop looping
 			return;
 		}
@@ -857,11 +865,11 @@ function valPosition(activeProp) {
 
 	// distance vs abs position values
 	if (activeProp.threeDLayer) {
-		return ('['+Math.round(a[0])+','+Math.round(a[1])+','+Math.round(a[2])+']››['+
-					Math.round(b[0])+','+Math.round(b[1])+','+Math.round(b[2])+']');
+		return ('[' + Math.round(a[0]) + ',' + Math.round(a[1]) + ',' + Math.round(a[2]) + ']››[' +
+					  Math.round(b[0]) + ',' + Math.round(b[1]) + ',' + Math.round(b[2]) + ']');
 	} else {
-		return ('['+Math.round(a[0])+','+Math.round(a[1])+']››['+
-					Math.round(b[0])+','+Math.round(b[1])+']');
+		return ('[' + Math.round(a[0]) + ',' + Math.round(a[1]) + ']››[' +
+					  Math.round(b[0]) + ',' + Math.round(b[1]) + ']');
 	}
 }
 
@@ -878,7 +886,7 @@ function valXPosition(activeProp) {
 	var b = activeProp.endValue;
 
 	// the pixel multiplier for distance in DP
-	var pixelMult = ddl_resolution.selection.index+1;
+	var pixelMult = ddl_resolution.selection.index + 1;
 
 	// distance vs abs position values
 
@@ -891,7 +899,7 @@ function valXPosition(activeProp) {
 		return (Math.round(vectDist) + 'dp');
 	} else {
 		// return coodinates
-		return (round(a, 2) + '››' + round(b, 2) );
+		return (round(a, 2) + '››' + round(b, 2));
 	}
 }
 
@@ -941,14 +949,14 @@ function valScale(activeProp) {
 	var b = activeProp.endValue;
 
 	// check if the x and y values match
-	var single = (round(a[0])==round(a[1])&&round(b[0])==round(b[1]))?true:false;
+	var single = (round(a[0]) == round(a[1]) && round(b[0]) == round(b[1])) ? true : false;
 
 	if (single) {
 		// if values match, print single vals with percentage
 		return (round(a[0]) + '% ›› ' + round(b[0]) + '%');
 	} else {
 		// else print arrays
-		return ('['+round(a[0])+','+round(a[1])+']%››['+round(b[0])+','+round(b[1])+']%');
+		return ('[' + round(a[0]) + ',' + round(a[1]) + ']%››[' + round(b[0]) + ',' + round(b[1]) + ']%');
 	}
 }
 
@@ -967,19 +975,19 @@ function valGeneric(activeProp) {
 
 	// it's an array value, check if the x and y values match
 	if (a instanceof Array) {
-		var single=(round(a[0])==round(a[1])&&round(b[0])==round(b[1]))?true:false;
+		var single = (round(a[0]) == round(a[1]) && round(b[0]) == round(b[1])) ? true : false;
 
 		if (activeProp.threeDLayer) {
 			// return coodinates
-			return ('['+Math.round(a[0])+','+Math.round(a[1])+','+Math.round(a[2])+']››['+
-						Math.round(b[0])+','+Math.round(b[1])+','+Math.round(b[2])+']');
+			return ('[' + Math.round(a[0]) + ',' + Math.round(a[1]) + ',' + Math.round(a[2]) + ']››[' +
+						  Math.round(b[0]) + ',' + Math.round(b[1]) + ',' + Math.round(b[2]) + ']');
 		} else if (single) {
 			// if values match, print single vals with percentage
-			return (round(a[0]) + ' ›› ' + round(b[0]) );
+			return (round(a[0]) + ' ›› ' + round(b[0]));
 		} else {
 			// Else format as array
-			return ('['+round(a[0],0)+','+round(a[1],0)+']››['
-								 +round(b[0],0)+','+round(b[1],0)+']');
+			return ('[' + round(a[0], 0) + ',' + round(a[1], 0) + ']››['
+						+ round(b[0], 0) + ',' + round(b[1],0) + ']');
 		}
 	} else {
 		// its not an array value, return value
@@ -1008,11 +1016,11 @@ function buildIsoLayer() {
 		stroke("ADBE Vector Stroke Width").setValue(3);
 
 	var fill = shapeGroup(2).addProperty("ADBE Vector Graphic - Fill");
-		fill("ADBE Vector Fill Color").setValue([0,0,0,1]);
+		fill("ADBE Vector Fill Color").setValue([0, 0, 0, 1]);
 
 	var tint = isolationLayer("ADBE Effect Parade").addProperty("ADBE Tint");
-		tint("ADBE Tint-0001").setValue([0.3,0.3,0.3,1]);
-		tint("ADBE Tint-0002").setValue([0.35,0.35,0.35,1]);
+		tint("ADBE Tint-0001").setValue([0.3, 0.3, 0.3, 1]);
+		tint("ADBE Tint-0002").setValue([0.35, 0.35, 0.35, 1]);
 }
 
 
@@ -1044,9 +1052,9 @@ function buildPointer() {
 		var gradFill = shapeGroup(2).addProperty("ADBE Vector Graphic - G-Fill");
 			gradFill.enabled = false;
 
-		shapeGroup(3)("ADBE Vector Anchor").setValue([0,-50]);
-		shapeGroup(3)("ADBE Vector Position").setValue([-580,0]);
-		shapeGroup(3)("ADBE Vector Scale").setValue([100,100]);
+		shapeGroup(3)("ADBE Vector Anchor").setValue([0, -50]);
+		shapeGroup(3)("ADBE Vector Position").setValue([-580, 0]);
+		shapeGroup(3)("ADBE Vector Scale").setValue([100, 100]);
 
 		var shapeGroup2 = pointer1("ADBE Root Vectors Group").addProperty("ADBE Vector Group");
 			shapeGroup2.name = "Arm";
@@ -1058,22 +1066,22 @@ function buildPointer() {
 
 		var gradFill2 = shapeGroup2(2).addProperty("ADBE Vector Graphic - G-Fill");
 			gradFill2.enabled = false;
-			shapeGroup2(3)("ADBE Vector Anchor").setValue([50,-50]);
-			shapeGroup2(3)("ADBE Vector Scale").setValue([564,349]);
+			shapeGroup2(3)("ADBE Vector Anchor").setValue([50, -50]);
+			shapeGroup2(3)("ADBE Vector Scale").setValue([564, 349]);
 
 		var stroke = pointer1("ADBE Root Vectors Group").addProperty("ADBE Vector Graphic - Stroke");
 			stroke("ADBE Vector Stroke Width").setValue(6);
-			stroke("ADBE Vector Stroke Color").setValue([0.4795,0.4795,0.4795,1]);
+			stroke("ADBE Vector Stroke Color").setValue([0.4795, 0.4795, 0.4795, 1]);
 
 		var fxPoint = pointer1("ADBE Effect Parade").addProperty("ADBE Point Control");
 			fxPoint.name = "Arm Length";
-			fxPoint("ADBE Point Control-0001").setValue([775,200]);
+			fxPoint("ADBE Point Control-0001").setValue([775, 200]);
 
 		var fxSize = pointer1("ADBE Effect Parade").addProperty("ADBE Slider Control");
 			fxSize.name = "Pointer Size";
 			fxSize("ADBE Slider Control-0001").setValue(200);
 
-		pointer1("ADBE Transform Group")("ADBE Position").setValue([leftEdge - margin*2,192,0]);
+		pointer1("ADBE Transform Group")("ADBE Position").setValue([leftEdge - margin * 2, 192, 0]);
 
 		// Apply expressions to properties
 		try {
@@ -1146,7 +1154,7 @@ var settings = grp_options.add('group');
 	settings.alignment = 'fill';
 	settings.alignChildren = ['fill', 'top'];
 	settings.orientation = 'column';
-	settings.margins = [0,6,0,0];
+	settings.margins = [0, 6, 0, 0];
 
 // radio pane for coods vs distance
 var grp_pos = settings.add('panel', undefined, 'Position');
@@ -1204,10 +1212,10 @@ var btn_aboutScript = buttonColorText(grp_buttons, '#263238', '?');
 	// ============ Button Functionality =================
 
 posCoord.onClick = function() {
-	ddl_resolution.visible =  false;
+	ddl_resolution.visible = false;
 };
 posDistance.onClick = function() {
-	ddl_resolution.visible =  true;
+	ddl_resolution.visible = true;
 };
 btn_aboutScript.onClick = function() {
 	// new dialog window
@@ -1217,16 +1225,16 @@ btn_aboutScript.onClick = function() {
 
 	// group to hold intry box
 	var content = w.add('group', undefined, '');
-		content.alignChildren = ['fill','fill'];
+		content.alignChildren = ['fill', 'fill'];
 		content.orientation = 'column';
 		content.alignment = ['left', 'top'];
 		content.margins = 16;
 		// content metrics
 		content.spacing = 8;
 
-	var btn_url = buttonColorVector(content, icons.build, '#EF5350', [224,64]);
+	var btn_url = buttonColorVector(content, icons.build, '#EF5350', [224, 64]);
 
-	content.add('statictext', [0,0,400,340],
+	content.add('statictext', [0, 0, 400, 340],
 		'Speed up the creation of animation specs for engineering while reducing miscommunication. One click to collect selected keyframe pair data to a text panel. Copy/paste this text out or build a panel along side the comp for easy reference.' +
 		'\n\n' +
 		'Usage:\n' +
@@ -1271,7 +1279,7 @@ btn_counter.onClick = function() {
 		var keyRange = getKeyRange();
 		// if no keys selected use the playhead time and playhead + 1:00
 		if (keyRange[0] == 9999999) {
-			keyRange = [thisComp.time, thisComp.time + 1]
+			keyRange = [thisComp.time, thisComp.time + 1];
 		}
 
 	app.beginUndoGroup('New Counter');
@@ -1298,7 +1306,7 @@ btnLaunch.onClick = function() {
 		// tabs
 		var tpanel = w.add ('tabbedpanel');
 			tpanel.alignChildren = ['fill', 'fill'];
-			tpanel.minimumSize = [350,300];
+			tpanel.minimumSize = [350, 300];
 			tpanel.maximumSize.height = 800;
 
 		var tab_text = tpanel.add ('tab', undefined, 'Text');
@@ -1311,12 +1319,12 @@ btnLaunch.onClick = function() {
 		var tab_json = tpanel.add ('tab', undefined, 'JSON');
 			tab_json.alignChildren = ['fill', 'fill'];
 
-		var jsonField = tab_json.add('edittext', [0,0,350,300], '', {multiline: true});
+		var jsonField = tab_json.add('edittext', [0, 0, 350, 300], '', {multiline: true});
 			jsonField.text = JSON.stringify(propObj, replacer, 2);
 
 		// clear props if no keys selected on initialize
 		if (propObj.firstKeyTime == 9999999) {
-			clearProps()
+			clearProps();
 		}
 
 		// buttons
@@ -1372,9 +1380,9 @@ btnLaunch.onClick = function() {
 		 */
 		function replacer(key, val) {
 			if (key === 'obj') {
-				return undefined
+				return undefined;
 			} else {
-				return val
+				return val;
 			};
 		};
 
