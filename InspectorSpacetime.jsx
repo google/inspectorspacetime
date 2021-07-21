@@ -1111,6 +1111,47 @@ function visitURL(url) {
 	}
 }
 
+/**
+ * Prompts user to select a file path
+ *
+ * @param {string} filename - Default filename to prompt
+ * @param {string} filter   - File type filter to use, Win only
+ * @return {File | null}    - User file object
+ */
+function getUserFile(filename, filter) {
+	var defaultPath = Folder.desktop.fullName + '/' + filename;
+	var outputFile = new File(defaultPath).saveDlg(
+		'Choose output path',
+		filter
+	);
+
+	if (!outputFile) {
+		return null;
+	}
+
+	return outputFile;
+}
+
+/**
+ * Writes a file to disk
+ *
+ * @param {File | string} path - Path or File obj to write
+ * @param {string} contents    - File contents to write
+ * @returns {File}             - Written file
+ */
+function writeFile(path, contents) {
+	var file = path instanceof File ? path : new File(path);
+
+	file.open("w");
+	var writeSuccess = file.write(contents);
+	file.close();
+
+	if (!writeSuccess) {
+		throw new Error("Could not write file " + file.toString());
+	}
+
+	return file;
+}
 
 // _______ UI SETUP _______
 // if the script is a Panel, (launched from the 'Window' menu), use it,
@@ -1332,9 +1373,11 @@ btnLaunch.onClick = function() {
 			buttons.alignment = 'right';
 			buttons.minimumSize.height = 28;
 			buttons.maximumSize.height = 28;
+
 		var btn_clearProp = buttons.add ('button', undefined, '⊗ Clear ⊗');
 		var btn_addProp = buttons.add ('button', undefined, '↑ Add property ↑');
 		var btn_newSidePanel = buttons.add ('button', undefined, '→ Create side panel →');
+		var btn_exportJson = buttons.add ('button', undefined, '⤵ Export ⤵');
 
 		btn_clearProp.onClick = function() {
 			clearProps();
@@ -1368,6 +1411,23 @@ btnLaunch.onClick = function() {
 				app.endUndoGroup();
 			} catch(e) {
 				alert(e.toString() + "\nError on line: " + e.line.toString(), scriptName);
+			}
+		}
+
+		btn_exportJson.onClick = function () {
+			var propObj = getPropObj(propObj);
+
+			var outputFile = getUserFile("spec.spacetime", "spacetime:*.spacetime;");
+
+			if (!outputFile) {
+				return;
+			}
+
+			try {
+				var writtenFile = writeFile(outputFile, JSON.stringify(propObj, replacer));
+				alert("Wrote file to " + writtenFile.fsName, scriptName);
+			} catch(e) {
+				alert(e, scriptName);
 			}
 		}
 
