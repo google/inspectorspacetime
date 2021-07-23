@@ -4,7 +4,7 @@
  *
  * inSPECtor SPACE+TIME = motion spec
  *
- * Current Version: 2.1 (March, 21 2019
+ * Current Version: 2.2 (July, 23 2019
  * Designed by: Adam Plouff (adamplouff@)
  *
  * Process:
