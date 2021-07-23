@@ -26,7 +26,7 @@ var JSON;JSON||(JSON={}); (function(){function k(a){return a<10?"0"+a:a}function
 
 //================ VARIABLES ======================
 var scriptName = 'Inspector Spacetime';
-var scriptVersion = '2.1';
+var scriptVersion = '2.2';
 var thisComp, inspectorFolder, margin, leftEdge, panelSize = [0, 0], dataSize = [0, 0];
 
 var exp_counter = 'var sTime = marker.key("Start").time; var eTime = marker.key("End").time; var countTime = Math.max(time - sTime, 0); countTime = Math.min(countTime, eTime - sTime); var counter = Math.round(countTime * 1000); var playIcon = (time > sTime && time < eTime) ? "\u25ba " : "\u25a0 "; playIcon + counter + "ms";';
@@ -1508,7 +1508,7 @@ btnLaunch.onClick = function() {
 			}
 
 			try {
-				var writtenFile = writeFile(outputFile, JSON.stringify(propObj, replacer));
+				var writtenFile = writeFile(outputFile, JSON.stringify(propObj, replacer, 2));
 				alert('Wrote file to ' + writtenFile.fsName, scriptName);
 			} catch(e) {
 				alert(e, scriptName);
