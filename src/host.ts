@@ -54,19 +54,14 @@
      * Set the current comp to the var thisComp
      */
     function setComp() {
-        // activate the comp even if it isnt highlighted
+        if (app.activeViewer == null) { return false; }
+        /// activate the comp window
         app.activeViewer.setActive();
-        // stupid extendscript
         thisComp = app.project.activeItem;
-        // Make sure a comp is selected
+        /// Make sure a comp is selected
         if (!thisComp || !(thisComp instanceof CompItem)) {
-            alert('Gotta select a comp first', scriptName);
             return false;
         }
-        // set the workStart var
-        workStart = thisComp.workAreaStart;
-        // set the workEnd var
-        workEnd = workStart + thisComp.workAreaDuration;
         return true;
     }
 
