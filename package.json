@@ -12,8 +12,11 @@
   },
   "author": "Adam Plouff",
   "license": "Apache-2.0",
+  "dependencies": {
+    "types-for-adobe": "github:pravdomil/types-for-adobe"
+  },
   "bugs": {
     "url": "https://github.com/google/inspectorspacetime/issues"
   },
-  "homepage": "https://github.com/google/inspectorspacetime#readme"
+  "homepage": "https://google.github.io/inspectorspacetime/"
 }

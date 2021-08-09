@@ -1,0 +1,19 @@
+{
+  "compileOnSave": true,
+  "compilerOptions": {
+    "outFile": "../InspectorSpacetime.jsx",
+    "allowJs": true,
+    "noLib": true,
+    "removeComments": true,
+    "types": [
+      "types-for-adobe/AfterEffects/18.0"
+    ]
+  },
+  "files": [
+    // "aequery.js",
+    "host.ts"
+  ],
+  "exclude": [
+    "node_modules"
+  ]
+}
