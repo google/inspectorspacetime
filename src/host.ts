@@ -371,28 +371,67 @@
     /**
      * Gets first and last key times
      *
-     * @return {number[]} - Duration between first and last keys
+     * @return {number[]} - Duration between first and last keys, or the playhead and 1 sec later
      */
     function getKeyRange() {
-        var firstKeyTime = 9999999;
-        var lastKeyTime = 0;
+        let selKeys = getSelKeys()
+        if (selKeys.length < 1) {
+            return [thisComp.time, thisComp.time + 1]
+        } else {
+            var firstKeyTime = 9999999;
+            var lastKeyTime = 0;
 
-        for (var i = 0; i < thisComp.selectedLayers.length; i++) {
-            var layer = thisComp.selectedLayers[i];
-            for (var j = 0; j < layer.selectedProperties.length; j++) {
-                var prop = layer.selectedProperties[j];
-                for (var k = 0; k < prop.selectedKeys.length; k++) {
-                    var key = prop.selectedKeys[k];
-                    // alert(prop.keyTime(key), scriptName)
+            for (const actKey of selKeys) {
+                const prop = actKey.prop;
+                const keys = actKey.keys;
 
-                    // set firstKeyTime to first keyframe's start time
-                    firstKeyTime = Math.min(firstKeyTime, prop.keyTime(key));
-                    lastKeyTime = Math.max(lastKeyTime, prop.keyTime(key));
+                for (let key of keys) {
+                    let keyTime = prop.keyTime(key)
+                    firstKeyTime = Math.min(firstKeyTime, keyTime);
+                    lastKeyTime = Math.max(lastKeyTime, keyTime);
                 }
             }
+            return [firstKeyTime, lastKeyTime];
         }
 
-        return [firstKeyTime, lastKeyTime];
+    }
+
+    /**
+     * Gets first and last key times
+     *
+     * @return {object[]} - Duration between first and last keys
+     */
+
+    function getSelKeys() {
+        try {
+            let selKeyList = [];
+
+            let props = thisComp.selectedProperties;
+
+            // for (let i = props.length - 1; i >= 0; i--) {       // loop backward
+            for (let i = 0; i < props.length; i++) {       // loop forward
+                let prop = props[i];
+                if (!prop.canVaryOverTime) {        // skip mask and path groups that are selected by default
+                    continue
+                }
+
+                let selKeys = prop.selectedKeys;
+
+                if (selKeys.length < 2) {           // skip if no selected keys within the selected property
+                    continue
+                }
+                // if (!selKeys || selKeys.length < 1) continue
+                if (selKeys.length % 2 > 0) { selKeys.pop() }
+
+                selKeyList.push({
+                    prop: prop,
+                    keys: selKeys || null,
+                })
+            }
+            return selKeyList;
+        } catch (error) {
+            return []
+        }
     }
 
     /**
@@ -545,9 +584,16 @@
      * @returns {TextLayer} - Created text layer
      */
     function buildCounter() {
+        setComp();
+        // get selected keys range
+        var keyRange = getKeyRange();
+        // if no keys selected use the playhead time and playhead + 1:00
+
+        app.beginUndoGroup('New Counter');
+
         try {
             // create new text layer
-            var dynText = thisComp.layers.addText('Spec Name');
+            var dynText = thisComp.layers.addText('Counter');
             // set the layer name
             dynText.name = 'Counter';
             // add a comment
@@ -599,13 +645,16 @@
             // Transforms
             dynText('ADBE Transform Group')('ADBE Position').setValue([100, 100]);
 
-            return dynText;
-        } catch (e) {
-            alert([
-                e.toString(),
-                'Error on line: ' + e.line.toString()
-            ].join('\n'), scriptName);
-        }
+        } catch (e) { alert(e.toString() + "\nError on line: " + e.line.toString()); }
+
+        // set markers
+        setTimeMarkers(dynText, keyRange[0], keyRange[1]);
+        dynText('ADBE Text Properties')('ADBE Text Document').expression = exp_counter;
+
+        // close twirled layers
+        app.executeCommand(2771);
+        app.executeCommand(2771);
+        app.endUndoGroup();
     }
 
 
