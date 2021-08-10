@@ -1217,336 +1217,500 @@
     // if the script is a Panel, (launched from the 'Window' menu), use it,
     // else (launched via 'File/Scripts/Run script...') create a new window
     // store it in the variable mainPalette
-    var mainPalette = thisObj instanceof Panel ? thisObj : new Window('palette', scriptName, undefined, { resizeable: true });
+    // var mainPalette = thisObj instanceof Panel ? thisObj : new Window('palette', scriptName, undefined, { resizeable: true });
 
-    //stop if there's no window
-    if (mainPalette === null) {
-        return;
-    }
+    // //stop if there's no window
+    // if (mainPalette === null) {
+    //     return;
+    // }
 
-    // set margins and alignment
-    mainPalette.alignChildren = ['fill', 'fill'];
-    // mainPalette.margins = 2;
-    // mainPalette.spacing = 2;
+    // // set margins and alignment
+    // mainPalette.alignChildren = ['fill', 'fill'];
+    // // mainPalette.margins = 2;
+    // // mainPalette.spacing = 2;
 
-    // ============ ADD UI CONTENT HERE =================
-    // content group
-    var content = mainPalette.add('group');
-    content.alignChildren = ['fill', 'fill'];
-    content.orientation = 'column';
-    // content.margins = 0;
-    content.spacing = 5;
+    // // ============ ADD UI CONTENT HERE =================
+    // // content group
+    // var content = mainPalette.add('group');
+    // content.alignChildren = ['fill', 'fill'];
+    // content.orientation = 'column';
+    // // content.margins = 0;
+    // content.spacing = 5;
 
-    // main button
-    var btnLaunch = buttonColorVector(content, icons.build, '#5B8BA3', [224, 64]);
-    btnLaunch.maximumSize.height = 64;
-    btnLaunch.minimumSize.height = 64;
-    btnLaunch.helpTip = 'Select keyframe pairs to build spec panel';
+    // // main button
+    // var btnLaunch = buttonColorVector(content, icons.build, '#5B8BA3', [224, 64]);
+    // btnLaunch.maximumSize.height = 64;
+    // btnLaunch.minimumSize.height = 64;
+    // btnLaunch.helpTip = 'Select keyframe pairs to build spec panel';
 
-    // button for isolation layer
-    // var btn_dataPanel = buttonColorText(content, '#5B8BA3', 'Panel');
+    // // button for isolation layer
+    // // var btn_dataPanel = buttonColorText(content, '#5B8BA3', 'Panel');
 
-    var grp_options = content.add('group');
-    grp_options.orientation = 'row';
-    grp_options.alignChildren = ['fill', 'top'];
-    grp_options.margins = 0;
+    // var grp_options = content.add('group');
+    // grp_options.orientation = 'row';
+    // grp_options.alignChildren = ['fill', 'top'];
+    // grp_options.margins = 0;
 
-    var settings = grp_options.add('group');
-    settings.alignment = 'fill';
-    settings.alignChildren = ['fill', 'top'];
-    settings.orientation = 'column';
-    settings.margins = [0, 6, 0, 0];
+    // var settings = grp_options.add('group');
+    // settings.alignment = 'fill';
+    // settings.alignChildren = ['fill', 'top'];
+    // settings.orientation = 'column';
+    // settings.margins = [0, 6, 0, 0];
 
-    // radio pane for coods vs distance
-    var grp_pos = settings.add('panel', undefined, 'Position');
-    grp_pos.alignChildren = 'left';
-    grp_pos.alignment = 'left';
-    grp_pos.orientation = 'column';
-    grp_pos.spacing = 0;
-    grp_pos.margins = [8, 10, 0, 6];
-    grp_pos.maximumSize.width = 110;
-    grp_pos.minimumSize.width = 110;
+    // // radio pane for coods vs distance
+    // var grp_pos = settings.add('panel', undefined, 'Position');
+    // grp_pos.alignChildren = 'left';
+    // grp_pos.alignment = 'left';
+    // grp_pos.orientation = 'column';
+    // grp_pos.spacing = 0;
+    // grp_pos.margins = [8, 10, 0, 6];
+    // grp_pos.maximumSize.width = 110;
+    // grp_pos.minimumSize.width = 110;
 
-    var rad_pos = grp_pos.add('group');
+    // var rad_pos = grp_pos.add('group');
 
-    // radio coord
-    var posCoord = rad_pos.add('radiobutton', undefined, 'Pixel');
-    posCoord.helpTip = 'Print position as pixel coordinates';
+    // // radio coord
+    // var posCoord = rad_pos.add('radiobutton', undefined, 'Pixel');
+    // posCoord.helpTip = 'Print position as pixel coordinates';
 
-    // radio distance
-    var posDistance = rad_pos.add('radiobutton', undefined, 'DP');
-    posDistance.helpTip = 'Print position as dp movement';
-    posDistance.value = true;
+    // // radio distance
+    // var posDistance = rad_pos.add('radiobutton', undefined, 'DP');
+    // posDistance.helpTip = 'Print position as dp movement';
+    // posDistance.value = true;
 
-    // dropdown list for
-    var ddl_resolution = settings.add('dropdownlist', undefined, ['1x', '2x', '3x']);
-    ddl_resolution.selection = 2;
-    ddl_resolution.maximumSize.width = 110;
-    ddl_resolution.minimumSize.width = 110;
-    ddl_resolution.alignment = 'left';
-    ddl_resolution.helpTip = 'Dp multiplier';
+    // // dropdown list for
+    // var ddl_resolution = settings.add('dropdownlist', undefined, ['1x', '2x', '3x']);
+    // ddl_resolution.selection = 2;
+    // ddl_resolution.maximumSize.width = 110;
+    // ddl_resolution.minimumSize.width = 110;
+    // ddl_resolution.alignment = 'left';
+    // ddl_resolution.helpTip = 'Dp multiplier';
 
-    var grp_buttons = grp_options.add('group');
-    grp_buttons.alignChildren = ['fill', 'top'];
-    grp_buttons.orientation = 'column';
-    grp_buttons.margins = 0;
-    grp_buttons.spacing = 1;
+    // var grp_buttons = grp_options.add('group');
+    // grp_buttons.alignChildren = ['fill', 'top'];
+    // grp_buttons.orientation = 'column';
+    // grp_buttons.margins = 0;
+    // grp_buttons.spacing = 1;
 
-    // button for isolation layer
-    var btn_isolation = buttonColorText(grp_buttons, '#37474F', 'Iso Layer');
-    btn_isolation.helpTip = [
-        'Create a color adjustment layer',
-        'the drag below targeted layers'
-    ].join('\n');
+    // // button for isolation layer
+    // var btn_isolation = buttonColorText(grp_buttons, '#37474F', 'Iso Layer');
+    // btn_isolation.helpTip = [
+    //     'Create a color adjustment layer',
+    //     'the drag below targeted layers'
+    // ].join('\n');
 
-    // button for pointer layer
-    var btn_pointer = buttonColorText(grp_buttons, '#37474F', 'Pointer');
-    btn_pointer.helpTip = [
-        'Create an adjustable pointer',
-        'line to connect text to element'
-    ].join('\n');
+    // // button for pointer layer
+    // var btn_pointer = buttonColorText(grp_buttons, '#37474F', 'Pointer');
+    // btn_pointer.helpTip = [
+    //     'Create an adjustable pointer',
+    //     'line to connect text to element'
+    // ].join('\n');
 
-    // button for counter layer
-    var btn_counter = buttonColorText(grp_buttons, '#37474F', 'Counter');
-    btn_counter.helpTip = 'Create text counter without building a spec';
+    // // button for counter layer
+    // var btn_counter = buttonColorText(grp_buttons, '#37474F', 'Counter');
+    // btn_counter.helpTip = 'Create text counter without building a spec';
 
-    var btn_aboutScript = buttonColorText(grp_buttons, '#263238', '?');
-    btn_aboutScript.helpTip = 'About ' + scriptName;
-    btn_aboutScript.minimumSize = [30, 30];
-    btn_aboutScript.maximumSize = [30, 30];
-    btn_aboutScript.alignment = ['right', 'bottom'];
+    // var btn_aboutScript = buttonColorText(grp_buttons, '#263238', '?');
+    // btn_aboutScript.helpTip = 'About ' + scriptName;
+    // btn_aboutScript.minimumSize = [30, 30];
+    // btn_aboutScript.maximumSize = [30, 30];
+    // btn_aboutScript.alignment = ['right', 'bottom'];
 
-    // ============ Button Functionality =================
+    // // ============ Button Functionality =================
 
-    posCoord.onClick = function () {
-        ddl_resolution.visible = false;
-    };
-    posDistance.onClick = function () {
-        ddl_resolution.visible = true;
-    };
-    btn_aboutScript.onClick = function () {
-        // new dialog window
-        var w = new Window('dialog', 'About ' + scriptName);
-        w.spacing = 0;
-        w.margins = 0;
+    // posCoord.onClick = function () {
+    //     ddl_resolution.visible = false;
+    // };
+    // posDistance.onClick = function () {
+    //     ddl_resolution.visible = true;
+    // };
+    // btn_aboutScript.onClick = function () {
+    //     // new dialog window
+    //     var w = new Window('dialog', 'About ' + scriptName);
+    //     w.spacing = 0;
+    //     w.margins = 0;
 
-        // group to hold intry box
-        var content = w.add('group', undefined, '');
-        content.alignChildren = ['fill', 'fill'];
-        content.orientation = 'column';
-        content.alignment = ['left', 'top'];
-        content.margins = 16;
-        // content metrics
-        content.spacing = 8;
+    //     // group to hold intry box
+    //     var content = w.add('group', undefined, '');
+    //     content.alignChildren = ['fill', 'fill'];
+    //     content.orientation = 'column';
+    //     content.alignment = ['left', 'top'];
+    //     content.margins = 16;
+    //     // content metrics
+    //     content.spacing = 8;
 
-        var btn_url = buttonColorVector(content, icons.build, '#EF5350', [224, 64]);
+    //     var btn_url = buttonColorVector(content, icons.build, '#EF5350', [224, 64]);
 
-        content.add('statictext', [0, 0, 400, 340],
-            [
-                'Speed up the creation of animation specs for engineering while reducing miscommunication. One click to collect selected keyframe pair data to a text panel. Copy/paste this text out or build a panel along side the comp for easy reference.',
-                '',
-                'Usage:',
-                '• Click the big button to open the property collection panel.',
-                '• Additional key pairs will be added to the list, grouped by layer. The total duration and individual propery delays will update.',
-                '• Copy out this text or create a panel along side a duplicate of your comp.',
-                '',
-                'Add ons:',
-                '• Pixel/DP: This data can be communicated as coordinates or in DP. Set the density dropdown based on resolution of your comp.',
-                '• ISO LAYER: Creates an adjustment layer below the selected layer to dims other layers. This allows layers to be hilighted while keeping things in context.',
-                '• POINTER: Creates an editable arrow to quickly draw a line from the text spec to on-screen element.',
-                '',
-                scriptName + ' - v' + scriptVersion,
-                'Created by Adam Plouff at Google'
-            ].join('\n'),
-            {
-                multiline: true
-            }
-        );
+    //     content.add('statictext', [0, 0, 400, 340],
+    //         [
+    //             'Speed up the creation of animation specs for engineering while reducing miscommunication. One click to collect selected keyframe pair data to a text panel. Copy/paste this text out or build a panel along side the comp for easy reference.',
+    //             '',
+    //             'Usage:',
+    //             '• Click the big button to open the property collection panel.',
+    //             '• Additional key pairs will be added to the list, grouped by layer. The total duration and individual propery delays will update.',
+    //             '• Copy out this text or create a panel along side a duplicate of your comp.',
+    //             '',
+    //             'Add ons:',
+    //             '• Pixel/DP: This data can be communicated as coordinates or in DP. Set the density dropdown based on resolution of your comp.',
+    //             '• ISO LAYER: Creates an adjustment layer below the selected layer to dims other layers. This allows layers to be hilighted while keeping things in context.',
+    //             '• POINTER: Creates an editable arrow to quickly draw a line from the text spec to on-screen element.',
+    //             '',
+    //             scriptName + ' - v' + scriptVersion,
+    //             'Created by Adam Plouff at Google'
+    //         ].join('\n'),
+    //         {
+    //             multiline: true
+    //         }
+    //     );
 
-        buttonColorText(content, '#406280', 'Close');
-        btn_url.onClick = function () {
-            visitURL('http://google.github.io/inspectorspacetime');
-        }
-        w.show();
-    }
+    //     buttonColorText(content, '#406280', 'Close');
+    //     btn_url.onClick = function () {
+    //         visitURL('http://google.github.io/inspectorspacetime');
+    //     }
+    //     w.show();
+    // }
 
-    btn_isolation.onClick = function () {
-        setComp();
+    // btn_isolation.onClick = function () {
+    //     setComp();
 
-        app.beginUndoGroup('New Isolation Layer');
-        buildIsoLayer();
-        app.endUndoGroup();
-    };
+    //     app.beginUndoGroup('New Isolation Layer');
+    //     buildIsoLayer();
+    //     app.endUndoGroup();
+    // };
 
-    btn_pointer.onClick = function () {
-        setComp();
-        getPanelSize();
+    // btn_pointer.onClick = function () {
+    //     setComp();
+    //     getPanelSize();
 
-        app.beginUndoGroup('New Pointer');
-        buildPointer();
-        app.endUndoGroup();
-    };
+    //     app.beginUndoGroup('New Pointer');
+    //     buildPointer();
+    //     app.endUndoGroup();
+    // };
 
-    btn_counter.onClick = function () {
-        setComp();
-        // getPanelSize();
-        // get selected keys range
-        var keyRange = getKeyRange();
-        // if no keys selected use the playhead time and playhead + 1:00
-        if (keyRange[0] == 9999999) {
-            keyRange = [thisComp.time, thisComp.time + 1];
-        }
+    // btn_counter.onClick = function () {
+    //     setComp();
+    //     // getPanelSize();
+    //     // get selected keys range
+    //     var keyRange = getKeyRange();
+    //     // if no keys selected use the playhead time and playhead + 1:00
+    //     if (keyRange[0] == 9999999) {
+    //         keyRange = [thisComp.time, thisComp.time + 1];
+    //     }
 
-        app.beginUndoGroup('New Counter');
-        // build text layer
-        var textLayer = buildCounter();
-        // set markers
-        setTimeMarkers(textLayer, keyRange[0], keyRange[1]);
-        textLayer('ADBE Text Properties')('ADBE Text Document').expression = exp_counter;
+    //     app.beginUndoGroup('New Counter');
+    //     // build text layer
+    //     var textLayer = buildCounter();
+    //     // set markers
+    //     setTimeMarkers(textLayer, keyRange[0], keyRange[1]);
+    //     textLayer('ADBE Text Properties')('ADBE Text Document').expression = exp_counter;
 
-        // close twirled layers
-        app.executeCommand(2771);
-        app.executeCommand(2771);
-        app.endUndoGroup();
-    };
+    //     // close twirled layers
+    //     app.executeCommand(2771);
+    //     app.executeCommand(2771);
+    //     app.endUndoGroup();
+    // };
 
-    btnLaunch.onClick = function () {
-        try {
-            var w = new Window('palette', scriptName, undefined, { resizeable: true });
-            w.alignChildren = ['fill', 'fill'];
+    // btnLaunch.onClick = function () {
+    //     try {
+    //         var w = new Window('palette', scriptName, undefined, { resizeable: true });
+    //         w.alignChildren = ['fill', 'fill'];
 
-            var propObj = getPropObj();
-            var propText = getPropText(propObj);
+    //         var propObj = getPropObj();
+    //         var propText = getPropText(propObj);
 
-            // tabs
-            var tpanel = w.add('tabbedpanel');
-            tpanel.alignChildren = ['fill', 'fill'];
-            tpanel.minimumSize = [350, 300];
-            tpanel.maximumSize.height = 800;
+    //         // tabs
+    //         var tpanel = w.add('tabbedpanel');
+    //         tpanel.alignChildren = ['fill', 'fill'];
+    //         tpanel.minimumSize = [350, 300];
+    //         tpanel.maximumSize.height = 800;
 
-            var tab_text = tpanel.add('tab', undefined, 'Text');
-            tab_text.alignChildren = ['fill', 'fill'];
+    //         var tab_text = tpanel.add('tab', undefined, 'Text');
+    //         tab_text.alignChildren = ['fill', 'fill'];
 
-            var textField = tab_text.add('edittext', undefined, '', { multiline: true });
-            textField.text = propText;
+    //         var textField = tab_text.add('edittext', undefined, '', { multiline: true });
+    //         textField.text = propText;
 
 
-            var tab_json = tpanel.add('tab', undefined, 'JSON');
-            tab_json.alignChildren = ['fill', 'fill'];
+    //         var tab_json = tpanel.add('tab', undefined, 'JSON');
+    //         tab_json.alignChildren = ['fill', 'fill'];
 
-            var jsonField = tab_json.add('edittext', [0, 0, 350, 300], '', { multiline: true });
-            jsonField.text = JSON.stringify(propObj, replacer, 2);
+    //         var jsonField = tab_json.add('edittext', [0, 0, 350, 300], '', { multiline: true });
+    //         jsonField.text = JSON.stringify(propObj, replacer, 2);
 
-            // clear props if no keys selected on initialize
-            if (propObj.firstKeyTime == 9999999) {
-                clearProps();
-            }
+    //         // clear props if no keys selected on initialize
+    //         if (propObj.firstKeyTime == 9999999) {
+    //             clearProps();
+    //         }
 
-            // buttons
-            var buttons = w.add('group');
-            buttons.alignment = 'right';
-            buttons.minimumSize.height = 28;
-            buttons.maximumSize.height = 28;
+    //         // buttons
+    //         var buttons = w.add('group');
+    //         buttons.alignment = 'right';
+    //         buttons.minimumSize.height = 28;
+    //         buttons.maximumSize.height = 28;
 
-            var btn_clearProp = buttons.add('button', undefined, '⊗ Clear ⊗');
-            var btn_addProp = buttons.add('button', undefined, '↑ Add property ↑');
-            var btn_newSidePanel = buttons.add('button', undefined, '→ Create side panel →');
-            var btn_exportJson = buttons.add('button', undefined, '⤵ Export ⤵');
+    //         var btn_clearProp = buttons.add('button', undefined, '⊗ Clear ⊗');
+    //         var btn_addProp = buttons.add('button', undefined, '↑ Add property ↑');
+    //         var btn_newSidePanel = buttons.add('button', undefined, '→ Create side panel →');
+    //         var btn_exportJson = buttons.add('button', undefined, '⤵ Export ⤵');
 
-            btn_clearProp.onClick = function () {
-                clearProps();
-            }
-            btn_addProp.onClick = function () {
+    //         btn_clearProp.onClick = function () {
+    //             clearProps();
+    //         }
+    //         btn_addProp.onClick = function () {
 
-                propObj = getPropObj(propObj);
-                jsonField.text = JSON.stringify(propObj, replacer, 2);
+    //             propObj = getPropObj(propObj);
+    //             jsonField.text = JSON.stringify(propObj, replacer, 2);
 
-                propText = getPropText(propObj);
-                textField.text = propText;
-            }
+    //             propText = getPropText(propObj);
+    //             textField.text = propText;
+    //         }
 
-            btn_newSidePanel.onClick = function () {
-                try {
-                    // start undo group
-                    app.beginUndoGroup('Create ' + scriptName + 'Elements');
+    //         btn_newSidePanel.onClick = function () {
+    //             try {
+    //                 // start undo group
+    //                 app.beginUndoGroup('Create ' + scriptName + 'Elements');
 
-                    // resize the comp
-                    resizeCompNew(thisComp);
+    //                 // resize the comp
+    //                 resizeCompNew(thisComp);
 
-                    // set the panel size in relation to the comp size
-                    getPanelSize();
+    //                 // set the panel size in relation to the comp size
+    //                 getPanelSize();
 
-                    buildText_plain(textField.text);
+    //                 buildText_plain(textField.text);
 
-                    // close twirled layers
-                    app.executeCommand(2771);
-                    app.executeCommand(2771);
+    //                 // close twirled layers
+    //                 app.executeCommand(2771);
+    //                 app.executeCommand(2771);
 
-                    app.endUndoGroup();
-                } catch (e) {
-                    alert([
-                        e.toString(),
-                        'Error on line: ' + e.line.toString()
-                    ].join('\n'), scriptName);
-                }
-            }
+    //                 app.endUndoGroup();
+    //             } catch (e) {
+    //                 alert([
+    //                     e.toString(),
+    //                     'Error on line: ' + e.line.toString()
+    //                 ].join('\n'), scriptName);
+    //             }
+    //         }
 
-            btn_exportJson.onClick = function () {
-                var propObj = getPropObj(propObj);
-                propObj.spacetimeVersion = scriptVersion;
-                propObj.aeVersion = app.version;
+    //         btn_exportJson.onClick = function () {
+    //             var propObj = getPropObj(propObj);
+    //             propObj.spacetimeVersion = scriptVersion;
+    //             propObj.aeVersion = app.version;
 
-                var outputFile = getUserFile('spec.spacetime.json', 'spacetime:*.spacetime.json;');
+    //             var outputFile = getUserFile('spec.spacetime.json', 'spacetime:*.spacetime.json;');
 
-                if (!outputFile) {
-                    return;
-                }
+    //             if (!outputFile) {
+    //                 return;
+    //             }
 
-                try {
-                    var writtenFile = writeFile(outputFile, JSON.stringify(propObj, replacer, 2));
-                    alert('Wrote file to ' + writtenFile.fsName, scriptName);
-                } catch (e) {
-                    alert(e, scriptName);
-                }
-            }
+    //             try {
+    //                 var writtenFile = writeFile(outputFile, JSON.stringify(propObj, replacer, 2));
+    //                 alert('Wrote file to ' + writtenFile.fsName, scriptName);
+    //             } catch (e) {
+    //                 alert(e, scriptName);
+    //             }
+    //         }
 
-            /**
-             * Clears global variables
-             */
-            function clearProps() {
-                propObj = null;
-                propText = null;
+    //         /**
+    //          * Clears global variables
+    //          */
+    //         function clearProps() {
+    //             propObj = null;
+    //             propText = null;
 
-                jsonField.text = '';
-                textField.text = '';
-            }
+    //             jsonField.text = '';
+    //             textField.text = '';
+    //         }
 
-            // visibility
-            // tpanel.selection = 1;
-            w.layout.layout(true);
-            w.layout.resize();
-            w.onResizing = w.onResize = function () { w.layout.resize(); };
-            w.show();
-        } catch (e) {
-            alert([
-                e.toString(),
-                'Error on line: ' + e.line.toString()
-            ].join('\n'));
-        }
-    }
+    //         // visibility
+    //         // tpanel.selection = 1;
+    //         w.layout.layout(true);
+    //         w.layout.resize();
+    //         w.onResizing = w.onResize = function () { w.layout.resize(); };
+    //         w.show();
+    //     } catch (e) {
+    //         alert([
+    //             e.toString(),
+    //             'Error on line: ' + e.line.toString()
+    //         ].join('\n'));
+    //     }
+    // }
 
-    //__________ SHOW UI ___________
-    // Set layout, and resize it on resize of the Panel/Window
-    mainPalette.layout.layout(true);
-    mainPalette.layout.resize();
-    mainPalette.onResizing = mainPalette.onResize = function () {
-        mainPalette.layout.resize();
-    };
+    // //__________ SHOW UI ___________
+    // // Set layout, and resize it on resize of the Panel/Window
+    // mainPalette.layout.layout(true);
+    // mainPalette.layout.resize();
+    // mainPalette.onResizing = mainPalette.onResize = function () {
+    //     mainPalette.layout.resize();
+    // };
 
-    //if the script is not a Panel (launched from File/Scripts/Run script...) we need to show it
-    if (!(mainPalette instanceof Panel)) {
-        mainPalette.show();
-    }
+    // //if the script is not a Panel (launched from File/Scripts/Run script...) we need to show it
+    // if (!(mainPalette instanceof Panel)) {
+    //     mainPalette.show();
+    // }
     //______________________________
+
+    function buildUI() {
+        /*
+        Code for Import https://scriptui.joonas.me — (Triple click to select):
+        {"activeId":21,"items":{"item-0":{"id":0,"type":"Dialog","parentId":false,"style":{"enabled":true,"varName":"myPanel","windowType":"Dialog","creationProps":{"su1PanelCoordinates":false,"maximizeButton":false,"minimizeButton":false,"independent":false,"closeButton":true,"borderless":false,"resizeable":true},"text":"Dialog","preferredSize":[240,0],"margins":16,"orientation":"column","spacing":10,"alignChildren":["fill","top"]}},"item-1":{"id":1,"type":"Button","parentId":0,"style":{"enabled":true,"varName":"btn_newEvent","text":"\\u2D60   New comp marker","justify":"left","preferredSize":[0,0],"alignment":"fill","helpTip":"Create event comp marker"}},"item-2":{"id":2,"type":"StaticText","parentId":0,"style":{"enabled":true,"varName":"txt_usage","creationProps":{"truncate":"none","multiline":true,"scrolling":false},"softWrap":true,"text":"Instructions","justify":"left","preferredSize":[0,0],"alignment":"fill","helpTip":null}},"item-3":{"id":3,"type":"StaticText","parentId":0,"style":{"enabled":true,"varName":"txt_about","creationProps":{"truncate":"none","multiline":false,"scrolling":false},"softWrap":false,"text":"StaticText","justify":"left","preferredSize":[0,0],"alignment":"fill","helpTip":null}},"item-4":{"id":4,"type":"EditText","parentId":0,"style":{"enabled":true,"varName":"txt_eventName","creationProps":{"noecho":false,"readonly":false,"multiline":false,"scrollable":false,"borderless":false,"enterKeySignalsOnChange":false},"softWrap":false,"text":"Tap","justify":"left","preferredSize":[0,0],"alignment":"fill","helpTip":"Event marker name"}},"item-6":{"id":6,"type":"Divider","parentId":0,"style":{"enabled":true,"varName":null}},"item-7":{"id":7,"type":"Button","parentId":0,"style":{"enabled":true,"varName":"btn_update","text":"\\u27F3   Comp timing","justify":"left","preferredSize":[0,0],"alignment":"fill","helpTip":"Retime keyframes to match markers"}},"item-8":{"id":8,"type":"Button","parentId":0,"style":{"enabled":true,"varName":"btn_linkKeyframes","text":"\\u2D35   Selected keyframes","justify":"left","preferredSize":[0,0],"alignment":"fill","helpTip":"SHIFT: Unlink"}},"item-10":{"id":10,"type":"Divider","parentId":0,"style":{"enabled":true,"varName":null}},"item-11":{"id":11,"type":"StaticText","parentId":0,"style":{"enabled":true,"varName":null,"creationProps":{"truncate":"none","multiline":false,"scrolling":false},"softWrap":false,"text":"Link to comp marker","justify":"left","preferredSize":[0,0],"alignment":"fill","helpTip":null}},"item-12":{"id":12,"type":"Divider","parentId":0,"style":{"enabled":true,"varName":null}},"item-13":{"id":13,"type":"StaticText","parentId":0,"style":{"enabled":true,"varName":null,"creationProps":{"truncate":"none","multiline":false,"scrolling":false},"softWrap":false,"text":"New gesture","justify":"left","preferredSize":[0,0],"alignment":"fill","helpTip":null}},"item-14":{"id":14,"type":"Button","parentId":0,"style":{"enabled":true,"varName":"btn_gestureTap","text":"\\u2D59   Tap","justify":"left","preferredSize":[0,0],"alignment":"fill","helpTip":"Create tap gesture"}},"item-15":{"id":15,"type":"Button","parentId":0,"style":{"enabled":true,"varName":"btn_gestureSwipe","text":"\\u2D48\\u2D54   Swipe","justify":"left","preferredSize":[0,0],"alignment":"fill","helpTip":"Create swipe gesture"}},"item-16":{"id":16,"type":"Divider","parentId":0,"style":{"enabled":true,"varName":null}},"item-18":{"id":18,"type":"Button","parentId":0,"style":{"enabled":true,"varName":"btn_getMarkers","text":"\\u2D3D  Get nested markers","justify":"left","preferredSize":[0,0],"alignment":"fill","helpTip":"Add nested markers to the precomp layer"}},"item-19":{"id":19,"type":"Button","parentId":0,"style":{"enabled":true,"varName":"btn_updateNested","text":"\\u2D50   Nested timing","justify":"left","preferredSize":[0,0],"alignment":"fill","helpTip":"Retime nested markers then retime keyframes to match markers"}},"item-20":{"id":20,"type":"StaticText","parentId":0,"style":{"enabled":true,"varName":null,"creationProps":{"truncate":"none","multiline":false,"scrolling":false},"softWrap":false,"text":"Update","justify":"left","preferredSize":[0,0],"alignment":"fill","helpTip":null}},"item-21":{"id":21,"type":"Button","parentId":0,"style":{"enabled":true,"varName":"btn_linkLayerMarker","text":"\\u2D44   Layer marker","justify":"left","preferredSize":[0,0],"alignment":"fill","helpTip":"SHIFT: Unlink"}}},"order":[0,4,1,10,11,8,21,6,20,7,19,18,12,13,14,15,16,2,3],"settings":{"importJSON":true,"indentSize":false,"cepExport":false,"includeCSSJS":true,"showDialog":true,"functionWrapper":false,"afterEffectsDockable":false,"itemReferenceList":"None"}}
+        */
+        var myPanel = (thisObj instanceof Panel) ? thisObj : new Window('palette', scriptName, undefined, { resizeable: true });
+
+        //stop if there's no window
+        if (myPanel === null) return;
+
+        myPanel.orientation = "column";
+        myPanel.alignChildren = ["left", "top"];
+        myPanel.preferredSize.width = 300;
+        myPanel.spacing = 4;
+        myPanel.margins = 12;
+
+
+
+        var btn_newEvent = myPanel.add("button", undefined, undefined, { name: "btn_newEvent" });
+        btn_newEvent.helpTip = "Create event comp marker";
+        btn_newEvent.text = "Get specs from selected keys";
+        btn_newEvent.alignment = ["fill", "top"];
+
+        // TPANEL1
+        // =======
+        var tpanel1 = myPanel.add("tabbedpanel", undefined, undefined, { name: "tpanel1" });
+        tpanel1.alignChildren = "fill";
+        tpanel1.preferredSize.width = 216.547;
+        tpanel1.margins = 0;
+        tpanel1.alignment = ["fill", "top"];
+
+        // TAB1
+        // ====
+        var tab1 = tpanel1.add("tab", undefined, undefined, { name: "tab1" });
+        tab1.text = "Text";
+        tab1.orientation = "column";
+        tab1.alignChildren = ["left", "top"];
+        tab1.spacing = 10;
+        tab1.margins = 0;
+
+        var txt_textField = tab1.add('edittext {properties: {name: "txt_textField", multiline: true, scrollable: true}}');
+        txt_textField.helpTip = "Event marker name";
+        txt_textField.preferredSize.height = 100;
+        txt_textField.alignment = ["fill", "top"];
+
+        // TAB2
+        // ====
+        var tab2 = tpanel1.add("tab", undefined, undefined, { name: "tab2" });
+        tab2.text = "JSON";
+        tab2.orientation = "column";
+        tab2.alignChildren = ["left", "top"];
+        tab2.spacing = 10;
+        tab2.margins = 0;
+
+        // TPANEL1
+        // =======
+        tpanel1.selection = tab1;
+
+        var txt_jsonField = tab2.add('edittext {properties: {name: "txt_jsonField", multiline: true, scrollable: true}}');
+        txt_jsonField.helpTip = "Event marker name";
+        txt_jsonField.preferredSize.height = 100;
+        txt_jsonField.alignment = ["fill", "top"];
+
+        // MYPANEL
+        // =======
+        var divider1 = myPanel.add("panel", undefined, undefined, { name: "divider1" });
+        divider1.alignment = "fill";
+
+        // GROUP1
+        // ======
+        var group1 = myPanel.add("group", undefined, { name: "group1" });
+        group1.orientation = "row";
+        group1.alignChildren = ["left", "center"];
+        group1.spacing = 10;
+        group1.margins = 0;
+
+        var btn_newCounter = group1.add("button", undefined, undefined, { name: "btn_newCounter" });
+        btn_newCounter.helpTip = "Create a time counter layer";
+        btn_newCounter.text = "New counter";
+        btn_newCounter.justify = "left";
+        btn_newCounter.alignment = ["left", "fill"];
+
+        var btn_newSidebar = group1.add("button", undefined, undefined, { name: "btn_newSidebar" });
+        btn_newSidebar.helpTip = "SHIFT: create on the bottom of the comp";
+        btn_newSidebar.text = "New side bar";
+        btn_newSidebar.justify = "left";
+        btn_newSidebar.alignment = ["left", "fill"];
+
+
+
+        myPanel.onResizing = myPanel.onResize = function () {
+            myPanel.layout.resize();
+        };
+
+        if (myPanel instanceof Window) {
+            myPanel.center();
+            myPanel.show();
+        } else {
+            myPanel.layout.layout(true);
+            myPanel.layout.resize();
+        }
+
+        /**************************************************************************
+         * Button functionality ***************************************************
+         **************************************************************************/
+
+        // btn_newEvent.onClick = function () {
+        //     if (!setComp()) { return }
+        //     newEvent(txt_eventName.text)
+        // }
+        // btn_linkKeyframes.onClick = function () {
+        //     if (!setComp()) { return }
+        //     linkKeyframes(ScriptUI.environment.keyboardState.shiftKey)
+        // }
+        // btn_linkLayerMarker.onClick = function () {
+        //     if (!setComp()) { return }
+        //     linkLayerMarker(ScriptUI.environment.keyboardState.shiftKey)
+        // }
+        // // btn_linkLayers.onClick = function () {
+        // //     linkLayers(ScriptUI.environment.keyboardState.shiftKey)
+        // // }
+        // btn_update.onClick = function () {
+        //     if (!setComp()) { return }
+        //     app.beginUndoGroup('Update keyframes to markers')
+        //     updateKeys()
+        //     app.endUndoGroup()
+        // }
+        // btn_getMarkers.onClick = function () {
+        //     if (!setComp()) { return }
+        //     app.beginUndoGroup('Get markers from precomp')
+        //     getNestedMarkers()
+        //     app.endUndoGroup()
+        // }
+        // btn_updateNested.onClick = function () {
+        //     if (!setComp()) { return }
+        //     updateNestedKeys()
+        // }
+        // btn_gestureTap.onClick = function () {
+        //     newGesture('tap')
+        // }
+        btn_newCounter.onClick = function () {
+            buildCounter();
+        }
+    }
+
+    var isKBarRunning = (typeof kbar !== 'undefined');
+
+    if (isKBarRunning && kbar.button) {
+        var button = kbar.button;  // Make a local copy of the kbar variable and button.
+
+        switch (button.argument.toLowerCase()) {
+            case 'run':
+                // run the modal
+                break;
+
+            default:
+                buildUI()
+                break;
+        }
+    }
+    else {
+        buildUI()
+    }
 
 })(this);
