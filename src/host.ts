@@ -380,7 +380,7 @@
         } else {
             var firstKeyTime = 9999999;
             var lastKeyTime = 0;
-
+            
             for (const actKey of selKeys) {
                 const prop = actKey.prop;
                 const keys = actKey.keys;
@@ -401,7 +401,7 @@
      *
      * @return {object[]} - Duration between first and last keys
      */
-
+    
     function getSelKeys() {
         try {
             let selKeyList = [];
@@ -645,7 +645,7 @@
             // Transforms
             dynText('ADBE Transform Group')('ADBE Position').setValue([100, 100]);
 
-        } catch (e) { alert(e.toString() + "\nError on line: " + e.line.toString()); }
+        } catch (e) { alert(e.toString() + "\nError on line: " + e.line.toString());}
 
         // set markers
         setTimeMarkers(dynText, keyRange[0], keyRange[1]);
@@ -1262,6 +1262,150 @@
         return file;
     }
 
+    /**
+     * Scans through all selected keyframes to gather spec data
+     * 
+     * @returns {object}            - Seleected keyframes as a collection of value, duration, ease, delay values
+     */
+    function getKeysSpec() {
+        try {
+
+            if (!setComp()) { return; }
+            let selKeys = getSelKeys()
+
+            //inital spec object
+            let spec = {
+                compName: thisComp.name,
+                layers: [],
+            }
+
+            // loop through each prop
+            let activeLayer = null
+            for (const actKey of selKeys) {
+                let prop = actKey.prop;
+                let layer = prop.propertyGroup(prop.propertyDepth)
+                let keys = actKey.keys;
+
+                // add each unique layer to the .layers array
+                if (activeLayer != layer) {
+                    activeLayer = layer
+                    spec.layers.push({
+                        name: layer.name,
+                        props: []
+                    })
+                }
+                // add each property to the .props array of its layer
+                let propSpec = getPropSpec(actKey)
+                spec.layers[spec.layers.length - 1].props.push({
+                    name: prop.name,
+                    value: propSpec.value,
+                    duration: propSpec.duration,
+                    ease: propSpec.ease,
+                    delay: propSpec.delay,
+                })
+
+            }
+
+            return spec
+
+        } catch (e) { alert(e.toString() + "\nError on line: " + e.line.toString()); }
+    }
+
+    /**
+     * Parses each keyframe pair for spec data
+     * 
+     * @param {object} actKey       - contains the prop and key indices 
+     * @returns {object}            - value change, duration, cubic bezier easing curve, delay from the playhead
+     */
+    function getPropSpec(actKey) {
+        const prop = actKey.prop;
+        const keys = actKey.keys;
+
+        const duration = prop.keyTime(keys[1]) - prop.keyTime(keys[0])
+
+        //// value change
+        let valChange = {
+            name: prop.matchName,
+            start: null,
+            end: null,
+        }
+        if (prop.propertyValueType !== PropertyValueType.NO_VALUE) {        // catch if a gradient property
+            valChange.start = prop.keyValue(keys[0])
+            valChange.end = prop.keyValue(keys[1])
+        }
+        let layer = prop.propertyGroup(prop.propertyDepth)
+        if (!layer.threeDLayer && valChange?.start?.length > 2) {       // remove the 3rd prop if layer not 3d
+            valChange.start.pop()
+            valChange.end.pop()
+        }
+
+        //// keyframe value change
+        let startVal, endVal
+        try {
+            startVal = actKey.prop.keyValue(actKey.keys[0])
+            endVal = actKey.prop.keyValue(actKey.keys[1])
+        } catch (e) {
+            startVal = 0
+            endVal = 1
+        }
+
+
+        // cubic bezier ease conversion
+        let x1 = 5, y1 = 5, x2 = 5, y2 = 5
+        // keyframes are linear
+        if (prop.keyOutInterpolationType(actKey.keys[0]) == KeyframeInterpolationType.LINEAR &&
+            prop.keyInInterpolationType(actKey.keys[1]) == KeyframeInterpolationType.LINEAR) {
+            x1 = 0, y1 = 0, x2 = 1, y2 = 1
+        } else if (prop.keyOutInterpolationType(actKey.keys[0]) == KeyframeInterpolationType.HOLD) {
+            x1 = 0, y1 = 0, x2 = 0, y2 = 0
+        } else {
+            let change
+
+            if (startVal.length > 1) {
+                if (prop.matchName.split('Size').length > 1 || prop.matchName.split('Scale').length > 1) {
+                    change = endVal[0] - startVal[0]
+                    // change = (endVal[0] + endVal[1])/2 - (startVal[0] + startVal[1])/2
+                    // change = Math.max(endVal[0], endVal[1]) - Math.max(startVal[0], startVal[1])
+                } else {
+                    change = Math.sqrt(Math.pow(endVal[0] - startVal[0], 2) + Math.pow(endVal[1] - startVal[1], 2))
+                }
+            } else {
+                if (isNaN(endVal)) {        // catch for non-number values
+                    change = 1
+                } else {
+                    change = endVal - startVal
+                }
+            }
+
+            let startOutEase = prop.keyOutTemporalEase(actKey.keys[0])[0]
+            let endInEase = prop.keyInTemporalEase(actKey.keys[1])[0]
+            let keyOutSpeed = startOutEase.speed
+            let keyInSpeed = endInEase.speed
+
+            x1 = startOutEase.influence / 100
+            y1 = (keyOutSpeed * x1) * (duration / (change || 0.0000000001))
+            x2 = 1 - endInEase.influence / 100
+            y2 = 1 + (keyInSpeed * (x2 - 1)) * (duration / (change || 0.0000000001))
+
+            // check if either of the keys is linear and overwrite
+            if (prop.keyOutInterpolationType(actKey.keys[0]) == KeyframeInterpolationType.LINEAR) {
+                x1 = 0.17, y1 = 0.17
+            } else if (prop.keyInInterpolationType(actKey.keys[1]) == KeyframeInterpolationType.LINEAR) {
+                x2 = 0.83, y2 = 0.83
+            }
+        }
+
+        return {
+            value: valChange,
+            duration,
+            ease: [x1, y1, x2, y2],
+            delay: prop.keyTime(keys[0]) - thisComp.time,
+        }
+    }
+    function parseSpecText(json) {
+
+    }
+
     // _______ UI SETUP _______
     // if the script is a Panel, (launched from the 'Window' menu), use it,
     // else (launched via 'File/Scripts/Run script...') create a new window
@@ -1616,10 +1760,10 @@
 
 
 
-        var btn_newEvent = myPanel.add("button", undefined, undefined, { name: "btn_newEvent" });
-        btn_newEvent.helpTip = "Create event comp marker";
-        btn_newEvent.text = "Get specs from selected keys";
-        btn_newEvent.alignment = ["fill", "top"];
+        var btn_getSpec = myPanel.add("button", undefined, undefined, { name: "btn_getSpec" });
+        btn_getSpec.helpTip = "";
+        btn_getSpec.text = "Get specs from selected keys";
+        btn_getSpec.alignment = ["fill", "top"];
 
         // TPANEL1
         // =======
@@ -1704,10 +1848,11 @@
          * Button functionality ***************************************************
          **************************************************************************/
 
-        // btn_newEvent.onClick = function () {
-        //     if (!setComp()) { return }
-        //     newEvent(txt_eventName.text)
-        // }
+        btn_getSpec.onClick = function () {
+            let specJSON = getKeysSpec()
+            txt_textField.text = parseSpecText(specJSON)
+            txt_jsonField.text = (JSON.stringify(specJSON, false, 2))
+        }
         // btn_linkKeyframes.onClick = function () {
         //     if (!setComp()) { return }
         //     linkKeyframes(ScriptUI.environment.keyboardState.shiftKey)
