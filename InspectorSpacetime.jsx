@@ -61,14 +61,14 @@
         ]
     };
     function setComp() {
+        if (app.activeViewer == null) {
+            return false;
+        }
         app.activeViewer.setActive();
         thisComp = app.project.activeItem;
         if (!thisComp || !(thisComp instanceof CompItem)) {
-            alert('Gotta select a comp first', scriptName);
             return false;
         }
-        workStart = thisComp.workAreaStart;
-        workEnd = workStart + thisComp.workAreaDuration;
         return true;
     }
     function buttonColorText(parentObj, accentColor, buttonText) {
@@ -216,20 +216,53 @@
         return str;
     }
     function getKeyRange() {
-        var firstKeyTime = 9999999;
-        var lastKeyTime = 0;
-        for (var i = 0; i < thisComp.selectedLayers.length; i++) {
-            var layer = thisComp.selectedLayers[i];
-            for (var j = 0; j < layer.selectedProperties.length; j++) {
-                var prop = layer.selectedProperties[j];
-                for (var k = 0; k < prop.selectedKeys.length; k++) {
-                    var key = prop.selectedKeys[k];
-                    firstKeyTime = Math.min(firstKeyTime, prop.keyTime(key));
-                    lastKeyTime = Math.max(lastKeyTime, prop.keyTime(key));
+        var selKeys = getSelKeys();
+        if (selKeys.length < 1) {
+            return [thisComp.time, thisComp.time + 1];
+        }
+        else {
+            var firstKeyTime = 9999999;
+            var lastKeyTime = 0;
+            for (var _i = 0, selKeys_1 = selKeys; _i < selKeys_1.length; _i++) {
+                var actKey = selKeys_1[_i];
+                var prop = actKey.prop;
+                var keys = actKey.keys;
+                for (var _a = 0, keys_1 = keys; _a < keys_1.length; _a++) {
+                    var key = keys_1[_a];
+                    var keyTime = prop.keyTime(key);
+                    firstKeyTime = Math.min(firstKeyTime, keyTime);
+                    lastKeyTime = Math.max(lastKeyTime, keyTime);
                 }
             }
+            return [firstKeyTime, lastKeyTime];
         }
-        return [firstKeyTime, lastKeyTime];
+    }
+    function getSelKeys() {
+        try {
+            var selKeyList = [];
+            var props = thisComp.selectedProperties;
+            for (var i = 0; i < props.length; i++) {
+                var prop = props[i];
+                if (!prop.canVaryOverTime) {
+                    continue;
+                }
+                var selKeys = prop.selectedKeys;
+                if (selKeys.length < 2) {
+                    continue;
+                }
+                if (selKeys.length % 2 > 0) {
+                    selKeys.pop();
+                }
+                selKeyList.push({
+                    prop: prop,
+                    keys: selKeys || null
+                });
+            }
+            return selKeyList;
+        }
+        catch (error) {
+            return [];
+        }
     }
     function getPropObj(opt_propObj) {
         if (opt_propObj == undefined) {
@@ -331,8 +364,11 @@
         ].join('\n');
     }
     function buildCounter() {
+        setComp();
+        var keyRange = getKeyRange();
+        app.beginUndoGroup('New Counter');
         try {
-            var dynText = thisComp.layers.addText('Spec Name');
+            var dynText = thisComp.layers.addText('Counter');
             dynText.name = 'Counter';
             dynText.comment = scriptName + '_data';
             var dynText_TextProp = dynText('ADBE Text Properties')('ADBE Text Document');
@@ -360,14 +396,15 @@
             lineHeight(1).addProperty('ADBE Text Selector');
             lineHeight(2)('ADBE Text Line Spacing').setValue([0, manualLineHeight]);
             dynText('ADBE Transform Group')('ADBE Position').setValue([100, 100]);
-            return dynText;
         }
         catch (e) {
-            alert([
-                e.toString(),
-                'Error on line: ' + e.line.toString()
-            ].join('\n'), scriptName);
+            alert(e.toString() + "\nError on line: " + e.line.toString());
         }
+        setTimeMarkers(dynText, keyRange[0], keyRange[1]);
+        dynText('ADBE Text Properties')('ADBE Text Document').expression = exp_counter;
+        app.executeCommand(2771);
+        app.executeCommand(2771);
+        app.endUndoGroup();
     }
     function getEase(activeProp) {
         try {
@@ -463,7 +500,7 @@
     }
     function round(value, opt_decimals) {
         try {
-            var decimals = (opt_decimals !== undefined) ? opt_decimals : 2;
+            var decimals = opt_decimals || 2;
             return parseFloat(value.toFixed(decimals));
         }
         catch (e) {
@@ -717,233 +754,339 @@
         }
         return file;
     }
-    var mainPalette = thisObj instanceof Panel ? thisObj : new Window('palette', scriptName, undefined, { resizeable: true });
-    if (mainPalette === null) {
-        return;
-    }
-    mainPalette.alignChildren = ['fill', 'fill'];
-    var content = mainPalette.add('group');
-    content.alignChildren = ['fill', 'fill'];
-    content.orientation = 'column';
-    content.spacing = 5;
-    var btnLaunch = buttonColorVector(content, icons.build, '#5B8BA3', [224, 64]);
-    btnLaunch.maximumSize.height = 64;
-    btnLaunch.minimumSize.height = 64;
-    btnLaunch.helpTip = 'Select keyframe pairs to build spec panel';
-    var grp_options = content.add('group');
-    grp_options.orientation = 'row';
-    grp_options.alignChildren = ['fill', 'top'];
-    grp_options.margins = 0;
-    var settings = grp_options.add('group');
-    settings.alignment = 'fill';
-    settings.alignChildren = ['fill', 'top'];
-    settings.orientation = 'column';
-    settings.margins = [0, 6, 0, 0];
-    var grp_pos = settings.add('panel', undefined, 'Position');
-    grp_pos.alignChildren = 'left';
-    grp_pos.alignment = 'left';
-    grp_pos.orientation = 'column';
-    grp_pos.spacing = 0;
-    grp_pos.margins = [8, 10, 0, 6];
-    grp_pos.maximumSize.width = 110;
-    grp_pos.minimumSize.width = 110;
-    var rad_pos = grp_pos.add('group');
-    var posCoord = rad_pos.add('radiobutton', undefined, 'Pixel');
-    posCoord.helpTip = 'Print position as pixel coordinates';
-    var posDistance = rad_pos.add('radiobutton', undefined, 'DP');
-    posDistance.helpTip = 'Print position as dp movement';
-    posDistance.value = true;
-    var ddl_resolution = settings.add('dropdownlist', undefined, ['1x', '2x', '3x']);
-    ddl_resolution.selection = 2;
-    ddl_resolution.maximumSize.width = 110;
-    ddl_resolution.minimumSize.width = 110;
-    ddl_resolution.alignment = 'left';
-    ddl_resolution.helpTip = 'Dp multiplier';
-    var grp_buttons = grp_options.add('group');
-    grp_buttons.alignChildren = ['fill', 'top'];
-    grp_buttons.orientation = 'column';
-    grp_buttons.margins = 0;
-    grp_buttons.spacing = 1;
-    var btn_isolation = buttonColorText(grp_buttons, '#37474F', 'Iso Layer');
-    btn_isolation.helpTip = [
-        'Create a color adjustment layer',
-        'the drag below targeted layers'
-    ].join('\n');
-    var btn_pointer = buttonColorText(grp_buttons, '#37474F', 'Pointer');
-    btn_pointer.helpTip = [
-        'Create an adjustable pointer',
-        'line to connect text to element'
-    ].join('\n');
-    var btn_counter = buttonColorText(grp_buttons, '#37474F', 'Counter');
-    btn_counter.helpTip = 'Create text counter without building a spec';
-    var btn_aboutScript = buttonColorText(grp_buttons, '#263238', '?');
-    btn_aboutScript.helpTip = 'About ' + scriptName;
-    btn_aboutScript.minimumSize = [30, 30];
-    btn_aboutScript.maximumSize = [30, 30];
-    btn_aboutScript.alignment = ['right', 'bottom'];
-    posCoord.onClick = function () {
-        ddl_resolution.visible = false;
-    };
-    posDistance.onClick = function () {
-        ddl_resolution.visible = true;
-    };
-    btn_aboutScript.onClick = function () {
-        var w = new Window('dialog', 'About ' + scriptName);
-        w.spacing = 0;
-        w.margins = 0;
-        var content = w.add('group', undefined, '');
-        content.alignChildren = ['fill', 'fill'];
-        content.orientation = 'column';
-        content.alignment = ['left', 'top'];
-        content.margins = 16;
-        content.spacing = 8;
-        var btn_url = buttonColorVector(content, icons.build, '#EF5350', [224, 64]);
-        content.add('statictext', [0, 0, 400, 340], [
-            'Speed up the creation of animation specs for engineering while reducing miscommunication. One click to collect selected keyframe pair data to a text panel. Copy/paste this text out or build a panel along side the comp for easy reference.',
-            '',
-            'Usage:',
-            '• Click the big button to open the property collection panel.',
-            '• Additional key pairs will be added to the list, grouped by layer. The total duration and individual propery delays will update.',
-            '• Copy out this text or create a panel along side a duplicate of your comp.',
-            '',
-            'Add ons:',
-            '• Pixel/DP: This data can be communicated as coordinates or in DP. Set the density dropdown based on resolution of your comp.',
-            '• ISO LAYER: Creates an adjustment layer below the selected layer to dims other layers. This allows layers to be hilighted while keeping things in context.',
-            '• POINTER: Creates an editable arrow to quickly draw a line from the text spec to on-screen element.',
-            '',
-            scriptName + ' - v' + scriptVersion,
-            'Created by Adam Plouff at Google'
-        ].join('\n'), {
-            multiline: true
-        });
-        buttonColorText(content, '#406280', 'Close');
-        btn_url.onClick = function () {
-            visitURL('http://google.github.io/inspectorspacetime');
-        };
-        w.show();
-    };
-    btn_isolation.onClick = function () {
-        setComp();
-        app.beginUndoGroup('New Isolation Layer');
-        buildIsoLayer();
-        app.endUndoGroup();
-    };
-    btn_pointer.onClick = function () {
-        setComp();
-        getPanelSize();
-        app.beginUndoGroup('New Pointer');
-        buildPointer();
-        app.endUndoGroup();
-    };
-    btn_counter.onClick = function () {
-        setComp();
-        var keyRange = getKeyRange();
-        if (keyRange[0] == 9999999) {
-            keyRange = [thisComp.time, thisComp.time + 1];
-        }
-        app.beginUndoGroup('New Counter');
-        var textLayer = buildCounter();
-        setTimeMarkers(textLayer, keyRange[0], keyRange[1]);
-        textLayer('ADBE Text Properties')('ADBE Text Document').expression = exp_counter;
-        app.executeCommand(2771);
-        app.executeCommand(2771);
-        app.endUndoGroup();
-    };
-    btnLaunch.onClick = function () {
+    function getKeysSpec() {
         try {
-            var w = new Window('palette', scriptName, undefined, { resizeable: true });
-            w.alignChildren = ['fill', 'fill'];
-            var propObj = getPropObj();
-            var propText = getPropText(propObj);
-            var tpanel = w.add('tabbedpanel');
-            tpanel.alignChildren = ['fill', 'fill'];
-            tpanel.minimumSize = [350, 300];
-            tpanel.maximumSize.height = 800;
-            var tab_text = tpanel.add('tab', undefined, 'Text');
-            tab_text.alignChildren = ['fill', 'fill'];
-            var textField = tab_text.add('edittext', undefined, '', { multiline: true });
-            textField.text = propText;
-            var tab_json = tpanel.add('tab', undefined, 'JSON');
-            tab_json.alignChildren = ['fill', 'fill'];
-            var jsonField = tab_json.add('edittext', [0, 0, 350, 300], '', { multiline: true });
-            jsonField.text = JSON.stringify(propObj, replacer, 2);
-            if (propObj.firstKeyTime == 9999999) {
-                clearProps();
+            if (!setComp()) {
+                return;
             }
-            var buttons = w.add('group');
-            buttons.alignment = 'right';
-            buttons.minimumSize.height = 28;
-            buttons.maximumSize.height = 28;
-            var btn_clearProp = buttons.add('button', undefined, '⊗ Clear ⊗');
-            var btn_addProp = buttons.add('button', undefined, '↑ Add property ↑');
-            var btn_newSidePanel = buttons.add('button', undefined, '→ Create side panel →');
-            var btn_exportJson = buttons.add('button', undefined, '⤵ Export ⤵');
-            btn_clearProp.onClick = function () {
-                clearProps();
+            var selKeys = getSelKeys();
+            var spec = {
+                compName: thisComp.name,
+                layers: []
             };
-            btn_addProp.onClick = function () {
-                propObj = getPropObj(propObj);
-                jsonField.text = JSON.stringify(propObj, replacer, 2);
-                propText = getPropText(propObj);
-                textField.text = propText;
-            };
-            btn_newSidePanel.onClick = function () {
-                try {
-                    app.beginUndoGroup('Create ' + scriptName + 'Elements');
-                    resizeCompNew(thisComp);
-                    getPanelSize();
-                    buildText_plain(textField.text);
-                    app.executeCommand(2771);
-                    app.executeCommand(2771);
-                    app.endUndoGroup();
+            var activeLayer = null;
+            for (var _i = 0, selKeys_2 = selKeys; _i < selKeys_2.length; _i++) {
+                var actKey = selKeys_2[_i];
+                var prop = actKey.prop;
+                var layer = prop.propertyGroup(prop.propertyDepth);
+                var keys = actKey.keys;
+                if (activeLayer != layer) {
+                    activeLayer = layer;
+                    spec.layers.push({
+                        name: layer.name,
+                        props: []
+                    });
                 }
-                catch (e) {
-                    alert([
-                        e.toString(),
-                        'Error on line: ' + e.line.toString()
-                    ].join('\n'), scriptName);
-                }
-            };
-            btn_exportJson.onClick = function () {
-                var propObj = getPropObj(propObj);
-                propObj.spacetimeVersion = scriptVersion;
-                propObj.aeVersion = app.version;
-                var outputFile = getUserFile('spec.spacetime.json', 'spacetime:*.spacetime.json;');
-                if (!outputFile) {
-                    return;
-                }
-                try {
-                    var writtenFile = writeFile(outputFile, JSON.stringify(propObj, replacer, 2));
-                    alert('Wrote file to ' + writtenFile.fsName, scriptName);
-                }
-                catch (e) {
-                    alert(e, scriptName);
-                }
-            };
-            function clearProps() {
-                propObj = null;
-                propText = null;
-                jsonField.text = '';
-                textField.text = '';
+                var propSpec = getPropSpec(actKey);
+                spec.layers[spec.layers.length - 1].props.push({
+                    name: prop.name,
+                    value: propSpec.value,
+                    duration: propSpec.duration,
+                    ease: propSpec.ease,
+                    delay: propSpec.delay
+                });
             }
-            w.layout.layout(true);
-            w.layout.resize();
-            w.onResizing = w.onResize = function () { w.layout.resize(); };
-            w.show();
+            return spec;
         }
         catch (e) {
-            alert([
-                e.toString(),
-                'Error on line: ' + e.line.toString()
-            ].join('\n'));
+            alert(e.toString() + "\nError on line: " + e.line.toString());
         }
-    };
-    mainPalette.layout.layout(true);
-    mainPalette.layout.resize();
-    mainPalette.onResizing = mainPalette.onResize = function () {
-        mainPalette.layout.resize();
-    };
-    if (!(mainPalette instanceof Panel)) {
-        mainPalette.show();
+    }
+    function getPropSpec(actKey) {
+        var _a;
+        var prop = actKey.prop;
+        var keys = actKey.keys;
+        var duration = prop.keyTime(keys[1]) - prop.keyTime(keys[0]);
+        var valChange = {
+            name: prop.matchName,
+            start: null,
+            end: null
+        };
+        if (prop.propertyValueType !== PropertyValueType.NO_VALUE) {
+            valChange.start = prop.keyValue(keys[0]);
+            valChange.end = prop.keyValue(keys[1]);
+        }
+        if (prop.matchName.match(/Shape/)) {
+            valChange.start = null;
+            valChange.end = null;
+        }
+        var layer = prop.propertyGroup(prop.propertyDepth);
+        if (!layer.threeDLayer && ((_a = valChange === null || valChange === void 0 ? void 0 : valChange.start) === null || _a === void 0 ? void 0 : _a.length) > 2) {
+            valChange.start.pop();
+            valChange.end.pop();
+        }
+        var startVal, endVal;
+        try {
+            startVal = actKey.prop.keyValue(actKey.keys[0]);
+            endVal = actKey.prop.keyValue(actKey.keys[1]);
+        }
+        catch (e) {
+            startVal = 0;
+            endVal = 1;
+        }
+        var x1 = 5, y1 = 5, x2 = 5, y2 = 5;
+        if (prop.keyOutInterpolationType(actKey.keys[0]) == KeyframeInterpolationType.LINEAR &&
+            prop.keyInInterpolationType(actKey.keys[1]) == KeyframeInterpolationType.LINEAR) {
+            x1 = 0, y1 = 0, x2 = 1, y2 = 1;
+        }
+        else if (prop.keyOutInterpolationType(actKey.keys[0]) == KeyframeInterpolationType.HOLD) {
+            x1 = 0, y1 = 0, x2 = 0, y2 = 0;
+        }
+        else {
+            var change = void 0;
+            if (startVal.length > 1) {
+                if (prop.matchName.split('Size').length > 1 || prop.matchName.split('Scale').length > 1) {
+                    change = endVal[0] - startVal[0];
+                }
+                else {
+                    change = Math.sqrt(Math.pow(endVal[0] - startVal[0], 2) + Math.pow(endVal[1] - startVal[1], 2));
+                }
+            }
+            else {
+                if (isNaN(endVal)) {
+                    change = 1;
+                }
+                else {
+                    change = endVal - startVal;
+                }
+            }
+            var startOutEase = prop.keyOutTemporalEase(actKey.keys[0])[0];
+            var endInEase = prop.keyInTemporalEase(actKey.keys[1])[0];
+            var keyOutSpeed = startOutEase.speed;
+            var keyInSpeed = endInEase.speed;
+            x1 = startOutEase.influence / 100;
+            y1 = (keyOutSpeed * x1) * (duration / (change || 0.0000000001));
+            x2 = 1 - endInEase.influence / 100;
+            y2 = 1 + (keyInSpeed * (x2 - 1)) * (duration / (change || 0.0000000001));
+            if (prop.keyOutInterpolationType(actKey.keys[0]) == KeyframeInterpolationType.LINEAR) {
+                x1 = 0.17, y1 = 0.17;
+            }
+            else if (prop.keyInInterpolationType(actKey.keys[1]) == KeyframeInterpolationType.LINEAR) {
+                x2 = 0.83, y2 = 0.83;
+            }
+        }
+        return {
+            value: valChange,
+            duration: duration,
+            ease: [x1, y1, x2, y2],
+            delay: prop.keyTime(keys[0]) - thisComp.time
+        };
+    }
+    function parseSpecText(json) {
+        try {
+            var str = '';
+            str = "# " + json.compName + "\n";
+            for (var _i = 0, _a = json.layers; _i < _a.length; _i++) {
+                var layer = _a[_i];
+                str += "\n## " + layer.name;
+                for (var _b = 0, _c = layer.props; _b < _c.length; _b++) {
+                    var prop = _c[_b];
+                    var val = getVal(prop.value);
+                    str += "\n" + prop.name;
+                    if (val != ' ') {
+                        str += ": " + val;
+                    }
+                    str += "\n- Duration: " + timeToMs(prop.duration);
+                    str += "\n- " + getCubic(prop.ease);
+                    if (prop.delay != 0) {
+                        str += "\n- Delay: " + timeToMs(prop.delay);
+                    }
+                    str += '\n';
+                }
+            }
+            return str;
+        }
+        catch (e) {
+            alert(e.toString() + "\nError on line: " + e.line.toString());
+        }
+    }
+    function getVal(valObj) {
+        var str = '';
+        if (valObj.name.match(/Opacity/) != null) {
+            str = round(valObj.start) + " \u2192 " + round(valObj.end) + "%";
+        }
+        else if (valObj.name.match(/Scale/) != null) {
+            str = round(valObj.start[0]) + " \u2192 " + round(valObj.end[0]) + "%";
+        }
+        else if (valObj.name.match(/Position_0|Position_1|Position_2/) != null) {
+            str = round(valObj.start) + " \u2192 " + round(valObj.end) + "px";
+        }
+        else if (valObj.name.match(/Rotate/) != null) {
+            str = round(valObj.start) + " \u2192 " + round(valObj.end) + "\u00BA";
+        }
+        else if (valObj.name.match(/Color|Shape/) != null) {
+            str = " ";
+        }
+        else {
+            str = null;
+        }
+        if (!str) {
+            str = '';
+            for (var i in valObj.start) {
+                if (!isNaN(i)) {
+                    str += round(valObj.start[i]) + " \u2192 " + round(valObj.end[i]) + " | ";
+                }
+            }
+            str = str.slice(0, -3);
+        }
+        return str;
+    }
+    function getCubic(arr) {
+        var val = '';
+        var color = '';
+        var easeLib = {
+            linear: {
+                val: [0.0, 0.0, 1.0, 1.0]
+            },
+            hold: {
+                val: [0.0, 0.0, 0.0, 0.0]
+            }
+        };
+        var tokenMatch = null;
+        for (var key in easeLib) {
+            if (Object.hasOwnProperty.call(easeLib, key)) {
+                var cubicBez = easeLib[key].val;
+                var tollerance = 0.01;
+                var match = true;
+                for (var i = 0; i < cubicBez.length; i++) {
+                    if (Math.abs(cubicBez[i] - arr[i]) > tollerance) {
+                        match = false;
+                    }
+                }
+                if (match) {
+                    tokenMatch = {
+                        name: capitalizeFirstLetter(key),
+                        cubic: cubicBez
+                    };
+                }
+            }
+        }
+        if (tokenMatch) {
+            val = "" + tokenMatch.name;
+        }
+        else {
+            val = "(" + arr[0].toFixed(2) + ", " + arr[1].toFixed(2) + ", " + arr[2].toFixed(2) + ", " + arr[3].toFixed(2) + ")";
+            color = (this.darkmode) ? 'hsl(196, 70%, 50%)' : 'hsl(196, 70%, 50%)';
+        }
+        return val;
+    }
+    function capitalizeFirstLetter(string) {
+        return string.charAt(0).toUpperCase() + string.slice(1);
+    }
+    function buildUI() {
+        var myPanel = (thisObj instanceof Panel) ? thisObj : new Window('palette', scriptName, undefined, { resizeable: true });
+        if (myPanel === null)
+            return;
+        myPanel.orientation = "column";
+        myPanel.alignChildren = ["left", "top"];
+        myPanel.preferredSize.width = 300;
+        myPanel.spacing = 4;
+        myPanel.margins = 12;
+        var btn_getSpec = myPanel.add("button", undefined, undefined, { name: "btn_getSpec" });
+        btn_getSpec.text = "Get specs from selected keys";
+        btn_getSpec.alignment = ["fill", "top"];
+        var tpanel1 = myPanel.add("tabbedpanel", undefined, undefined, { name: "tpanel1" });
+        tpanel1.alignChildren = "fill";
+        tpanel1.preferredSize.width = 246.359;
+        tpanel1.margins = 0;
+        tpanel1.alignment = ["fill", "top"];
+        var tab1 = tpanel1.add("tab", undefined, undefined, { name: "tab1" });
+        tab1.text = "Text";
+        tab1.orientation = "column";
+        tab1.alignChildren = ["left", "top"];
+        tab1.spacing = 10;
+        tab1.margins = 0;
+        var txt_textField = tab1.add('edittext {properties: {name: "txt_textField", multiline: true, scrollable: true}}');
+        txt_textField.helpTip = "Event marker name";
+        txt_textField.preferredSize.height = 200;
+        txt_textField.alignment = ["fill", "top"];
+        var group1 = tab1.add("group", undefined, { name: "group1" });
+        group1.orientation = "row";
+        group1.alignChildren = ["center", "center"];
+        group1.spacing = 10;
+        group1.margins = 0;
+        group1.alignment = ["fill", "top"];
+        var btn_newBarSide = group1.add("button", undefined, undefined, { name: "btn_newBarSide" });
+        btn_newBarSide.text = "New side bar";
+        btn_newBarSide.justify = "left";
+        btn_newBarSide.alignment = ["center", "fill"];
+        var btn_newBarBottom = group1.add("button", undefined, undefined, { name: "btn_newBarBottom" });
+        btn_newBarBottom.text = "New bottom bar";
+        btn_newBarBottom.justify = "left";
+        btn_newBarBottom.alignment = ["center", "fill"];
+        var tab2 = tpanel1.add("tab", undefined, undefined, { name: "tab2" });
+        tab2.text = "JSON";
+        tab2.orientation = "column";
+        tab2.alignChildren = ["left", "top"];
+        tab2.spacing = 10;
+        tab2.margins = 0;
+        tpanel1.selection = tab1;
+        var txt_jsonField = tab2.add('edittext {properties: {name: "txt_jsonField", multiline: true, scrollable: true}}');
+        txt_jsonField.helpTip = "Event marker name";
+        txt_jsonField.preferredSize.height = 200;
+        txt_jsonField.alignment = ["fill", "top"];
+        var btn_saveJSON = tab2.add("button", undefined, undefined, { name: "btn_saveJSON" });
+        btn_saveJSON.text = "Save to .JSON";
+        btn_saveJSON.alignment = ["fill", "top"];
+        var group2 = myPanel.add("group", undefined, { name: "group2" });
+        group2.orientation = "row";
+        group2.alignChildren = ["left", "center"];
+        group2.spacing = 10;
+        group2.margins = 0;
+        group2.alignment = ["fill", "top"];
+        var btn_newCounter = group2.add("button", undefined, undefined, { name: "btn_newCounter" });
+        btn_newCounter.helpTip = "Create a time counter layer";
+        btn_newCounter.text = "New counter";
+        btn_newCounter.justify = "left";
+        btn_newCounter.alignment = ["left", "fill"];
+        myPanel.onResizing = myPanel.onResize = function () {
+            myPanel.layout.resize();
+        };
+        if (myPanel instanceof Window) {
+            myPanel.center();
+            myPanel.show();
+        }
+        else {
+            myPanel.layout.layout(true);
+            myPanel.layout.resize();
+        }
+        btn_getSpec.onClick = function () {
+            var specJSON = getKeysSpec();
+            txt_textField.text = parseSpecText(specJSON);
+            txt_jsonField.text = (JSON.stringify(specJSON, false, 2));
+        };
+        btn_saveJSON.onClick = function () {
+            var specJSON = getKeysSpec();
+            specJSON.spacetimeVersion = scriptVersion;
+            specJSON.aeVersion = app.version;
+            var outputFile = getUserFile('spec.spacetime.json', 'spacetime:*.spacetime.json;');
+            if (!outputFile) {
+                return;
+            }
+            try {
+                var writtenFile = writeFile(outputFile, JSON.stringify(specJSON, replacer, 2));
+                writtenFile.parent.execute();
+            }
+            catch (e) {
+                alert(e, scriptName);
+            }
+        };
+        btn_newCounter.onClick = function () {
+            buildCounter();
+        };
+    }
+    var isKBarRunning = (typeof kbar !== 'undefined');
+    if (isKBarRunning && kbar.button) {
+        var button = kbar.button;
+        switch (button.argument.toLowerCase()) {
+            case 'run':
+                break;
+            default:
+                buildUI();
+                break;
+        }
+    }
+    else {
+        buildUI();
     }
 })(this);

@@ -1406,6 +1406,13 @@
             delay: prop.keyTime(keys[0]) - thisComp.time,
         }
     }
+
+    /**
+     * Convert the spec object into readable text
+     * 
+     * @param {object} json         - spec object hierarchy
+     * @returns {string}            - multi-line text of the spec data
+     */
     function parseSpecText(json) {
         try {
             
@@ -1430,6 +1437,7 @@
             return str
         } catch (e) { alert(e.toString() + "\nError on line: " + e.line.toString());}
     }
+
     function getVal(valObj) {
         let str = ''
 
@@ -1877,7 +1885,6 @@
 
 
         var btn_getSpec = myPanel.add("button", undefined, undefined, { name: "btn_getSpec" });
-        btn_getSpec.helpTip = "";
         btn_getSpec.text = "Get specs from selected keys";
         btn_getSpec.alignment = ["fill", "top"];
 
@@ -1885,7 +1892,7 @@
         // =======
         var tpanel1 = myPanel.add("tabbedpanel", undefined, undefined, { name: "tpanel1" });
         tpanel1.alignChildren = "fill";
-        tpanel1.preferredSize.width = 216.547;
+        tpanel1.preferredSize.width = 246.359;
         tpanel1.margins = 0;
         tpanel1.alignment = ["fill", "top"];
 
@@ -1902,6 +1909,25 @@
         txt_textField.helpTip = "Event marker name";
         txt_textField.preferredSize.height = 200;
         txt_textField.alignment = ["fill", "top"];
+
+        // GROUP1
+        // ======
+        var group1 = tab1.add("group", undefined, { name: "group1" });
+        group1.orientation = "row";
+        group1.alignChildren = ["center", "center"];
+        group1.spacing = 10;
+        group1.margins = 0;
+        group1.alignment = ["fill", "top"];
+
+        var btn_newBarSide = group1.add("button", undefined, undefined, { name: "btn_newBarSide" });
+        btn_newBarSide.text = "New side bar";
+        btn_newBarSide.justify = "left";
+        btn_newBarSide.alignment = ["center", "fill"];
+
+        var btn_newBarBottom = group1.add("button", undefined, undefined, { name: "btn_newBarBottom" });
+        btn_newBarBottom.text = "New bottom bar";
+        btn_newBarBottom.justify = "left";
+        btn_newBarBottom.alignment = ["center", "fill"];
 
         // TAB2
         // ====
@@ -1921,30 +1947,24 @@
         txt_jsonField.preferredSize.height = 200;
         txt_jsonField.alignment = ["fill", "top"];
 
-        // MYPANEL
-        // =======
-        var divider1 = myPanel.add("panel", undefined, undefined, { name: "divider1" });
-        divider1.alignment = "fill";
+        var btn_saveJSON = tab2.add("button", undefined, undefined, { name: "btn_saveJSON" });
+        btn_saveJSON.text = "Save to .JSON";
+        btn_saveJSON.alignment = ["fill", "top"];
 
-        // GROUP1
+        // GROUP2
         // ======
-        var group1 = myPanel.add("group", undefined, { name: "group1" });
-        group1.orientation = "row";
-        group1.alignChildren = ["left", "center"];
-        group1.spacing = 10;
-        group1.margins = 0;
+        var group2 = myPanel.add("group", undefined, { name: "group2" });
+        group2.orientation = "row";
+        group2.alignChildren = ["left", "center"];
+        group2.spacing = 10;
+        group2.margins = 0;
+        group2.alignment = ["fill", "top"];
 
-        var btn_newCounter = group1.add("button", undefined, undefined, { name: "btn_newCounter" });
+        var btn_newCounter = group2.add("button", undefined, undefined, { name: "btn_newCounter" });
         btn_newCounter.helpTip = "Create a time counter layer";
         btn_newCounter.text = "New counter";
         btn_newCounter.justify = "left";
         btn_newCounter.alignment = ["left", "fill"];
-
-        var btn_newSidebar = group1.add("button", undefined, undefined, { name: "btn_newSidebar" });
-        btn_newSidebar.helpTip = "SHIFT: create on the bottom of the comp";
-        btn_newSidebar.text = "New side bar";
-        btn_newSidebar.justify = "left";
-        btn_newSidebar.alignment = ["left", "fill"];
 
 
 
@@ -1968,6 +1988,24 @@
             let specJSON = getKeysSpec()
             txt_textField.text = parseSpecText(specJSON)
             txt_jsonField.text = (JSON.stringify(specJSON, false, 2))
+        }
+        btn_saveJSON.onClick = function () {
+            var specJSON = getKeysSpec()
+                specJSON.spacetimeVersion = scriptVersion;
+                specJSON.aeVersion = app.version;
+
+            var outputFile = getUserFile('spec.spacetime.json', 'spacetime:*.spacetime.json;');
+
+            if (!outputFile) {
+                return;
+            }
+
+            try {
+                var writtenFile = writeFile(outputFile, JSON.stringify(specJSON, replacer, 2));
+                writtenFile.parent.execute()
+            } catch (e) {
+                alert(e, scriptName);
+            }
         }
         // btn_linkKeyframes.onClick = function () {
         //     if (!setComp()) { return }
