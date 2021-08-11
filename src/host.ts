@@ -806,10 +806,10 @@
      * @param {number} [opt_decimals] - Number of decimals, optional
      * @return {number}               - Rounded value
      */
-    function round(value, opt_decimals) {
+    function round(value, opt_decimals?) {
         try {
             // default to 2 decimal places if nothing is specified
-            var decimals = (opt_decimals !== undefined) ? opt_decimals : 2;
+            var decimals = opt_decimals || 2;
             return parseFloat(value.toFixed(decimals));
         } catch (e) {
             return value;
@@ -1333,6 +1333,10 @@
             valChange.start = prop.keyValue(keys[0])
             valChange.end = prop.keyValue(keys[1])
         }
+        if (prop.matchName.match(/Shape/)) {        // catch if a shape property - remove this block if you want path info
+            valChange.start = null
+            valChange.end = null
+        }
         let layer = prop.propertyGroup(prop.propertyDepth)
         if (!layer.threeDLayer && valChange?.start?.length > 2) {       // remove the 3rd prop if layer not 3d
             valChange.start.pop()
@@ -1403,7 +1407,119 @@
         }
     }
     function parseSpecText(json) {
+        try {
+            
+            let str = ''
+    
+            str = `# ${json.compName}\n`
+    
+            for (let layer of json.layers) {
+                str += `\n## ${ layer.name }`
+    
+                for (let prop of layer.props) {
+                    let val = getVal(prop.value)
+                    str += `\n${ prop.name }`                                                   // name
+                    if (val != ' ') { str += `: ${val}` }                                       // value change
+                    str += `\n- Duration: ${ timeToMs(prop.duration) }`                         // duration
+                    str += `\n- ${ getCubic(prop.ease) }`                                       // ease
+                    if (prop.delay != 0) { str += `\n- Delay: ${ timeToMs(prop.delay) }` }      // delay
+                    str += '\n'
+                }
+            }
+    
+            return str
+        } catch (e) { alert(e.toString() + "\nError on line: " + e.line.toString());}
+    }
+    function getVal(valObj) {
+        let str = ''
 
+        if (valObj.name.match(/Opacity/) != null) {
+            str = `${round(valObj.start)} → ${round(valObj.end)}%`
+        } else if (valObj.name.match(/Scale/) != null) {
+            str = `${round(valObj.start[0])} → ${round(valObj.end[0])}%`
+        } else if (valObj.name.match(/Position_0|Position_1|Position_2/) != null) {
+            str = `${round(valObj.start)} → ${round(valObj.end)}px`
+        } else if (valObj.name.match(/Rotate/) != null) {
+            str = `${round(valObj.start)} → ${round(valObj.end)}º`
+        } else if (valObj.name.match(/Color|Shape/) != null) {
+            str = ` `
+        } else {
+            str = null
+        }
+
+        if (!str) {
+            str = ''
+            for (const i in valObj.start) {
+                // if (Object.prototype.hasOwnProperty.call(valObj, start)) {
+                if (!isNaN(i)) {
+                    str += `${round(valObj.start[i])} → ${round(valObj.end[i])} | `
+                }
+                
+            }
+            str = str.slice(0, -3)      // remove the last ` :: `
+        }
+
+        return str
+    }
+    function getCubic(arr) {
+        let val = ''
+        let color = ''
+        const easeLib = {
+            linear: {
+                val: [0.0, 0.0, 1.0, 1.0]
+            },
+            hold: {
+                val: [0.0, 0.0, 0.0, 0.0]
+            },
+        }
+        let tokenMatch = null
+
+        // loop through all tokens in the easing library
+        for (const key in easeLib) {
+            if (Object.hasOwnProperty.call(easeLib, key)) {
+                const cubicBez = easeLib[key].val;
+
+                const tollerance = 0.01
+
+                let match = true
+                for (let i = 0; i < cubicBez.length; i++) {
+                    if (Math.abs(cubicBez[i] - arr[i]) > tollerance) {
+                        match = false
+                    }
+                }
+                if (match) {
+
+                    tokenMatch = {
+                        name: capitalizeFirstLetter(key),
+                        cubic: cubicBez
+                    }
+                    // console.log('tokenMatch:', arr, key);
+                }
+            }
+        }
+
+        if (tokenMatch) {
+            val = `${tokenMatch.name}`
+            // val = `${tokenMatch.name}: (${tokenMatch.cubic})`
+            // color = /Linear/.test(tokenMatch.name)
+            //     ? 'gold'
+            //     : /In/.test(tokenMatch.name)
+            //         ? '#7ec850'
+            //         : /Out/.test(tokenMatch.name)
+            //             ? 'tomato'
+            //             : 'skyblue'
+
+        } else {
+            val = `(${arr[0].toFixed(2)}, ${arr[1].toFixed(2)}, ${arr[2].toFixed(2)}, ${arr[3].toFixed(2)})`
+            color = (this.darkmode) ? 'hsl(196, 70%, 50%)' : 'hsl(196, 70%, 50%)'    // yellow
+        }
+
+        // }
+
+        return val
+    }
+    function capitalizeFirstLetter(string) {
+        return string.charAt(0).toUpperCase() + string.slice(1);
     }
 
     // _______ UI SETUP _______
@@ -1784,7 +1900,7 @@
 
         var txt_textField = tab1.add('edittext {properties: {name: "txt_textField", multiline: true, scrollable: true}}');
         txt_textField.helpTip = "Event marker name";
-        txt_textField.preferredSize.height = 100;
+        txt_textField.preferredSize.height = 200;
         txt_textField.alignment = ["fill", "top"];
 
         // TAB2
@@ -1802,7 +1918,7 @@
 
         var txt_jsonField = tab2.add('edittext {properties: {name: "txt_jsonField", multiline: true, scrollable: true}}');
         txt_jsonField.helpTip = "Event marker name";
-        txt_jsonField.preferredSize.height = 100;
+        txt_jsonField.preferredSize.height = 200;
         txt_jsonField.alignment = ["fill", "top"];
 
         // MYPANEL
