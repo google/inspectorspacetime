@@ -1,5 +1,5 @@
 /**
- * Generates motion spec data to be rendered with the reference quicktime to share with ENG.
+ * Generates motion spec data to to share with ENG.
  * It's a stupid name with a reference to the short-lived NBC show Commpunity.
  *
  * inSPECtor SPACE+TIME = motion spec
@@ -73,7 +73,7 @@
      * @param {string} buttonText  - button text
      * @returns {Button}           - created button
      */
-    function buttonColorText(parentObj, accentColor, buttonText) {
+    function buttonColorText(parentObj: object, accentColor: string, buttonText: string) {
         // draw a regular button, make it pressable with ENTER key
         var btn = parentObj.add('button', undefined, '', { name: 'ok' });
         btn.fillBrush = btn.graphics.newBrush(btn.graphics.BrushType.SOLID_COLOR, hexToArray(accentColor));
@@ -138,7 +138,7 @@
      * @param {number[]} size    - button size
      * @returns {number[]}       - coordinates array
      */
-    function buttonColorVector(parentObj, iconVec, iconColor, size) {
+    function buttonColorVector(parentObj: object, iconVec: string, iconColor: string, size: number[]) {
         // defines the artsize before resizing the button container
         var artSize = size;
         var vButton = parentObj.add('button', [0, 0, size[0], size[1], undefined]);
@@ -235,7 +235,7 @@
      * @param {number} startTime - time of first keyframe
      * @param {number} endTime   - time of last keyframe
      */
-    function setTimeMarkers(layer, startTime, endTime) {
+    function setTimeMarkers(layer: Layer, startTime: number, endTime: number) {
         // new marker object
         var layer_marker1 = new MarkerValue('Start');
         layer_marker1.eventCuePoint = true;
@@ -257,115 +257,8 @@
      * @param {number} time - time float value
      * @returns {string}    - rounded time in ms
      */
-    function timeToMs(time) {
+    function timeToMs(time: number) {
         return Math.round(time * 1000) + 'ms';
-    }
-
-    /**
-     * create the master text layer, return text layer; plain version
-     *
-     * @param {string} str  - Text to create
-     * @returns {TextLayer} - Created text layer
-     */
-    function buildText_plain(str) {
-        // initialize propStr as empty string
-        var propStr = str;
-
-        try {
-            // create new text layer
-            var dynText = thisComp.layers.addText('Spec Layer Name');
-            dynText.name = 'Spec Layer Name';
-            dynText.comment = scriptName + '_data';
-
-            // new text object
-            var dynText_TextProp = dynText('ADBE Text Properties')('ADBE Text Document');
-            var dynText_TextDocument = dynText_TextProp.value;
-
-            // reset all text values
-            dynText_TextDocument.resetCharStyle();
-
-            dynText_TextDocument.fontSize = Math.floor(dataSize[0] / 16);
-            dynText_TextDocument.font = 'CourierNewPS-BoldMT';
-            dynText_TextDocument.applyFill = true;
-            dynText_TextDocument.fillColor = [1, 1, 1];
-            dynText_TextDocument.applyStroke = false;
-            dynText_TextDocument.justification = ParagraphJustification.LEFT_JUSTIFY;
-            dynText_TextDocument.tracking = -30;
-
-            if (parseFloat(app.version) >= 13.2) {
-                dynText_TextDocument.verticalScale = 1;
-                dynText_TextDocument.horizontalScale = 1;
-                dynText_TextDocument.baselineShift = 0;
-                dynText_TextDocument.tsume = 0;
-            }
-
-            // apply text properties
-            dynText_TextProp.setValue(dynText_TextDocument);
-
-            // apply text string
-            dynText_TextProp.setValue(propStr);
-
-            // define manualLineHeight
-            var manualLineHeight = 10;
-
-            // create a new text animator
-            var lineHeight = dynText('ADBE Text Properties')(4).addProperty('ADBE Text Animator');
-            // name it line height
-            lineHeight.name = 'Line Height';
-            // add a Line Spacing element
-            lineHeight('ADBE Text Animator Properties').addProperty('ADBE Text Line Spacing');
-            // add a selector
-            lineHeight(1).addProperty('ADBE Text Selector');
-            // set value
-            lineHeight(2)('ADBE Text Line Spacing').setValue([0, manualLineHeight]);
-
-            // Transforms
-            dynText('ADBE Transform Group')('ADBE Anchor Point').setValue([0, -dynText_TextDocument.fontSize * 0.82, 0]);
-            dynText('ADBE Transform Group')('ADBE Position').setValue([leftEdge, margin, 0]);
-
-            return dynText;
-        } catch (e) {
-            alert([
-                e.toString(),
-                'Error on line: ' + e.line.toString()
-            ].join('\n'), scriptName);
-        }
-    }
-
-    /**
-     * Builds text block
-     *
-     * @param {object} p - Property data object
-     * @return {string}  - Text block string
-     */
-    function buildTextBlock(p) {
-        var firstKeyTime = p.firstKeyTime;
-        var str = '';
-
-        // loop through collected props
-        for (var j = 0; j < p.layers.length; j++) {
-            layer = p.layers[j];
-
-            // add prop name to text string
-            str += '\u2261 ' + layer.name + ' \u2261\n';
-
-            for (var i = 0; i < layer.props.length; i++) {
-                prop = layer.props[i];
-                str += '- ' + prop.name + ' -\n';
-
-                // add start time
-                // str += 'Start: ' + timeToMs(prop.startTime) + '\n';
-
-                str += 'Delay: ' + timeToMs(prop.startTime - firstKeyTime) + '\n';
-                str += 'Dur: ' + timeToMs(prop.dur) + '\n';
-                str += 'Val: ' + getValChange(prop) + '\n';
-
-                // add interpolation value
-                str += getEase(prop) + '\n\n';
-            }
-        }
-
-        return str;
     }
 
     /**
@@ -432,150 +325,6 @@
         } catch (error) {
             return []
         }
-    }
-
-    /**
-     * Gets property object
-     *
-     * @param {object} [opt_propObj] - Initial property object
-     * @return {object}              - Property object
-     */
-    function getPropObj(opt_propObj) {
-        if (opt_propObj == undefined) {
-            propCollect = [],
-                firstKeyTime = 9999999,
-                lastKeyTime = 0;
-
-            var propObj = {
-                firstKeyTime: 9999999,
-                lastKeyTime: 0,
-                layers: [],
-            }
-        } else {
-            propObj = opt_propObj;
-        }
-
-        // set the viewer to active
-        app.activeViewer.setActive();
-
-        // check if theres a comp selected, stop if not
-        if (!setComp()) {
-            return;
-        }
-
-        var selectedLayers = thisComp.selectedLayers;
-
-        // error check that keys are selected
-        try {
-            // loop through all selected layers
-            for (var i = 0; i < selectedLayers.length; i++) {
-                var alreadyInList = false;
-                // loop through all layers already in the list
-                for (var k = 0; k < propObj.layers.length; k++) {
-                    // is this new layer in the list?
-                    if (selectedLayers[i].index == propObj.layers[k].index) {
-
-                        var selectedProps = getProps(selectedLayers[i]);
-                        var alreadyInPropList = false;
-                        // add each property to the layer in the list
-                        for (var m = 0; m < selectedProps.length; m++) {
-                            // check that the property isn't already in the property list
-                            for (var n = 0; n < propObj.layers[k].props.length; n++) {
-                                if (propObj.layers[k].props[n].obj.matchName == selectedProps[m].obj.matchName) {
-                                    alreadyInPropList = true;
-                                    break;
-                                }
-                            }
-                            if (!alreadyInPropList) {
-                                propObj.layers[k].props.push(selectedProps[m]);
-                            }
-                        }
-
-                        alreadyInList = true;
-                        break;
-                    }
-                }
-                // add a new layer's properties to the list
-                if (!alreadyInList) {
-                    layer = selectedLayers[i];
-                    propObj.layers.push({
-                        name: layer.name,
-                        matchName: layer.matchName,
-                        index: layer.index,
-                        props: getProps(layer),
-                    })
-                }
-            }
-        } catch (e) {
-            alert('Select some keyframes.', scriptName);
-            return;
-        }
-
-        propObj.firstKeyTime = firstKeyTime;
-        propObj.lastKeyTime = lastKeyTime;
-
-        return propObj;
-
-        /**
-         * Gets property data from a layer
-         *
-         * @param {Layer} layer - Layer to get property data from
-         * @return {object[]}   - Data for each selected layer property
-         */
-        function getProps(layer) {
-            var propCollect = [];
-
-            // loop through selected properties
-            for (var k = 0; k < layer.selectedProperties.length; k++) {
-                prop = layer.selectedProperties[k];
-                if (prop.canVaryOverTime &&
-                    // check if selected prop is keyframable
-                    prop.selectedKeys.length > 1) {
-                    // set var to store selectedKey indices
-                    var selKeys = prop.selectedKeys;
-
-                    for (var m = 0; m < selKeys.length - 1; m++) {
-                        propCollect.push({
-                            obj: prop,
-                            threeDLayer: layer.threeDLayer || (layer instanceof CameraLayer),
-                            propertyValueType: prop.propertyValueType,
-                            name: prop.name,
-                            matchName: prop.matchName,
-                            dur: prop.keyTime(selKeys[m + 1]) - prop.keyTime(selKeys[m]),
-                            // val: 0,
-                            startTime: prop.keyTime(selKeys[m]),
-                            startValue: prop.keyValue(selKeys[m]),
-                            startTemporalEase: prop.keyOutTemporalEase(selKeys[m])[0],
-                            startEaseType: prop.keyOutInterpolationType(selKeys[m]),
-                            endTime: prop.keyTime(selKeys[m + 1]),
-                            endValue: prop.keyValue(selKeys[m + 1]),
-                            endTemporalEase: prop.keyInTemporalEase(selKeys[m + 1])[0],
-                            endEaseType: prop.keyInInterpolationType(selKeys[m + 1]),
-                            duration: prop.keyTime(selKeys[m + 1]) - prop.keyTime(selKeys[m]),
-                        });
-                    }
-                    // set firstKeyTime to first keyframe's start time
-                    firstKeyTime = Math.min(firstKeyTime, propCollect[0].startTime);
-                    lastKeyTime = Math.max(lastKeyTime, propCollect[propCollect.length - 1].endTime);
-                }
-            }
-
-            return propCollect;
-        }
-    }
-
-    /**
-     * Builds property text from an object
-     *
-     * @param {object} propObj - Property object to build text from
-     * @return {string}        - Text string
-     */
-    function getPropText(propObj) {
-        return [
-            'Total Dur: ' + timeToMs(propObj.lastKeyTime - propObj.firstKeyTime),
-            '',
-            buildTextBlock(propObj)
-        ].join('\n')
     }
 
     /**
@@ -659,154 +408,13 @@
 
 
     /**
-     * calculate and return cubic bezier text string
-     *
-     * @param {Property} activeProp - property object
-     */
-    function getEase(activeProp) {
-        try {
-            // count the property dimension
-            var dims = (activeProp.obj.value instanceof Array) ? activeProp.obj.value.length : 1;
-            // initalize first key
-            var k1 = activeProp.startValue;
-            // initalize last key
-            var k2 = activeProp.endValue;
-
-            // value change logic
-            var valChange;
-            if (dims == 1 || activeProp.propertyType == PropertyType.PROPERTY) {
-                valChange = k2 - k1;
-            } else {
-                if (activeProp.matchName.indexOf('Size') != -1) {
-                    valChange = 100000000000000;
-                } else {
-                    valChange = Math.sqrt(Math.pow(k2[0] - k1[0], 2) + Math.pow(k2[1] - k1[1], 2));
-                }
-            }
-
-            var keyOutSpeed = activeProp.startTemporalEase.speed;
-            var keyInSpeed = activeProp.endTemporalEase.speed;
-
-            if (keyOutSpeed < 0) {
-                keyOutSpeed *= -1;
-            }
-            if (keyInSpeed > 0) {
-                keyInSpeed *= -1;
-            }
-
-            var y1Mult = (activeProp.startTemporalEase.speed > 0) ? 1 : -1;
-            var y2Mult = (activeProp.endTemporalEase.speed > 0) ? 1 : -1;
-
-            var x1 = activeProp.startTemporalEase.influence / 100;
-            var y1 = (keyOutSpeed * x1) * (activeProp.duration / valChange) * y1Mult;
-            var x2 = 1 - activeProp.endTemporalEase.influence / 100;
-            var y2 = 1 - (keyInSpeed * (x2 - 1)) * (activeProp.duration / valChange) * y2Mult;
-
-            // check type of keys
-            if (activeProp.startEaseType == KeyframeInterpolationType.LINEAR && activeProp.endEaseType == KeyframeInterpolationType.LINEAR) {
-                // return if linear keys
-                return 'Linear';
-            } else if (activeProp.startEaseType == KeyframeInterpolationType.HOLD) {
-                // return if no change
-                return 'Hold';
-            } else if (isNaN(y1)) {
-                // return if no change
-                return 'No Change';
-            } else {
-                // return cubic bezier string
-                return '(' + round(x1) + ', ' + round(y1) + ', ' + round(x2) + ', ' + round(y2) + ')';
-            }
-            // error catch returns ()
-        } catch (e) {
-            return '()'
-        }
-    }
-
-
-    /**
-     * dup comp, resize new comp, add panel
-     * @param {CompItem} work_comp - comp object
-     */
-    function resizeCompNew(work_comp) {
-        for (var i = 1; i <= work_comp.layers.length; i++) {
-            // skip all this if there's already a panel layer
-            if (thisComp.layers[i].comment === scriptName + '_panel') {
-                return;
-            }
-        }
-
-        // make a new folder to store spec comps
-        createISTfolder();
-
-        // duplicate comp
-        thisComp = work_comp.duplicate();
-        // move new comp to IST folder
-        thisComp.parentFolder = inspectorFolder;
-        // rename duped comp
-        thisComp.name = work_comp.name + '_Spec';
-        // open new comp
-        thisComp.openInViewer();
-
-        // set panelSize
-        panelSize = [Math.floor(thisComp.height / 3), thisComp.height];
-
-        // set leftEdge
-        leftEdge = thisComp.width;
-
-        // resize comp
-        thisComp.width = leftEdge + panelSize[0];
-
-        try {
-            // create info panel backing layer
-            var compInfo = thisComp.layers.addShape();
-            // name panel layer
-            compInfo.name = 'Spec Panel 1';
-            // comment panel layer
-            compInfo.comment = scriptName + '_panel';
-            // set layer label to grey
-            compInfo.label = 0;
-
-            var shapeGroup = compInfo('ADBE Root Vectors Group').addProperty('ADBE Vector Group');
-            shapeGroup.name = 'Rectangle 1';
-
-            var rect = shapeGroup(2).addProperty('ADBE Vector Shape - Rect');
-            rect('ADBE Vector Rect Size').setValue(panelSize);
-            rect('ADBE Vector Rect Position').setValue(panelSize / 2);
-
-            var stroke = shapeGroup(2).addProperty('ADBE Vector Graphic - Stroke');
-            stroke.enabled = false;
-            stroke('ADBE Vector Stroke Width').setValue(6);
-
-            var fill = shapeGroup(2).addProperty('ADBE Vector Graphic - Fill');
-            fill('ADBE Vector Fill Color').setValue([0.08203125, 0.5625, 0.91796875, 1]);
-
-            var shapeGroup2 = compInfo('ADBE Root Vectors Group').addProperty('ADBE Vector Group');
-            shapeGroup2.name = 'Admin';
-            shapeGroup2(3)('ADBE Vector Scale').setValue(panelSize);
-
-            compInfo('ADBE Transform Group')('ADBE Position').setValue([leftEdge, 0]);
-        } catch (e) {
-            alert([
-                e.toString(),
-                'Error on line: ' + e.line.toString()
-            ].join('\n'), scriptName);
-        }
-
-        // update positioning variables
-        margin = Math.floor(panelSize[0] / 18);
-        panelSize -= margin * 2;
-        leftEdge += margin;
-    }
-
-
-    /**
      * round input to maximum number if decimal places, or int
      *
      * @param {number} value          - Value to round
      * @param {number} [opt_decimals] - Number of decimals, optional
      * @return {number}               - Rounded value
      */
-    function round(value, opt_decimals?) {
+    function round(value: number, opt_decimals?) {
         try {
             // default to 2 decimal places if nothing is specified
             var decimals = opt_decimals || 2;
@@ -817,386 +425,11 @@
     }
 
     /**
-     * Rounds all values in an array
-     *
-     * @param {number[]} array        - Array to round
-     * @param {number} [opt_decimals] - Number of decimals, optional
-     * @return {number[]}             - Rounded array
-     */
-    function roundArray(array, opt_decimals) {
-        if (!(array instanceof Array)) {
-            return round(array, opt_decimals);
-        }
-
-        var rounded = [];
-
-        for (var i = 0; i < array.length; i++) {
-            var element = array[i];
-            var roundedElement = round(element, opt_decimals);
-
-            rounded.push(roundedElement);
-        }
-
-        return rounded;
-    }
-
-    /**
-     * Create a SPEC folder if one doesn't exist
-     */
-    function createISTfolder() {
-        // initialize var with false
-        var hasRedlineFolder = false;
-        // loop through all project items
-        for (var i = 1; i <= app.project.numItems; i++) {
-            // find folders
-            if (app.project.item(i) instanceof FolderItem) {
-                // check if it's name matches the script name
-                if (app.project.item(i).name == scriptName) {
-                    // set the var to true
-                    hasRedlineFolder = true;
-                    // set the inspectorFolder var to the found folder
-                    inspectorFolder = app.project.item(i);
-                    // stop all that looping
-                    break;
-                }
-            }
-        }
-        // if no spec folder is found
-        if (!hasRedlineFolder) {
-            // create spec folder
-            inspectorFolder = app.project.items.addFolder(scriptName);
-        }
-    }
-
-
-    /**
-     * get the size of the current info panel
-     */
-    function getPanelSize() {
-        // loop through layers
-        for (var i = 1; i <= thisComp.layers.length; i++) {
-            // if layer has a panel comment
-            if (thisComp.layer(i).comment == scriptName + '_panel') {
-                // update vars
-                panelSize = thisComp.layer(i)('ADBE Root Vectors Group')(2)(3)('ADBE Vector Scale').value;
-                margin = Math.floor(panelSize[0] / 18)
-                leftEdge = thisComp.layer(i)('ADBE Transform Group')('ADBE Position').value[0] + margin;
-                dataSize = [panelSize[0] - margin * 2, panelSize[1] - margin * 2];
-                // stop looping
-                return;
-            }
-        }
-    }
-
-
-    /**
-     * filtering func that checks the property match name then feeds the prop to the appropriate value func
-     *
-     * @param {Property} activeProp - current property
-     */
-    function getValChange(activeProp) {
-        // check the property match name
-        switch (activeProp.obj.matchName) {
-            case 'ADBE Scale':
-                // is Scale
-                return valScale(activeProp);
-            case 'ADBE Position_0':
-                // is seperated X position
-                return valXPosition(activeProp);
-            case 'ADBE Position_1':
-                // is seperated Y position
-                return valXPosition(activeProp);
-            case 'ADBE Position':
-                // is Position array
-                return valPosition(activeProp);
-            case 'ADBE Rotate Z':
-                // is Rotation
-                return valRotation(activeProp);
-            case 'ADBE Opacity':
-                // is Opacity
-                return valOpacity(activeProp);
-            case 'ADBE Mask Shape':
-                // is a Mask
-                return 'Mask data unsupported';
-            case 'ADBE Vector Shape':
-                // is a Path
-                return 'Path data unsupported';
-            default:
-                // is anything else
-                return valGeneric(activeProp);
-        }
-    }
-
-    /**
-     * returns the position value change
-     *
-     * @param {Property} activeProp - current property
-     */
-    function valPosition(activeProp) {
-        // get the first key value
-        var a = activeProp.startValue;
-
-        // get the last key value
-        var b = activeProp.endValue;
-
-        // distance vs abs position values
-        var aRounded = roundArray(a);
-        var bRounded = roundArray(b);
-
-        if (!activeProp.threeDLayer) {
-            aRounded.length = 2;
-            bRounded.length = 2;
-        }
-
-        return JSON.stringify(aRounded) + '››' + JSON.stringify(bRounded);
-    }
-
-    /**
-     * returns the position value change for a seperated position value
-     *
-     * @param {Property} activeProp - current property
-     */
-    function valXPosition(activeProp) {
-        // get the first key value
-        var a = activeProp.startValue;
-
-        // get the last key value
-        var b = activeProp.endValue;
-
-        // the pixel multiplier for distance in DP
-        var pixelMult = ddl_resolution.selection.index + 1;
-
-        // distance vs abs position values
-
-        // distance selected
-        if (rad_pos.children[1].value) {
-            // calc the distance
-            var vectDist = (b - a) / pixelMult;
-
-            // return distance with dp
-            return (Math.round(vectDist) + 'dp');
-        } else {
-            // return coodinates
-            return (round(a, 2) + '››' + round(b, 2));
-        }
-    }
-
-    /**
-     * Gets Opacity percentage
-     *
-     * @param {any} activeProp - Current property object
-     * @return {string}        - Opacity string
-     */
-    function valOpacity(activeProp) {
-        // get the first key value
-        var a = activeProp.startValue;
-
-        // get the last key value
-        var b = activeProp.endValue;
-
-        return (round(a, 2) + '% ››› ' + round(b, 2) + '%');
-    }
-
-    /**
-     * Gets Rotation degrees
-     *
-     * @param {any} activeProp - Current property object
-     * @return {string}        - Rotation string
-     */
-    function valRotation(activeProp) {
-        // get the first key value
-        var a = activeProp.startValue;
-
-        // get the last key value
-        var b = activeProp.endValue;
-
-        return round(a) + '° ››› ' + round(b) + '°';
-    }
-
-    /**
-     * Gets Scale amounts
-     *
-     * @param {any} activeProp - Current property object
-     * @return {string}        - Scale string
-     */
-    function valScale(activeProp) {
-        // get the first key value
-        var a = activeProp.startValue;
-
-        // get the last key value
-        var b = activeProp.endValue;
-
-        // check if the x and y values match
-        var single = (round(a[0]) == round(a[1]) && round(b[0]) == round(b[1])) ? true : false;
-
-        if (single) {
-            // if values match, print single vals with percentage
-            return (round(a[0]) + '% ›› ' + round(b[0]) + '%');
-        } else {
-            var aRounded = roundArray(a);
-            var bRounded = roundArray(b);
-
-            if (!activeProp.threeDLayer) {
-                aRounded.length = 2;
-                bRounded.length = 2;
-            }
-
-            return JSON.stringify(aRounded) + '%››' + JSON.stringify(bRounded) + '%';
-        }
-    }
-
-    /**
-     * Gets generic value
-     *
-     * @param {any} activeProp - Current property object
-     * @return {string}        - Generic string
-     */
-    function valGeneric(activeProp) {
-        // get the first key value
-        var a = activeProp.startValue;
-
-        // get the last key value
-        var b = activeProp.endValue;
-
-        // it's an array value, check if the x and y values match
-        if (a instanceof Array) {
-            var single = (round(a[0]) == round(a[1]) && round(b[0]) == round(b[1])) ? true : false;
-
-            if (single) {
-                // if values match, print single vals with percentage
-                return (round(a[0]) + ' ›› ' + round(b[0]));
-            } else {
-                var aRounded = roundArray(a);
-                var bRounded = roundArray(b);
-
-                if (!activeProp.threeDLayer) {
-                    aRounded.length = 2;
-                    bRounded.length = 2;
-                }
-
-                return JSON.stringify(aRounded) + '››' + JSON.stringify(bRounded);
-            }
-        } else {
-            // its not an array value, return value
-            return (round(a, 2) + '››' + round(b, 2));
-        }
-    }
-
-
-    /**
-     * create an isolation layer
-     */
-    function buildIsoLayer() {
-        var isolationLayer = thisComp.layers.addShape();
-        isolationLayer.name = '\u2193\u2193 Isolation \u2193\u2193';
-        isolationLayer.label = 0;
-        isolationLayer.adjustmentLayer = true;
-
-        var shapeGroup = isolationLayer('ADBE Root Vectors Group').addProperty('ADBE Vector Group');
-        shapeGroup.name = 'Rectangle 1';
-
-        var rect = shapeGroup(2).addProperty('ADBE Vector Shape - Rect');
-        rect('ADBE Vector Rect Size').setValue([thisComp.width, thisComp.height]);
-
-        var stroke = shapeGroup(2).addProperty('ADBE Vector Graphic - Stroke');
-        stroke.enabled = false;
-        stroke('ADBE Vector Stroke Width').setValue(3);
-
-        var fill = shapeGroup(2).addProperty('ADBE Vector Graphic - Fill');
-        fill('ADBE Vector Fill Color').setValue([0, 0, 0, 1]);
-
-        var tint = isolationLayer('ADBE Effect Parade').addProperty('ADBE Tint');
-        tint('ADBE Tint-0001').setValue([0.3, 0.3, 0.3, 1]);
-        tint('ADBE Tint-0002').setValue([0.35, 0.35, 0.35, 1]);
-    }
-
-
-    /**
-     * Create a shape layer pointer
-     */
-    function buildPointer() {
-        try {
-            if (leftEdge == undefined) {
-                alert('Gotta create a spec panel first.', scriptName);
-                return;
-            }
-
-            // new shape layer
-            var pointer1 = thisComp.layers.addShape();
-            // name shape layer
-            pointer1.name = 'Pointer 1';
-            // set label color
-            pointer1.label = 2;
-
-            var shapeGroup = pointer1('ADBE Root Vectors Group').addProperty('ADBE Vector Group');
-            shapeGroup.name = 'Pointer';
-            shapeGroup(2).addProperty('ADBE Vector Shape - Rect');
-
-            var trim = shapeGroup(2).addProperty('ADBE Vector Filter - Trim');
-            trim('ADBE Vector Trim End').setValue(25);
-            trim('ADBE Vector Trim Offset').setValue(-90);
-
-            var gradFill = shapeGroup(2).addProperty('ADBE Vector Graphic - G-Fill');
-            gradFill.enabled = false;
-
-            shapeGroup(3)('ADBE Vector Anchor').setValue([0, -50]);
-            shapeGroup(3)('ADBE Vector Position').setValue([-580, 0]);
-            shapeGroup(3)('ADBE Vector Scale').setValue([100, 100]);
-
-            var shapeGroup2 = pointer1('ADBE Root Vectors Group').addProperty('ADBE Vector Group');
-            shapeGroup2.name = 'Arm';
-            shapeGroup2(2).addProperty('ADBE Vector Shape - Rect');
-
-            var trim2 = shapeGroup2(2).addProperty('ADBE Vector Filter - Trim');
-            trim2('ADBE Vector Trim End').setValue(50);
-            trim2('ADBE Vector Trim Offset').setValue(180);
-
-            var gradFill2 = shapeGroup2(2).addProperty('ADBE Vector Graphic - G-Fill');
-            gradFill2.enabled = false;
-            shapeGroup2(3)('ADBE Vector Anchor').setValue([50, -50]);
-            shapeGroup2(3)('ADBE Vector Scale').setValue([564, 349]);
-
-            var stroke = pointer1('ADBE Root Vectors Group').addProperty('ADBE Vector Graphic - Stroke');
-            stroke('ADBE Vector Stroke Width').setValue(6);
-            stroke('ADBE Vector Stroke Color').setValue([0.4795, 0.4795, 0.4795, 1]);
-
-            var fxPoint = pointer1('ADBE Effect Parade').addProperty('ADBE Point Control');
-            fxPoint.name = 'Arm Length';
-            fxPoint('ADBE Point Control-0001').setValue([775, 200]);
-
-            var fxSize = pointer1('ADBE Effect Parade').addProperty('ADBE Slider Control');
-            fxSize.name = 'Pointer Size';
-            fxSize('ADBE Slider Control-0001').setValue(200);
-
-            pointer1('ADBE Transform Group')('ADBE Position').setValue([leftEdge - margin * 2, 192, 0]);
-
-            // Apply expressions to properties
-            try {
-                pointer1('ADBE Root Vectors Group')(1)(3)('ADBE Vector Position').expression = [
-                    'p = effect("Arm Length")("Point");',
-                    '[-p[0], p[1]]'
-                ].join('\n');
-                pointer1('ADBE Root Vectors Group')(1)(3)('ADBE Vector Scale').expression = [
-                    's = effect("Pointer Size")("Slider");',
-                    '[s, s]'
-                ].join('\n');
-                pointer1('ADBE Root Vectors Group')(2)(3)('ADBE Vector Scale').expression = 'effect("Arm Length")("Point")';
-            } catch (err) { }
-        } catch (e) {
-            alert([
-                e.toString(),
-                'Error on line: ' + e.line.toString()
-            ].join('\n'), scriptName);
-        }
-    }
-
-
-    /**
      * create clickable web links from AE
      *
      * @param {string} url - web url
      */
-    function visitURL(url) {
+    function visitURL(url: string) {
         if ($.os.indexOf('Windows') != -1) {
             system.callSystem('cmd /c "' + Folder.commonFiles.parent.fsName + "\\Internet Explorer\\iexplore.exe" + '" ' + url);
         } else {
@@ -1212,7 +445,7 @@
      * @param {any} val    - Object value
      * @return {any}       - Object value
      */
-    function replacer(key, val) {
+    function replacer(key: string, val: any) {
         if (key === 'obj') {
             return undefined;
         } else {
@@ -1227,7 +460,7 @@
      * @param {string} filter   - File type filter to use, Win only
      * @return {File | null}    - User file object
      */
-    function getUserFile(filename, filter) {
+    function getUserFile(filename: string, filter: string) {
         var defaultPath = Folder.desktop.fullName + '/' + filename;
         var outputFile = new File(defaultPath).saveDlg(
             'Choose output path',
@@ -1248,7 +481,7 @@
      * @param {string} contents    - File contents to write
      * @returns {File}             - Written file
      */
-    function writeFile(path, contents) {
+    function writeFile(path: File | string, contents: string) {
         var file = path instanceof File ? path : new File(path);
 
         file.open('w');
@@ -1262,10 +495,29 @@
         return file;
     }
 
+    interface Spec {
+        compName: string;
+        spacetimeVersion: string;
+        aeVersion: string;
+        layers: any
+        // layers: [{
+        //     name: string;
+        //     props: [{
+        //         name: string;
+        //         value: object;
+        //         duration: number;
+        //         delay: number;
+        //         ease: number[];
+        //     }];
+        // }]
+    }
+    // interface kbar {
+    //     button: boolean
+    // }
     /**
      * Scans through all selected keyframes to gather spec data
      * 
-     * @returns {object}            - Seleected keyframes as a collection of value, duration, ease, delay values
+     * @returns {Spec}            - Selected keyframes as a collection of value, duration, ease, delay values
      */
     function getKeysSpec() {
         try {
@@ -1274,8 +526,10 @@
             let selKeys = getSelKeys()
 
             //inital spec object
-            let spec = {
+            let spec: Spec = {
                 compName: thisComp.name,
+                spacetimeVersion: null,
+                aeVersion: null,
                 layers: [],
             }
 
@@ -1314,10 +568,10 @@
     /**
      * Parses each keyframe pair for spec data
      * 
-     * @param {object} actKey       - contains the prop and key indices 
+     * @param actKey                - contains the prop and key indices 
      * @returns {object}            - value change, duration, cubic bezier easing curve, delay from the playhead
      */
-    function getPropSpec(actKey) {
+    function getPropSpec(actKey: {prop: Property, keys: number[]}) {
         const prop = actKey.prop;
         const keys = actKey.keys;
 
@@ -1407,20 +661,21 @@
         }
     }
 
+    
     /**
      * Convert the spec object into readable text
      * 
-     * @param {object} json         - spec object hierarchy
+     * @param specObj               - spec object hierarchy
      * @returns {string}            - multi-line text of the spec data
      */
-    function parseSpecText(json) {
+    function parseSpecText(specObj: Spec) {
         try {
             
             let str = ''
     
-            str = `# ${json.compName}\n`
+            str = `# ${specObj.compName}\n`
     
-            for (let layer of json.layers) {
+            for (let layer of specObj.layers) {
                 str += `\n## ${ layer.name }`
     
                 for (let prop of layer.props) {
@@ -1469,9 +724,8 @@
 
         return str
     }
-    function getCubic(arr) {
+    function getCubic(arr: number[]) {
         let val = ''
-        let color = ''
         const easeLib = {
             linear: {
                 val: [0.0, 0.0, 1.0, 1.0]
@@ -1501,370 +755,27 @@
                         name: capitalizeFirstLetter(key),
                         cubic: cubicBez
                     }
-                    // console.log('tokenMatch:', arr, key);
                 }
             }
         }
 
         if (tokenMatch) {
             val = `${tokenMatch.name}`
-            // val = `${tokenMatch.name}: (${tokenMatch.cubic})`
-            // color = /Linear/.test(tokenMatch.name)
-            //     ? 'gold'
-            //     : /In/.test(tokenMatch.name)
-            //         ? '#7ec850'
-            //         : /Out/.test(tokenMatch.name)
-            //             ? 'tomato'
-            //             : 'skyblue'
-
         } else {
             val = `(${arr[0].toFixed(2)}, ${arr[1].toFixed(2)}, ${arr[2].toFixed(2)}, ${arr[3].toFixed(2)})`
-            color = (this.darkmode) ? 'hsl(196, 70%, 50%)' : 'hsl(196, 70%, 50%)'    // yellow
         }
-
-        // }
 
         return val
     }
-    function capitalizeFirstLetter(string) {
-        return string.charAt(0).toUpperCase() + string.slice(1);
+    /**
+     * 
+     * @param str 
+     * @returns {string} 
+     */
+    function capitalizeFirstLetter(str: string) {
+        return str.charAt(0).toUpperCase() + str.slice(1);
     }
 
-    // _______ UI SETUP _______
-    // if the script is a Panel, (launched from the 'Window' menu), use it,
-    // else (launched via 'File/Scripts/Run script...') create a new window
-    // store it in the variable mainPalette
-    // var mainPalette = thisObj instanceof Panel ? thisObj : new Window('palette', scriptName, undefined, { resizeable: true });
-
-    // //stop if there's no window
-    // if (mainPalette === null) {
-    //     return;
-    // }
-
-    // // set margins and alignment
-    // mainPalette.alignChildren = ['fill', 'fill'];
-    // // mainPalette.margins = 2;
-    // // mainPalette.spacing = 2;
-
-    // // ============ ADD UI CONTENT HERE =================
-    // // content group
-    // var content = mainPalette.add('group');
-    // content.alignChildren = ['fill', 'fill'];
-    // content.orientation = 'column';
-    // // content.margins = 0;
-    // content.spacing = 5;
-
-    // // main button
-    // var btnLaunch = buttonColorVector(content, icons.build, '#5B8BA3', [224, 64]);
-    // btnLaunch.maximumSize.height = 64;
-    // btnLaunch.minimumSize.height = 64;
-    // btnLaunch.helpTip = 'Select keyframe pairs to build spec panel';
-
-    // // button for isolation layer
-    // // var btn_dataPanel = buttonColorText(content, '#5B8BA3', 'Panel');
-
-    // var grp_options = content.add('group');
-    // grp_options.orientation = 'row';
-    // grp_options.alignChildren = ['fill', 'top'];
-    // grp_options.margins = 0;
-
-    // var settings = grp_options.add('group');
-    // settings.alignment = 'fill';
-    // settings.alignChildren = ['fill', 'top'];
-    // settings.orientation = 'column';
-    // settings.margins = [0, 6, 0, 0];
-
-    // // radio pane for coods vs distance
-    // var grp_pos = settings.add('panel', undefined, 'Position');
-    // grp_pos.alignChildren = 'left';
-    // grp_pos.alignment = 'left';
-    // grp_pos.orientation = 'column';
-    // grp_pos.spacing = 0;
-    // grp_pos.margins = [8, 10, 0, 6];
-    // grp_pos.maximumSize.width = 110;
-    // grp_pos.minimumSize.width = 110;
-
-    // var rad_pos = grp_pos.add('group');
-
-    // // radio coord
-    // var posCoord = rad_pos.add('radiobutton', undefined, 'Pixel');
-    // posCoord.helpTip = 'Print position as pixel coordinates';
-
-    // // radio distance
-    // var posDistance = rad_pos.add('radiobutton', undefined, 'DP');
-    // posDistance.helpTip = 'Print position as dp movement';
-    // posDistance.value = true;
-
-    // // dropdown list for
-    // var ddl_resolution = settings.add('dropdownlist', undefined, ['1x', '2x', '3x']);
-    // ddl_resolution.selection = 2;
-    // ddl_resolution.maximumSize.width = 110;
-    // ddl_resolution.minimumSize.width = 110;
-    // ddl_resolution.alignment = 'left';
-    // ddl_resolution.helpTip = 'Dp multiplier';
-
-    // var grp_buttons = grp_options.add('group');
-    // grp_buttons.alignChildren = ['fill', 'top'];
-    // grp_buttons.orientation = 'column';
-    // grp_buttons.margins = 0;
-    // grp_buttons.spacing = 1;
-
-    // // button for isolation layer
-    // var btn_isolation = buttonColorText(grp_buttons, '#37474F', 'Iso Layer');
-    // btn_isolation.helpTip = [
-    //     'Create a color adjustment layer',
-    //     'the drag below targeted layers'
-    // ].join('\n');
-
-    // // button for pointer layer
-    // var btn_pointer = buttonColorText(grp_buttons, '#37474F', 'Pointer');
-    // btn_pointer.helpTip = [
-    //     'Create an adjustable pointer',
-    //     'line to connect text to element'
-    // ].join('\n');
-
-    // // button for counter layer
-    // var btn_counter = buttonColorText(grp_buttons, '#37474F', 'Counter');
-    // btn_counter.helpTip = 'Create text counter without building a spec';
-
-    // var btn_aboutScript = buttonColorText(grp_buttons, '#263238', '?');
-    // btn_aboutScript.helpTip = 'About ' + scriptName;
-    // btn_aboutScript.minimumSize = [30, 30];
-    // btn_aboutScript.maximumSize = [30, 30];
-    // btn_aboutScript.alignment = ['right', 'bottom'];
-
-    // // ============ Button Functionality =================
-
-    // posCoord.onClick = function () {
-    //     ddl_resolution.visible = false;
-    // };
-    // posDistance.onClick = function () {
-    //     ddl_resolution.visible = true;
-    // };
-    // btn_aboutScript.onClick = function () {
-    //     // new dialog window
-    //     var w = new Window('dialog', 'About ' + scriptName);
-    //     w.spacing = 0;
-    //     w.margins = 0;
-
-    //     // group to hold intry box
-    //     var content = w.add('group', undefined, '');
-    //     content.alignChildren = ['fill', 'fill'];
-    //     content.orientation = 'column';
-    //     content.alignment = ['left', 'top'];
-    //     content.margins = 16;
-    //     // content metrics
-    //     content.spacing = 8;
-
-    //     var btn_url = buttonColorVector(content, icons.build, '#EF5350', [224, 64]);
-
-    //     content.add('statictext', [0, 0, 400, 340],
-    //         [
-    //             'Speed up the creation of animation specs for engineering while reducing miscommunication. One click to collect selected keyframe pair data to a text panel. Copy/paste this text out or build a panel along side the comp for easy reference.',
-    //             '',
-    //             'Usage:',
-    //             '• Click the big button to open the property collection panel.',
-    //             '• Additional key pairs will be added to the list, grouped by layer. The total duration and individual propery delays will update.',
-    //             '• Copy out this text or create a panel along side a duplicate of your comp.',
-    //             '',
-    //             'Add ons:',
-    //             '• Pixel/DP: This data can be communicated as coordinates or in DP. Set the density dropdown based on resolution of your comp.',
-    //             '• ISO LAYER: Creates an adjustment layer below the selected layer to dims other layers. This allows layers to be hilighted while keeping things in context.',
-    //             '• POINTER: Creates an editable arrow to quickly draw a line from the text spec to on-screen element.',
-    //             '',
-    //             scriptName + ' - v' + scriptVersion,
-    //             'Created by Adam Plouff at Google'
-    //         ].join('\n'),
-    //         {
-    //             multiline: true
-    //         }
-    //     );
-
-    //     buttonColorText(content, '#406280', 'Close');
-    //     btn_url.onClick = function () {
-    //         visitURL('http://google.github.io/inspectorspacetime');
-    //     }
-    //     w.show();
-    // }
-
-    // btn_isolation.onClick = function () {
-    //     setComp();
-
-    //     app.beginUndoGroup('New Isolation Layer');
-    //     buildIsoLayer();
-    //     app.endUndoGroup();
-    // };
-
-    // btn_pointer.onClick = function () {
-    //     setComp();
-    //     getPanelSize();
-
-    //     app.beginUndoGroup('New Pointer');
-    //     buildPointer();
-    //     app.endUndoGroup();
-    // };
-
-    // btn_counter.onClick = function () {
-    //     setComp();
-    //     // getPanelSize();
-    //     // get selected keys range
-    //     var keyRange = getKeyRange();
-    //     // if no keys selected use the playhead time and playhead + 1:00
-    //     if (keyRange[0] == 9999999) {
-    //         keyRange = [thisComp.time, thisComp.time + 1];
-    //     }
-
-    //     app.beginUndoGroup('New Counter');
-    //     // build text layer
-    //     var textLayer = buildCounter();
-    //     // set markers
-    //     setTimeMarkers(textLayer, keyRange[0], keyRange[1]);
-    //     textLayer('ADBE Text Properties')('ADBE Text Document').expression = exp_counter;
-
-    //     // close twirled layers
-    //     app.executeCommand(2771);
-    //     app.executeCommand(2771);
-    //     app.endUndoGroup();
-    // };
-
-    // btnLaunch.onClick = function () {
-    //     try {
-    //         var w = new Window('palette', scriptName, undefined, { resizeable: true });
-    //         w.alignChildren = ['fill', 'fill'];
-
-    //         var propObj = getPropObj();
-    //         var propText = getPropText(propObj);
-
-    //         // tabs
-    //         var tpanel = w.add('tabbedpanel');
-    //         tpanel.alignChildren = ['fill', 'fill'];
-    //         tpanel.minimumSize = [350, 300];
-    //         tpanel.maximumSize.height = 800;
-
-    //         var tab_text = tpanel.add('tab', undefined, 'Text');
-    //         tab_text.alignChildren = ['fill', 'fill'];
-
-    //         var textField = tab_text.add('edittext', undefined, '', { multiline: true });
-    //         textField.text = propText;
-
-
-    //         var tab_json = tpanel.add('tab', undefined, 'JSON');
-    //         tab_json.alignChildren = ['fill', 'fill'];
-
-    //         var jsonField = tab_json.add('edittext', [0, 0, 350, 300], '', { multiline: true });
-    //         jsonField.text = JSON.stringify(propObj, replacer, 2);
-
-    //         // clear props if no keys selected on initialize
-    //         if (propObj.firstKeyTime == 9999999) {
-    //             clearProps();
-    //         }
-
-    //         // buttons
-    //         var buttons = w.add('group');
-    //         buttons.alignment = 'right';
-    //         buttons.minimumSize.height = 28;
-    //         buttons.maximumSize.height = 28;
-
-    //         var btn_clearProp = buttons.add('button', undefined, '⊗ Clear ⊗');
-    //         var btn_addProp = buttons.add('button', undefined, '↑ Add property ↑');
-    //         var btn_newSidePanel = buttons.add('button', undefined, '→ Create side panel →');
-    //         var btn_exportJson = buttons.add('button', undefined, '⤵ Export ⤵');
-
-    //         btn_clearProp.onClick = function () {
-    //             clearProps();
-    //         }
-    //         btn_addProp.onClick = function () {
-
-    //             propObj = getPropObj(propObj);
-    //             jsonField.text = JSON.stringify(propObj, replacer, 2);
-
-    //             propText = getPropText(propObj);
-    //             textField.text = propText;
-    //         }
-
-    //         btn_newSidePanel.onClick = function () {
-    //             try {
-    //                 // start undo group
-    //                 app.beginUndoGroup('Create ' + scriptName + 'Elements');
-
-    //                 // resize the comp
-    //                 resizeCompNew(thisComp);
-
-    //                 // set the panel size in relation to the comp size
-    //                 getPanelSize();
-
-    //                 buildText_plain(textField.text);
-
-    //                 // close twirled layers
-    //                 app.executeCommand(2771);
-    //                 app.executeCommand(2771);
-
-    //                 app.endUndoGroup();
-    //             } catch (e) {
-    //                 alert([
-    //                     e.toString(),
-    //                     'Error on line: ' + e.line.toString()
-    //                 ].join('\n'), scriptName);
-    //             }
-    //         }
-
-    //         btn_exportJson.onClick = function () {
-    //             var propObj = getPropObj(propObj);
-    //             propObj.spacetimeVersion = scriptVersion;
-    //             propObj.aeVersion = app.version;
-
-    //             var outputFile = getUserFile('spec.spacetime.json', 'spacetime:*.spacetime.json;');
-
-    //             if (!outputFile) {
-    //                 return;
-    //             }
-
-    //             try {
-    //                 var writtenFile = writeFile(outputFile, JSON.stringify(propObj, replacer, 2));
-    //                 alert('Wrote file to ' + writtenFile.fsName, scriptName);
-    //             } catch (e) {
-    //                 alert(e, scriptName);
-    //             }
-    //         }
-
-    //         /**
-    //          * Clears global variables
-    //          */
-    //         function clearProps() {
-    //             propObj = null;
-    //             propText = null;
-
-    //             jsonField.text = '';
-    //             textField.text = '';
-    //         }
-
-    //         // visibility
-    //         // tpanel.selection = 1;
-    //         w.layout.layout(true);
-    //         w.layout.resize();
-    //         w.onResizing = w.onResize = function () { w.layout.resize(); };
-    //         w.show();
-    //     } catch (e) {
-    //         alert([
-    //             e.toString(),
-    //             'Error on line: ' + e.line.toString()
-    //         ].join('\n'));
-    //     }
-    // }
-
-    // //__________ SHOW UI ___________
-    // // Set layout, and resize it on resize of the Panel/Window
-    // mainPalette.layout.layout(true);
-    // mainPalette.layout.resize();
-    // mainPalette.onResizing = mainPalette.onResize = function () {
-    //     mainPalette.layout.resize();
-    // };
-
-    // //if the script is not a Panel (launched from File/Scripts/Run script...) we need to show it
-    // if (!(mainPalette instanceof Panel)) {
-    //     mainPalette.show();
-    // }
-    //______________________________
 
     function buildUI() {
         /*
@@ -1892,7 +803,7 @@
         // =======
         var tpanel1 = myPanel.add("tabbedpanel", undefined, undefined, { name: "tpanel1" });
         tpanel1.alignChildren = "fill";
-        tpanel1.preferredSize.width = 246.359;
+        tpanel1.preferredSize.width = 208;
         tpanel1.margins = 0;
         tpanel1.alignment = ["fill", "top"];
 
@@ -1907,27 +818,8 @@
 
         var txt_textField = tab1.add('edittext {properties: {name: "txt_textField", multiline: true, scrollable: true}}');
         txt_textField.helpTip = "Event marker name";
-        txt_textField.preferredSize.height = 200;
+        txt_textField.preferredSize.height = 235;
         txt_textField.alignment = ["fill", "top"];
-
-        // GROUP1
-        // ======
-        var group1 = tab1.add("group", undefined, { name: "group1" });
-        group1.orientation = "row";
-        group1.alignChildren = ["center", "center"];
-        group1.spacing = 10;
-        group1.margins = 0;
-        group1.alignment = ["fill", "top"];
-
-        var btn_newBarSide = group1.add("button", undefined, undefined, { name: "btn_newBarSide" });
-        btn_newBarSide.text = "New side bar";
-        btn_newBarSide.justify = "left";
-        btn_newBarSide.alignment = ["center", "fill"];
-
-        var btn_newBarBottom = group1.add("button", undefined, undefined, { name: "btn_newBarBottom" });
-        btn_newBarBottom.text = "New bottom bar";
-        btn_newBarBottom.justify = "left";
-        btn_newBarBottom.alignment = ["center", "fill"];
 
         // TAB2
         // ====
@@ -1951,16 +843,16 @@
         btn_saveJSON.text = "Save to .JSON";
         btn_saveJSON.alignment = ["fill", "top"];
 
-        // GROUP2
+        // GROUP1
         // ======
-        var group2 = myPanel.add("group", undefined, { name: "group2" });
-        group2.orientation = "row";
-        group2.alignChildren = ["left", "center"];
-        group2.spacing = 10;
-        group2.margins = 0;
-        group2.alignment = ["fill", "top"];
+        var group1 = myPanel.add("group", undefined, { name: "group1" });
+        group1.orientation = "row";
+        group1.alignChildren = ["left", "center"];
+        group1.spacing = 10;
+        group1.margins = 0;
+        group1.alignment = ["fill", "top"];
 
-        var btn_newCounter = group2.add("button", undefined, undefined, { name: "btn_newCounter" });
+        var btn_newCounter = group1.add("button", undefined, undefined, { name: "btn_newCounter" });
         btn_newCounter.helpTip = "Create a time counter layer";
         btn_newCounter.text = "New counter";
         btn_newCounter.justify = "left";
@@ -2007,36 +899,6 @@
                 alert(e, scriptName);
             }
         }
-        // btn_linkKeyframes.onClick = function () {
-        //     if (!setComp()) { return }
-        //     linkKeyframes(ScriptUI.environment.keyboardState.shiftKey)
-        // }
-        // btn_linkLayerMarker.onClick = function () {
-        //     if (!setComp()) { return }
-        //     linkLayerMarker(ScriptUI.environment.keyboardState.shiftKey)
-        // }
-        // // btn_linkLayers.onClick = function () {
-        // //     linkLayers(ScriptUI.environment.keyboardState.shiftKey)
-        // // }
-        // btn_update.onClick = function () {
-        //     if (!setComp()) { return }
-        //     app.beginUndoGroup('Update keyframes to markers')
-        //     updateKeys()
-        //     app.endUndoGroup()
-        // }
-        // btn_getMarkers.onClick = function () {
-        //     if (!setComp()) { return }
-        //     app.beginUndoGroup('Get markers from precomp')
-        //     getNestedMarkers()
-        //     app.endUndoGroup()
-        // }
-        // btn_updateNested.onClick = function () {
-        //     if (!setComp()) { return }
-        //     updateNestedKeys()
-        // }
-        // btn_gestureTap.onClick = function () {
-        //     newGesture('tap')
-        // }
         btn_newCounter.onClick = function () {
             buildCounter();
         }
