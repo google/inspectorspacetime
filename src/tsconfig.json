@@ -1,7 +1,7 @@
 {
   "compileOnSave": true,
   "compilerOptions": {
-    "outFile": "../InspectorSpacetime.jsx",
+    "outFile": "../dist/InspectorSpacetime.jsx",
     "allowJs": true,
     "noLib": true,
     "removeComments": true,
