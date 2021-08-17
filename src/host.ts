@@ -27,31 +27,66 @@
     //================ VARIABLES ======================
     var scriptName = 'Inspector Spacetime';
     var scriptVersion = '2.3';
-    var thisComp, inspectorFolder, margin, leftEdge, panelSize = [0, 0], dataSize = [0, 0];
+    var thisComp, easeLib = {};
 
     var exp_counter = 'var sTime = marker.key("Start").time; var eTime = marker.key("End").time; var countTime = Math.max(time - sTime, 0); countTime = Math.min(countTime, eTime - sTime); var counter = Math.round(countTime * 1000); var playIcon = (time > sTime && time < eTime) ? "\u25ba " : "\u25a0 "; playIcon + counter + "ms";';
+    let configFolder = Folder.userData.toString() + '/BattleAxe/InspectorSpacetime/config/'
+
+    initConfig()
 
     // icon string for retina icons
-    var icons = {
-        build: [
-            '104 26.478 104.82 32.260 104 38.043 116.39 35.565 115.56 40.521 123 32.260 115.56 24 116.39 28.956',
-            '93 48 93 57 34 57 34 43 32 43 32 39 34 39 34 38 30 38 30 34 34 34 34 7 36 7 36 34 69 34 69 38 36 38 36 39 80 39 80 43 36 43 36 55 91 55 91 48 63 48 63 44 91 44 91 16 38 16 38 12 91 12 91 9 36 9 36 7 93 7 93 12 96 12 96 16 93 16 93 44 98 44 98 48 93 48',
-            '45 23 91 23 91 27 45 27',
-            '65 49 67 51 65 53 63 51',
-            '76 17 78 19 76 21 74 19',
-            '40 17 42 19 40 21 38 19',
-            '85 49 89 49 87.66 51 89 53 85 53 86.33 51',
-            '69 28 73 28 71.66 30 73 32 69 32 70.33 30',
-            '50 28 54 28 52.66 30 54 32 50 32 51.33 30',
-            '160 7 160 56 170 56 170 54 160 54 160 53 174 53 174 51 160 51 160 50 167 50 167 48 168 48 168 50 173 50 173 48 160 48 160 47 166 47 166 45 160 45 160 42 172 42 172 40 160 40 160 39 170 39 170 37 160 37 160 36 167 36 167 34 168 34 168 36 177 36 177 34 160 34 160 33 172 33 172 31 160 31 160 28 170 28 170 26 160 26 160 25 172 25 172 23 160 23 160 22 167 22 167 20 168 20 168 22 175 22 175 20 160 20 160 19 169 19 169 17 160 17 160 14 176 14 176 12 160 12 160 11 173 11 173 9 160 9 160 7 181 7 181 58 157 58 131 58 131 7 157 7 157 9 133 9 133 56 157 56 157 7'
-        ]
-    };
+    // var icons = {
+    //     build: [
+    //         '104 26.478 104.82 32.260 104 38.043 116.39 35.565 115.56 40.521 123 32.260 115.56 24 116.39 28.956',
+    //         '93 48 93 57 34 57 34 43 32 43 32 39 34 39 34 38 30 38 30 34 34 34 34 7 36 7 36 34 69 34 69 38 36 38 36 39 80 39 80 43 36 43 36 55 91 55 91 48 63 48 63 44 91 44 91 16 38 16 38 12 91 12 91 9 36 9 36 7 93 7 93 12 96 12 96 16 93 16 93 44 98 44 98 48 93 48',
+    //         '45 23 91 23 91 27 45 27',
+    //         '65 49 67 51 65 53 63 51',
+    //         '76 17 78 19 76 21 74 19',
+    //         '40 17 42 19 40 21 38 19',
+    //         '85 49 89 49 87.66 51 89 53 85 53 86.33 51',
+    //         '69 28 73 28 71.66 30 73 32 69 32 70.33 30',
+    //         '50 28 54 28 52.66 30 54 32 50 32 51.33 30',
+    //         '160 7 160 56 170 56 170 54 160 54 160 53 174 53 174 51 160 51 160 50 167 50 167 48 168 48 168 50 173 50 173 48 160 48 160 47 166 47 166 45 160 45 160 42 172 42 172 40 160 40 160 39 170 39 170 37 160 37 160 36 167 36 167 34 168 34 168 36 177 36 177 34 160 34 160 33 172 33 172 31 160 31 160 28 170 28 170 26 160 26 160 25 172 25 172 23 160 23 160 22 167 22 167 20 168 20 168 22 175 22 175 20 160 20 160 19 169 19 169 17 160 17 160 14 176 14 176 12 160 12 160 11 173 11 173 9 160 9 160 7 181 7 181 58 157 58 131 58 131 7 157 7 157 9 133 9 133 56 157 56 157 7'
+    //     ]
+    // };
 
     // ================ FUNCTIONS =============
 
+    /**
+     * Initialize support files 
+     */
+    function initConfig() {
+        easeLib = {
+            linear: {
+                val: [0.0, 0.0, 1.0, 1.0]
+            },
+            hold: {
+                val: [0.0, 0.0, 0.0, 0.0]
+            },
+        }
+        const easeLibPath = `${configFolder}/ease-library.json`
+
+        if (!Folder(configFolder).exists) {         // config folder does not exist
+            Folder(configFolder).create();
+        }
+        
+        if (!Folder(easeLibPath).exists) {          // ease library file does not exist
+            writeFile(easeLibPath, JSON.stringify(easeLib, replacer, 2))
+        } else {                                    // ease library exists so read it
+            let file = File(easeLibPath)
+            file.open('r')
+            let data = file.read()
+            file.close()
+            
+            if (data != '') {                       // make sure there is something in the file
+                easeLib = JSON.parse(data)
+            }
+        }
+    }
 
     /**
      * Set the current comp to the var thisComp
+     * @returns {boolean}           - if there is an available comp
      */
     function setComp() {
         if (app.activeViewer == null) { return false; }
@@ -406,7 +441,6 @@
         app.endUndoGroup();
     }
 
-
     /**
      * round input to maximum number if decimal places, or int
      *
@@ -511,9 +545,11 @@
         //     }];
         // }]
     }
-    // interface kbar {
-    //     button: boolean
-    // }
+    interface PropVal {
+        name: string;
+        start: number[] | number;
+        end: number[] | number;
+    }
     /**
      * Scans through all selected keyframes to gather spec data
      * 
@@ -661,7 +697,6 @@
         }
     }
 
-    
     /**
      * Convert the spec object into readable text
      * 
@@ -693,7 +728,13 @@
         } catch (e) { alert(e.toString() + "\nError on line: " + e.line.toString());}
     }
 
-    function getVal(valObj) {
+    /**
+     * Convert the prop object to readable text based on the prop type
+     * 
+     * @param valObj        - 
+     * @returns {string}    - 
+     */
+    function getVal(valObj: PropVal) {
         let str = ''
 
         if (valObj.name.match(/Opacity/) != null) {
@@ -724,16 +765,15 @@
 
         return str
     }
+
+    /**
+     * Convert the cubic bezier array to readable text 
+     * 
+     * @param arr           - cubic bezier in array format
+     * @returns {string}    - cubic bezier in format (0.00, 0.40, 0.20, 1.00)
+     */
     function getCubic(arr: number[]) {
         let val = ''
-        const easeLib = {
-            linear: {
-                val: [0.0, 0.0, 1.0, 1.0]
-            },
-            hold: {
-                val: [0.0, 0.0, 0.0, 0.0]
-            },
-        }
         let tokenMatch = null
 
         // loop through all tokens in the easing library
@@ -767,20 +807,20 @@
 
         return val
     }
+
     /**
      * 
-     * @param str 
-     * @returns {string} 
+     * @param str           - String to capitalize
+     * @returns {string}    - Capitalized string
      */
     function capitalizeFirstLetter(str: string) {
         return str.charAt(0).toUpperCase() + str.slice(1);
     }
 
-
     function buildUI() {
         /*
         Code for Import https://scriptui.joonas.me — (Triple click to select):
-        {"activeId":21,"items":{"item-0":{"id":0,"type":"Dialog","parentId":false,"style":{"enabled":true,"varName":"myPanel","windowType":"Dialog","creationProps":{"su1PanelCoordinates":false,"maximizeButton":false,"minimizeButton":false,"independent":false,"closeButton":true,"borderless":false,"resizeable":true},"text":"Dialog","preferredSize":[240,0],"margins":16,"orientation":"column","spacing":10,"alignChildren":["fill","top"]}},"item-1":{"id":1,"type":"Button","parentId":0,"style":{"enabled":true,"varName":"btn_newEvent","text":"\\u2D60   New comp marker","justify":"left","preferredSize":[0,0],"alignment":"fill","helpTip":"Create event comp marker"}},"item-2":{"id":2,"type":"StaticText","parentId":0,"style":{"enabled":true,"varName":"txt_usage","creationProps":{"truncate":"none","multiline":true,"scrolling":false},"softWrap":true,"text":"Instructions","justify":"left","preferredSize":[0,0],"alignment":"fill","helpTip":null}},"item-3":{"id":3,"type":"StaticText","parentId":0,"style":{"enabled":true,"varName":"txt_about","creationProps":{"truncate":"none","multiline":false,"scrolling":false},"softWrap":false,"text":"StaticText","justify":"left","preferredSize":[0,0],"alignment":"fill","helpTip":null}},"item-4":{"id":4,"type":"EditText","parentId":0,"style":{"enabled":true,"varName":"txt_eventName","creationProps":{"noecho":false,"readonly":false,"multiline":false,"scrollable":false,"borderless":false,"enterKeySignalsOnChange":false},"softWrap":false,"text":"Tap","justify":"left","preferredSize":[0,0],"alignment":"fill","helpTip":"Event marker name"}},"item-6":{"id":6,"type":"Divider","parentId":0,"style":{"enabled":true,"varName":null}},"item-7":{"id":7,"type":"Button","parentId":0,"style":{"enabled":true,"varName":"btn_update","text":"\\u27F3   Comp timing","justify":"left","preferredSize":[0,0],"alignment":"fill","helpTip":"Retime keyframes to match markers"}},"item-8":{"id":8,"type":"Button","parentId":0,"style":{"enabled":true,"varName":"btn_linkKeyframes","text":"\\u2D35   Selected keyframes","justify":"left","preferredSize":[0,0],"alignment":"fill","helpTip":"SHIFT: Unlink"}},"item-10":{"id":10,"type":"Divider","parentId":0,"style":{"enabled":true,"varName":null}},"item-11":{"id":11,"type":"StaticText","parentId":0,"style":{"enabled":true,"varName":null,"creationProps":{"truncate":"none","multiline":false,"scrolling":false},"softWrap":false,"text":"Link to comp marker","justify":"left","preferredSize":[0,0],"alignment":"fill","helpTip":null}},"item-12":{"id":12,"type":"Divider","parentId":0,"style":{"enabled":true,"varName":null}},"item-13":{"id":13,"type":"StaticText","parentId":0,"style":{"enabled":true,"varName":null,"creationProps":{"truncate":"none","multiline":false,"scrolling":false},"softWrap":false,"text":"New gesture","justify":"left","preferredSize":[0,0],"alignment":"fill","helpTip":null}},"item-14":{"id":14,"type":"Button","parentId":0,"style":{"enabled":true,"varName":"btn_gestureTap","text":"\\u2D59   Tap","justify":"left","preferredSize":[0,0],"alignment":"fill","helpTip":"Create tap gesture"}},"item-15":{"id":15,"type":"Button","parentId":0,"style":{"enabled":true,"varName":"btn_gestureSwipe","text":"\\u2D48\\u2D54   Swipe","justify":"left","preferredSize":[0,0],"alignment":"fill","helpTip":"Create swipe gesture"}},"item-16":{"id":16,"type":"Divider","parentId":0,"style":{"enabled":true,"varName":null}},"item-18":{"id":18,"type":"Button","parentId":0,"style":{"enabled":true,"varName":"btn_getMarkers","text":"\\u2D3D  Get nested markers","justify":"left","preferredSize":[0,0],"alignment":"fill","helpTip":"Add nested markers to the precomp layer"}},"item-19":{"id":19,"type":"Button","parentId":0,"style":{"enabled":true,"varName":"btn_updateNested","text":"\\u2D50   Nested timing","justify":"left","preferredSize":[0,0],"alignment":"fill","helpTip":"Retime nested markers then retime keyframes to match markers"}},"item-20":{"id":20,"type":"StaticText","parentId":0,"style":{"enabled":true,"varName":null,"creationProps":{"truncate":"none","multiline":false,"scrolling":false},"softWrap":false,"text":"Update","justify":"left","preferredSize":[0,0],"alignment":"fill","helpTip":null}},"item-21":{"id":21,"type":"Button","parentId":0,"style":{"enabled":true,"varName":"btn_linkLayerMarker","text":"\\u2D44   Layer marker","justify":"left","preferredSize":[0,0],"alignment":"fill","helpTip":"SHIFT: Unlink"}}},"order":[0,4,1,10,11,8,21,6,20,7,19,18,12,13,14,15,16,2,3],"settings":{"importJSON":true,"indentSize":false,"cepExport":false,"includeCSSJS":true,"showDialog":true,"functionWrapper":false,"afterEffectsDockable":false,"itemReferenceList":"None"}}
+        {"items":{"item-0":{"id":0,"type":"Dialog","parentId":false,"style":{"enabled":true,"varName":"myPanel","windowType":"Dialog","creationProps":{"su1PanelCoordinates":false,"maximizeButton":false,"minimizeButton":false,"independent":false,"closeButton":true,"borderless":false,"resizeable":true},"text":"Dialog","preferredSize":[240,0],"margins":16,"orientation":"column","spacing":10,"alignChildren":["fill","top"]}},"item-1":{"id":1,"type":"Button","parentId":0,"style":{"enabled":true,"varName":"btn_getSpec","text":"Get specs from selected keys","justify":"center","preferredSize":[0,0],"alignment":"fill","helpTip":""}},"item-4":{"id":4,"type":"EditText","parentId":24,"style":{"enabled":true,"varName":"txt_jsonField","creationProps":{"noecho":false,"readonly":false,"multiline":true,"scrollable":true,"borderless":false,"enterKeySignalsOnChange":false},"softWrap":false,"text":"","justify":"left","preferredSize":[0,200],"alignment":"fill","helpTip":"Event marker name"}},"item-22":{"id":22,"type":"TabbedPanel","parentId":0,"style":{"enabled":true,"varName":null,"preferredSize":[0,0],"margins":0,"alignment":"fill","selection":23}},"item-23":{"id":23,"type":"Tab","parentId":22,"style":{"enabled":true,"varName":null,"text":"Text","orientation":"column","spacing":10,"alignChildren":["left","top"]}},"item-24":{"id":24,"type":"Tab","parentId":22,"style":{"enabled":true,"varName":null,"text":"JSON","orientation":"column","spacing":10,"alignChildren":["left","top"]}},"item-25":{"id":25,"type":"EditText","parentId":23,"style":{"enabled":true,"varName":"txt_textField","creationProps":{"noecho":false,"readonly":false,"multiline":true,"scrollable":true,"borderless":false,"enterKeySignalsOnChange":false},"softWrap":false,"text":"","justify":"left","preferredSize":[0,235],"alignment":"fill","helpTip":"Event marker name"}},"item-26":{"id":26,"type":"Group","parentId":0,"style":{"enabled":true,"varName":null,"preferredSize":[0,0],"margins":0,"orientation":"row","spacing":10,"alignChildren":["left","center"],"alignment":"fill"}},"item-27":{"id":27,"type":"Button","parentId":26,"style":{"enabled":true,"varName":"btn_settings","text":"✱","justify":"right","preferredSize":[40,0],"alignment":null,"helpTip":"Settings"}},"item-28":{"id":28,"type":"Button","parentId":24,"style":{"enabled":true,"varName":"btn_saveJSON","text":"Save to .JSON","justify":"center","preferredSize":[0,0],"alignment":"fill","helpTip":null}},"item-29":{"id":29,"type":"Button","parentId":26,"style":{"enabled":true,"varName":"btn_newCounter","text":"New counter","justify":"left","preferredSize":[0,0],"alignment":null,"helpTip":"Create a time counter layer"}}},"order":[0,1,22,23,25,24,4,28,26,29,27],"settings":{"importJSON":true,"indentSize":false,"cepExport":false,"includeCSSJS":true,"showDialog":true,"functionWrapper":false,"afterEffectsDockable":false,"itemReferenceList":"None"},"activeId":26}
         */
         var myPanel = (thisObj instanceof Panel) ? thisObj : new Window('palette', scriptName, undefined, { resizeable: true });
 
@@ -856,7 +896,12 @@
         btn_newCounter.helpTip = "Create a time counter layer";
         btn_newCounter.text = "New counter";
         btn_newCounter.justify = "left";
-        btn_newCounter.alignment = ["left", "fill"];
+
+        var btn_settings = group1.add("button", undefined, undefined, { name: "btn_settings" });
+        btn_settings.helpTip = "Settings";
+        btn_settings.text = "✱";
+        btn_settings.preferredSize.width = 40;
+        btn_settings.justify = "right";
 
 
 
@@ -901,6 +946,9 @@
         }
         btn_newCounter.onClick = function () {
             buildCounter();
+        }
+        btn_settings.onClick = function () {
+            Folder(configFolder).execute()
         }
     }
 
