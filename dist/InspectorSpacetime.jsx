@@ -363,7 +363,7 @@
         var keys = actKey.keys;
         var duration = prop.keyTime(keys[1]) - prop.keyTime(keys[0]);
         var valChange = {
-            name: prop.matchName,
+            matchName: prop.matchName,
             start: null,
             end: null
         };
@@ -475,19 +475,19 @@
     }
     function getVal(valObj) {
         var str = '';
-        if (valObj.name.match(/Opacity/) != null) {
+        if (valObj.matchName.match(/Opacity/) != null) {
             str = round(valObj.start) + " \u2192 " + round(valObj.end) + "%";
         }
-        else if (valObj.name.match(/Scale/) != null) {
+        else if (valObj.matchName.match(/Scale/) != null) {
             str = round(valObj.start[0]) + " \u2192 " + round(valObj.end[0]) + "%";
         }
-        else if (valObj.name.match(/Position_0|Position_1|Position_2/) != null) {
+        else if (valObj.matchName.match(/Position_0|Position_1|Position_2/) != null) {
             str = round(valObj.start) + " \u2192 " + round(valObj.end) + "px";
         }
-        else if (valObj.name.match(/Rotate/) != null) {
+        else if (valObj.matchName.match(/Rotate/) != null) {
             str = round(valObj.start) + " \u2192 " + round(valObj.end) + "\u00BA";
         }
-        else if (valObj.name.match(/Color|Shape/) != null) {
+        else if (valObj.matchName.match(/Color|Shape/) != null) {
             str = " ";
         }
         else {
