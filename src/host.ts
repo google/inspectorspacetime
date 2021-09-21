@@ -26,7 +26,7 @@
 
     //================ VARIABLES ======================
     var scriptName = 'Inspector Spacetime';
-    var scriptVersion = '2.3';
+    var scriptVersion = '2.5';
     var thisComp, easeLib = {};
 
     var exp_counter = 'var sTime = marker.key("Start").time; var eTime = marker.key("End").time; var countTime = Math.max(time - sTime, 0); countTime = Math.min(countTime, eTime - sTime); var counter = Math.round(countTime * 1000); var playIcon = (time > sTime && time < eTime) ? "\u25ba " : "\u25a0 "; playIcon + counter + "ms";';
@@ -561,10 +561,17 @@
             if (!setComp()) { return; }
             let selKeys = getSelKeys()
 
+            if (selKeys.length < 1) {  
+                return {
+                    compName: 'Select some keyframes',
+                    layers: []
+                }
+            }
+
             //inital spec object
             let spec: Spec = {
                 compName: thisComp.name,
-                spacetimeVersion: null,
+                spacetimeVersion: scriptVersion,
                 aeVersion: null,
                 layers: [],
             }
@@ -818,6 +825,7 @@
     }
 
     function buildUI() {
+        let specJSON = getKeysSpec()        
         /*
         Code for Import https://scriptui.joonas.me — (Triple click to select):
         {"items":{"item-0":{"id":0,"type":"Dialog","parentId":false,"style":{"enabled":true,"varName":"myPanel","windowType":"Dialog","creationProps":{"su1PanelCoordinates":false,"maximizeButton":false,"minimizeButton":false,"independent":false,"closeButton":true,"borderless":false,"resizeable":true},"text":"Dialog","preferredSize":[240,0],"margins":16,"orientation":"column","spacing":10,"alignChildren":["fill","top"]}},"item-1":{"id":1,"type":"Button","parentId":0,"style":{"enabled":true,"varName":"btn_getSpec","text":"Get specs from selected keys","justify":"center","preferredSize":[0,0],"alignment":"fill","helpTip":""}},"item-4":{"id":4,"type":"EditText","parentId":24,"style":{"enabled":true,"varName":"txt_jsonField","creationProps":{"noecho":false,"readonly":false,"multiline":true,"scrollable":true,"borderless":false,"enterKeySignalsOnChange":false},"softWrap":false,"text":"","justify":"left","preferredSize":[0,200],"alignment":"fill","helpTip":"Event marker name"}},"item-22":{"id":22,"type":"TabbedPanel","parentId":0,"style":{"enabled":true,"varName":null,"preferredSize":[0,0],"margins":0,"alignment":"fill","selection":23}},"item-23":{"id":23,"type":"Tab","parentId":22,"style":{"enabled":true,"varName":null,"text":"Text","orientation":"column","spacing":10,"alignChildren":["left","top"]}},"item-24":{"id":24,"type":"Tab","parentId":22,"style":{"enabled":true,"varName":null,"text":"JSON","orientation":"column","spacing":10,"alignChildren":["left","top"]}},"item-25":{"id":25,"type":"EditText","parentId":23,"style":{"enabled":true,"varName":"txt_textField","creationProps":{"noecho":false,"readonly":false,"multiline":true,"scrollable":true,"borderless":false,"enterKeySignalsOnChange":false},"softWrap":false,"text":"","justify":"left","preferredSize":[0,235],"alignment":"fill","helpTip":"Event marker name"}},"item-26":{"id":26,"type":"Group","parentId":0,"style":{"enabled":true,"varName":null,"preferredSize":[0,0],"margins":0,"orientation":"row","spacing":10,"alignChildren":["left","center"],"alignment":"fill"}},"item-27":{"id":27,"type":"Button","parentId":26,"style":{"enabled":true,"varName":"btn_settings","text":"✱","justify":"right","preferredSize":[40,0],"alignment":null,"helpTip":"Settings"}},"item-28":{"id":28,"type":"Button","parentId":24,"style":{"enabled":true,"varName":"btn_saveJSON","text":"Save to .JSON","justify":"center","preferredSize":[0,0],"alignment":"fill","helpTip":null}},"item-29":{"id":29,"type":"Button","parentId":26,"style":{"enabled":true,"varName":"btn_newCounter","text":"New counter","justify":"left","preferredSize":[0,0],"alignment":null,"helpTip":"Create a time counter layer"}}},"order":[0,1,22,23,25,24,4,28,26,29,27],"settings":{"importJSON":true,"indentSize":false,"cepExport":false,"includeCSSJS":true,"showDialog":true,"functionWrapper":false,"afterEffectsDockable":false,"itemReferenceList":"None"},"activeId":26}
@@ -860,6 +868,7 @@
         txt_textField.helpTip = "Event marker name";
         txt_textField.preferredSize.height = 235;
         txt_textField.alignment = ["fill", "top"];
+        txt_textField.text = parseSpecText(specJSON)
 
         // TAB2
         // ====
@@ -878,6 +887,7 @@
         txt_jsonField.helpTip = "Event marker name";
         txt_jsonField.preferredSize.height = 200;
         txt_jsonField.alignment = ["fill", "top"];
+        txt_jsonField.text = (JSON.stringify(specJSON, false, 2))
 
         var btn_saveJSON = tab2.add("button", undefined, undefined, { name: "btn_saveJSON" });
         btn_saveJSON.text = "Save to .JSON";
@@ -928,7 +938,7 @@
         }
         btn_saveJSON.onClick = function () {
             var specJSON = getKeysSpec()
-                specJSON.spacetimeVersion = scriptVersion;
+                // specJSON.spacetimeVersion = scriptVersion;
                 specJSON.aeVersion = app.version;
 
             var outputFile = getUserFile('spec.spacetime.json', 'spacetime:*.spacetime.json;');
@@ -960,6 +970,8 @@
         switch (button.argument.toLowerCase()) {
             case 'run':
                 // run the modal
+                // alert('butt')
+                buildUI()
                 break;
 
             default:
