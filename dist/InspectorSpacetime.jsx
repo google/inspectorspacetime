@@ -444,15 +444,18 @@
             var h2 = (markdown) ? '## ' : '\n';
             var propLine = (markdown) ? '\n    ' : '\n  ';
             var str = '';
-            str = "" + h1 + specObj.compName + lineBreak;
-            str += (specObj.totalDur) ? "Total duration: " + timeToMs(specObj.totalDur) : '';
+            str = "" + h1 + specObj.compName;
+            str += (markdown) ? '\n\n' : '\n';
+            str += (specObj.totalDur) ? "Total duration: " + timeToMs(specObj.totalDur) + "\n" : '';
             for (var _i = 0, _a = specObj.layers; _i < _a.length; _i++) {
                 var layer = _a[_i];
-                str += "" + lineBreak + h2 + layer.name;
+                str += (markdown) ? "\n" : "";
+                str += "" + h2 + layer.name;
                 for (var _b = 0, _c = layer.props; _b < _c.length; _b++) {
                     var prop = _c[_b];
                     var val = getVal(prop.value);
-                    str += lineBreak + "- " + prop.name;
+                    str += "\n";
+                    str += "- " + prop.name;
                     if (val != ' ') {
                         str += ": " + val;
                     }
@@ -461,6 +464,7 @@
                     if (prop.delay != 0) {
                         str += propLine + "Delay: " + timeToMs(prop.delay);
                     }
+                    str += "\n";
                 }
             }
             return str;

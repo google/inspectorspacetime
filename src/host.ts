@@ -1,24 +1,12 @@
 /**
  * Generates motion spec data to to share with ENG.
- * It's a stupid name with a reference to the short-lived NBC show Commpunity.
+ * It's a stupid name with a reference to the short-lived NBC show Community.
  *
  * inSPECtor SPACE+TIME = motion spec
  *
- * Current Version: 2.2 (July, 23 2019
+ * Current Version: 2.5 (Sept, 21 2021
  * Designed by: Adam Plouff (adamplouff@)
  *
- * Process:
- * • Select keyframe pairs
- * • Keys are collected
- * • Key info is gathered into one object per pair
- * • Key-pair-objs are sorted based on start tim
- * • Comp is duplicated
- * • Side panel is added
- * • Text layer is create
- * • Keys are filtered by property value type
- * • Keyframe data is added to a text string
- * • Start and End markers are added
- * • Raw text is styled by an expression
  */
 (function (thisObj) {
 
@@ -33,22 +21,6 @@
     let configFolder = Folder.userData.toString() + '/BattleAxe/InspectorSpacetime/config/'
 
     initConfig()
-
-    // icon string for retina icons
-    // var icons = {
-    //     build: [
-    //         '104 26.478 104.82 32.260 104 38.043 116.39 35.565 115.56 40.521 123 32.260 115.56 24 116.39 28.956',
-    //         '93 48 93 57 34 57 34 43 32 43 32 39 34 39 34 38 30 38 30 34 34 34 34 7 36 7 36 34 69 34 69 38 36 38 36 39 80 39 80 43 36 43 36 55 91 55 91 48 63 48 63 44 91 44 91 16 38 16 38 12 91 12 91 9 36 9 36 7 93 7 93 12 96 12 96 16 93 16 93 44 98 44 98 48 93 48',
-    //         '45 23 91 23 91 27 45 27',
-    //         '65 49 67 51 65 53 63 51',
-    //         '76 17 78 19 76 21 74 19',
-    //         '40 17 42 19 40 21 38 19',
-    //         '85 49 89 49 87.66 51 89 53 85 53 86.33 51',
-    //         '69 28 73 28 71.66 30 73 32 69 32 70.33 30',
-    //         '50 28 54 28 52.66 30 54 32 50 32 51.33 30',
-    //         '160 7 160 56 170 56 170 54 160 54 160 53 174 53 174 51 160 51 160 50 167 50 167 48 168 48 168 50 173 50 173 48 160 48 160 47 166 47 166 45 160 45 160 42 172 42 172 40 160 40 160 39 170 39 170 37 160 37 160 36 167 36 167 34 168 34 168 36 177 36 177 34 160 34 160 33 172 33 172 31 160 31 160 28 170 28 170 26 160 26 160 25 172 25 172 23 160 23 160 22 167 22 167 20 168 20 168 22 175 22 175 20 160 20 160 19 169 19 169 17 160 17 160 14 176 14 176 12 160 12 160 11 173 11 173 9 160 9 160 7 181 7 181 58 157 58 131 58 131 7 157 7 157 9 133 9 133 56 157 56 157 7'
-    //     ]
-    // };
 
     // ================ FUNCTIONS =============
 
@@ -722,23 +694,24 @@
             
             let str = ''
     
-            str = `${h1}${specObj.compName}${lineBreak}`
-            str += (specObj.totalDur) ? `Total duration: ${timeToMs(specObj.totalDur)}` : ''
+            str = `${h1}${specObj.compName}`
+            str += (markdown) ? '\n\n' : '\n'
+            str += (specObj.totalDur) ? `Total duration: ${timeToMs(specObj.totalDur)}\n` : ''
     
             for (let layer of specObj.layers) {
-                str += `${lineBreak}${h2}${layer.name}`
+                str += (markdown) ? `\n` : ``
+                str += `${h2}${layer.name}`
     
                 for (let prop of layer.props) {
                     let val = getVal(prop.value)
-                    str += `${lineBreak}- ${ prop.name }`                                                   // name
-                    if (val != ' ') { str += `: ${val}` }                                                // value change
-                    str += `${propLine}Duration: ${ timeToMs(prop.duration) }`                         // duration
-                    str += `${propLine}${ getCubic(prop.ease) }`                                       // ease
-                    if (prop.delay != 0) { str += `${propLine}Delay: ${timeToMs(prop.delay)}` }      // delay
-                    // str += (markdown) ? '' : `\n`
+                    str += `\n`
+                    str += `- ${ prop.name }`                                                   // name
+                    if (val != ' ') { str += `: ${val}` }                                                   // value change
+                    str += `${propLine}Duration: ${ timeToMs(prop.duration) }`                              // duration
+                    str += `${propLine}${ getCubic(prop.ease) }`                                            // ease
+                    if (prop.delay != 0) { str += `${propLine}Delay: ${timeToMs(prop.delay)}` }             // delay
+                    str += `\n`
                 }
-                // str += (markdown) ? '' : `\n`
-                // str += `${lineBreak}`
             }
     
             return str
@@ -996,7 +969,6 @@
         switch (button.argument.toLowerCase()) {
             case 'run':
                 // run the modal
-                // alert('butt')
                 buildUI()
                 break;
 
