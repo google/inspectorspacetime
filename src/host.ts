@@ -574,7 +574,7 @@
             let spec: Spec = {
                 compName: thisComp.name,
                 spacetimeVersion: scriptVersion,
-                aeVersion: null,
+                aeVersion: app.version,
                 totalDur: keyRange[1] - keyRange[0],
                 layers: [],
             }
@@ -713,26 +713,32 @@
      * @param specObj               - spec object hierarchy
      * @returns {string}            - multi-line text of the spec data
      */
-    function parseSpecText(specObj: Spec) {
+    function parseSpecText(specObj: Spec, markdown?: boolean) {
         try {
+            let lineBreak = (markdown) ? '\n\n' : '\n'
+            let h1 = (markdown) ? '# ' : ''
+            let h2 = (markdown) ? '## ' : '\n'
+            let propLine = (markdown) ? '\n    ' : '\n  '
             
             let str = ''
     
-            str = `# ${specObj.compName}\n`
-            str += `Total duration: ${ timeToMs(specObj.totalDur) }\n`
+            str = `${h1}${specObj.compName}${lineBreak}`
+            str += (specObj.totalDur) ? `Total duration: ${timeToMs(specObj.totalDur)}` : ''
     
             for (let layer of specObj.layers) {
-                str += `\n## ${ layer.name }`
+                str += `${lineBreak}${h2}${layer.name}`
     
                 for (let prop of layer.props) {
                     let val = getVal(prop.value)
-                    str += `\n${ prop.name }`                                                   // name
-                    if (val != ' ') { str += `: ${val}` }                                       // value change
-                    str += `\n- Duration: ${ timeToMs(prop.duration) }`                         // duration
-                    str += `\n- ${ getCubic(prop.ease) }`                                       // ease
-                    if (prop.delay != 0) { str += `\n- Delay: ${ timeToMs(prop.delay) }` }      // delay
-                    str += '\n'
+                    str += `${lineBreak}- ${ prop.name }`                                                   // name
+                    if (val != ' ') { str += `: ${val}` }                                                // value change
+                    str += `${propLine}Duration: ${ timeToMs(prop.duration) }`                         // duration
+                    str += `${propLine}${ getCubic(prop.ease) }`                                       // ease
+                    if (prop.delay != 0) { str += `${propLine}Delay: ${timeToMs(prop.delay)}` }      // delay
+                    // str += (markdown) ? '' : `\n`
                 }
+                // str += (markdown) ? '' : `\n`
+                // str += `${lineBreak}`
             }
     
             return str
@@ -864,7 +870,7 @@
         var tab1 = tpanel1.add("tab", undefined, undefined, { name: "tab1" });
         tab1.text = "Text";
         tab1.orientation = "column";
-        tab1.alignChildren = ["left", "fill"];
+        tab1.alignChildren = ["fill", "fill"];
         tab1.spacing = 10;
         tab1.margins = 0;
 
@@ -877,23 +883,38 @@
         // TAB2
         // ====
         var tab2 = tpanel1.add("tab", undefined, undefined, { name: "tab2" });
-        tab2.text = "JSON";
+        tab2.text = "MD";
         tab2.orientation = "column";
         tab2.alignChildren = ["left", "top"];
         tab2.spacing = 10;
         tab2.margins = 0;
 
+        var txt_mdField = tab2.add('edittext {properties: {name: "txt_mdField", multiline: true, scrollable: true}}');
+        txt_mdField.helpTip = "Event marker name";
+        // txt_mdField.preferredSize.height = 235;
+        txt_mdField.alignment = ["fill", "fill"];
+        txt_mdField.text = parseSpecText(specJSON, true)
+        
+        // TAB3
+        // ====
+        var tab3 = tpanel1.add("tab", undefined, undefined, { name: "tab3" });
+        tab3.text = "JSON";
+        tab3.orientation = "column";
+        tab3.alignChildren = ["left", "top"];
+        tab3.spacing = 10;
+        tab3.margins = 0;
+
         // TPANEL1
         // =======
         tpanel1.selection = tab1;
 
-        var txt_jsonField = tab2.add('edittext {properties: {name: "txt_jsonField", multiline: true, scrollable: true}}');
+        var txt_jsonField = tab3.add('edittext {properties: {name: "txt_jsonField", multiline: true, scrollable: true}}');
         txt_jsonField.helpTip = "Event marker name";
         // txt_jsonField.preferredSize.height = 200;
         txt_jsonField.alignment = ["fill", "fill"];
         txt_jsonField.text = (JSON.stringify(specJSON, false, 2))
 
-        var btn_saveJSON = tab2.add("button", undefined, undefined, { name: "btn_saveJSON" });
+        var btn_saveJSON = tab3.add("button", undefined, undefined, { name: "btn_saveJSON" });
         btn_saveJSON.text = "Save to .JSON";
         btn_saveJSON.alignment = ["fill", "bottom"];
 
@@ -938,12 +959,13 @@
         btn_getSpec.onClick = function () {
             let specJSON = getKeysSpec()
             txt_textField.text = parseSpecText(specJSON)
+            txt_mdField.text = parseSpecText(specJSON, true)
             txt_jsonField.text = (JSON.stringify(specJSON, false, 2))
         }
         btn_saveJSON.onClick = function () {
             var specJSON = getKeysSpec()
                 // specJSON.spacetimeVersion = scriptVersion;
-                specJSON.aeVersion = app.version;
+                // specJSON.aeVersion = app.version;
 
             var outputFile = getUserFile('spec.spacetime.json', 'spacetime:*.spacetime.json;');
 
