@@ -919,6 +919,14 @@
         btn_settings.preferredSize.width = 40;
         btn_settings.justify = "right";
 
+        var btn_help = group1.add("button", undefined, undefined, { name: "btn_help" });
+        btn_help.helpTip = "Guide";
+        btn_help.text = "Learn stuff";
+        btn_help.justify = "right";
+        
+        group1.add("staticText", undefined, `v${scriptVersion}`, { name: "btn_help" });
+
+
 
 
         myPanel.onResizing = myPanel.onResize = function () {
@@ -966,6 +974,9 @@
         }
         btn_settings.onClick = function () {
             Folder(configFolder).execute()
+        }
+        btn_help.onClick = function () {
+            visitURL('https://google.github.io/inspectorspacetime/')
         }
     }
 
