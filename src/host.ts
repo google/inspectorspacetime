@@ -533,6 +533,7 @@
         compName: string;
         spacetimeVersion: string;
         aeVersion: string;
+        totalDur: number;
         layers: any
         // layers: [{
         //     name: string;
@@ -560,6 +561,7 @@
 
             if (!setComp()) { return; }
             let selKeys = getSelKeys()
+            let keyRange = getKeyRange()
 
             if (selKeys.length < 1) {  
                 return {
@@ -573,6 +575,7 @@
                 compName: thisComp.name,
                 spacetimeVersion: scriptVersion,
                 aeVersion: null,
+                totalDur: keyRange[1] - keyRange[0],
                 layers: [],
             }
 
@@ -716,6 +719,7 @@
             let str = ''
     
             str = `# ${specObj.compName}\n`
+            str += `Total duration: ${ timeToMs(specObj.totalDur) }\n`
     
             for (let layer of specObj.layers) {
                 str += `\n## ${ layer.name }`
@@ -851,23 +855,23 @@
         // =======
         var tpanel1 = myPanel.add("tabbedpanel", undefined, undefined, { name: "tpanel1" });
         tpanel1.alignChildren = "fill";
-        tpanel1.preferredSize.width = 208;
+        // tpanel1.preferredSize.width = 208;
         tpanel1.margins = 0;
-        tpanel1.alignment = ["fill", "top"];
+        tpanel1.alignment = ["fill", "fill"];
 
         // TAB1
         // ====
         var tab1 = tpanel1.add("tab", undefined, undefined, { name: "tab1" });
         tab1.text = "Text";
         tab1.orientation = "column";
-        tab1.alignChildren = ["left", "top"];
+        tab1.alignChildren = ["left", "fill"];
         tab1.spacing = 10;
         tab1.margins = 0;
 
         var txt_textField = tab1.add('edittext {properties: {name: "txt_textField", multiline: true, scrollable: true}}');
         txt_textField.helpTip = "Event marker name";
-        txt_textField.preferredSize.height = 235;
-        txt_textField.alignment = ["fill", "top"];
+        // txt_textField.preferredSize.height = 235;
+        txt_textField.alignment = ["fill", "fill"];
         txt_textField.text = parseSpecText(specJSON)
 
         // TAB2
@@ -885,13 +889,13 @@
 
         var txt_jsonField = tab2.add('edittext {properties: {name: "txt_jsonField", multiline: true, scrollable: true}}');
         txt_jsonField.helpTip = "Event marker name";
-        txt_jsonField.preferredSize.height = 200;
-        txt_jsonField.alignment = ["fill", "top"];
+        // txt_jsonField.preferredSize.height = 200;
+        txt_jsonField.alignment = ["fill", "fill"];
         txt_jsonField.text = (JSON.stringify(specJSON, false, 2))
 
         var btn_saveJSON = tab2.add("button", undefined, undefined, { name: "btn_saveJSON" });
         btn_saveJSON.text = "Save to .JSON";
-        btn_saveJSON.alignment = ["fill", "top"];
+        btn_saveJSON.alignment = ["fill", "bottom"];
 
         // GROUP1
         // ======
@@ -900,7 +904,7 @@
         group1.alignChildren = ["left", "center"];
         group1.spacing = 10;
         group1.margins = 0;
-        group1.alignment = ["fill", "top"];
+        group1.alignment = ["fill", "bottom"];
 
         var btn_newCounter = group1.add("button", undefined, undefined, { name: "btn_newCounter" });
         btn_newCounter.helpTip = "Create a time counter layer";

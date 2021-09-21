@@ -43,7 +43,7 @@
                 Object.prototype.hasOwnProperty.call(b, g) && (f = c(b, g), f !== void 0 ? b[g] = f : delete b[g]); return e.call(a, d, b); } var d, a = String(a); q.lastIndex = 0; q.test(a) && (a = a.replace(q, function (a) { return "\\u" + ("0000" + a.charCodeAt(0).toString(16)).slice(-4); })); if (/^[\],:{}\s]*$/.test(a.replace(/\\(?:["\\\/bfnrt]|u[0-9a-fA-F]{4})/g, "@").replace(/"[^"\\\n\r]*"|true|false|null|-?\d+(?:\.\d*)?(?:[eE][+\-]?\d+)?/g, "]").replace(/(?:^|:|,)(?:\s*\[)+/g, "")))
             return d = eval("(" + a + ")"), typeof e === "function" ? c({ "": d }, "") : d; throw new SyntaxError("JSON.parse"); }; })();
     var scriptName = 'Inspector Spacetime';
-    var scriptVersion = '2.3';
+    var scriptVersion = '2.5';
     var thisComp, easeLib = {};
     var exp_counter = 'var sTime = marker.key("Start").time; var eTime = marker.key("End").time; var countTime = Math.max(time - sTime, 0); countTime = Math.min(countTime, eTime - sTime); var counter = Math.round(countTime * 1000); var playIcon = (time > sTime && time < eTime) ? "\u25ba " : "\u25a0 "; playIcon + counter + "ms";';
     var configFolder = Folder.userData.toString() + '/BattleAxe/InspectorSpacetime/config/';
@@ -315,10 +315,18 @@
                 return;
             }
             var selKeys = getSelKeys();
+            var keyRange = getKeyRange();
+            if (selKeys.length < 1) {
+                return {
+                    compName: 'Select some keyframes',
+                    layers: []
+                };
+            }
             var spec = {
                 compName: thisComp.name,
-                spacetimeVersion: null,
+                spacetimeVersion: scriptVersion,
                 aeVersion: null,
+                totalDur: keyRange[1] - keyRange[0],
                 layers: []
             };
             var activeLayer = null;
@@ -433,6 +441,7 @@
         try {
             var str = '';
             str = "# " + specObj.compName + "\n";
+            str += "Total duration: " + timeToMs(specObj.totalDur) + "\n";
             for (var _i = 0, _a = specObj.layers; _i < _a.length; _i++) {
                 var layer = _a[_i];
                 str += "\n## " + layer.name;
@@ -521,6 +530,7 @@
         return str.charAt(0).toUpperCase() + str.slice(1);
     }
     function buildUI() {
+        var specJSON = getKeysSpec();
         var myPanel = (thisObj instanceof Panel) ? thisObj : new Window('palette', scriptName, undefined, { resizeable: true });
         if (myPanel === null)
             return;
@@ -534,19 +544,18 @@
         btn_getSpec.alignment = ["fill", "top"];
         var tpanel1 = myPanel.add("tabbedpanel", undefined, undefined, { name: "tpanel1" });
         tpanel1.alignChildren = "fill";
-        tpanel1.preferredSize.width = 208;
         tpanel1.margins = 0;
-        tpanel1.alignment = ["fill", "top"];
+        tpanel1.alignment = ["fill", "fill"];
         var tab1 = tpanel1.add("tab", undefined, undefined, { name: "tab1" });
         tab1.text = "Text";
         tab1.orientation = "column";
-        tab1.alignChildren = ["left", "top"];
+        tab1.alignChildren = ["left", "fill"];
         tab1.spacing = 10;
         tab1.margins = 0;
         var txt_textField = tab1.add('edittext {properties: {name: "txt_textField", multiline: true, scrollable: true}}');
         txt_textField.helpTip = "Event marker name";
-        txt_textField.preferredSize.height = 235;
-        txt_textField.alignment = ["fill", "top"];
+        txt_textField.alignment = ["fill", "fill"];
+        txt_textField.text = parseSpecText(specJSON);
         var tab2 = tpanel1.add("tab", undefined, undefined, { name: "tab2" });
         tab2.text = "JSON";
         tab2.orientation = "column";
@@ -556,17 +565,17 @@
         tpanel1.selection = tab1;
         var txt_jsonField = tab2.add('edittext {properties: {name: "txt_jsonField", multiline: true, scrollable: true}}');
         txt_jsonField.helpTip = "Event marker name";
-        txt_jsonField.preferredSize.height = 200;
-        txt_jsonField.alignment = ["fill", "top"];
+        txt_jsonField.alignment = ["fill", "fill"];
+        txt_jsonField.text = (JSON.stringify(specJSON, false, 2));
         var btn_saveJSON = tab2.add("button", undefined, undefined, { name: "btn_saveJSON" });
         btn_saveJSON.text = "Save to .JSON";
-        btn_saveJSON.alignment = ["fill", "top"];
+        btn_saveJSON.alignment = ["fill", "bottom"];
         var group1 = myPanel.add("group", undefined, { name: "group1" });
         group1.orientation = "row";
         group1.alignChildren = ["left", "center"];
         group1.spacing = 10;
         group1.margins = 0;
-        group1.alignment = ["fill", "top"];
+        group1.alignment = ["fill", "bottom"];
         var btn_newCounter = group1.add("button", undefined, undefined, { name: "btn_newCounter" });
         btn_newCounter.helpTip = "Create a time counter layer";
         btn_newCounter.text = "New counter";
@@ -594,7 +603,6 @@
         };
         btn_saveJSON.onClick = function () {
             var specJSON = getKeysSpec();
-            specJSON.spacetimeVersion = scriptVersion;
             specJSON.aeVersion = app.version;
             var outputFile = getUserFile('spec.spacetime.json', 'spacetime:*.spacetime.json;');
             if (!outputFile) {
@@ -620,6 +628,7 @@
         var button = kbar.button;
         switch (button.argument.toLowerCase()) {
             case 'run':
+                buildUI();
                 break;
             default:
                 buildUI();
