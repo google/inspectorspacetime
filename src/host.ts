@@ -788,14 +788,22 @@
                 }
             }
         }
-
         if (tokenMatch) {
             val = `${tokenMatch.name}`
         } else {
-            val = `(${arr[0].toFixed(2)}, ${arr[1].toFixed(2)}, ${arr[2].toFixed(2)}, ${arr[3].toFixed(2)})`
+            val = `(${round(arr[0])}, ${round(arr[1])}, ${round(arr[2])}, ${round(arr[3])})`
         }
 
         return val
+
+        function round(num) {
+            let rounded = num.toFixed(2)
+
+            if (rounded === '-0.00') {
+                rounded = '0.00'
+            }
+            return rounded
+        }
     }
 
     /**

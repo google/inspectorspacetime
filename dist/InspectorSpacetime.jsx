@@ -529,9 +529,16 @@
             val = "" + tokenMatch.name;
         }
         else {
-            val = "(" + arr[0].toFixed(2) + ", " + arr[1].toFixed(2) + ", " + arr[2].toFixed(2) + ", " + arr[3].toFixed(2) + ")";
+            val = "(" + round(arr[0]) + ", " + round(arr[1]) + ", " + round(arr[2]) + ", " + round(arr[3]) + ")";
         }
         return val;
+        function round(num) {
+            var rounded = num.toFixed(2);
+            if (rounded === '-0.00') {
+                rounded = '0.00';
+            }
+            return rounded;
+        }
     }
     function capitalizeFirstLetter(str) {
         return str.charAt(0).toUpperCase() + str.slice(1);
