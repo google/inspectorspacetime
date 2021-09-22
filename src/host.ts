@@ -354,6 +354,8 @@
             dynText.name = 'Counter';
             // add a comment
             dynText.comment = scriptName + '_data';
+            // add a comment
+            dynText.guideLayer = true;
 
             // new text object
             var dynText_TextProp = dynText('ADBE Text Properties')('ADBE Text Document');
@@ -788,10 +790,13 @@
                 }
             }
         }
+        let parenCubic = `(${round(arr[0])}, ${round(arr[1])}, ${round(arr[2])}, ${round(arr[3])})`
+
         if (tokenMatch) {
             val = `${tokenMatch.name}`
+            // val = `${tokenMatch.name} - ${parenCubic}`
         } else {
-            val = `(${round(arr[0])}, ${round(arr[1])}, ${round(arr[2])}, ${round(arr[3])})`
+            val = parenCubic
         }
 
         return val
@@ -856,7 +861,6 @@
         tab1.margins = 0;
 
         var txt_textField = tab1.add('edittext {properties: {name: "txt_textField", multiline: true, scrollable: true}}');
-        txt_textField.helpTip = "Event marker name";
         // txt_textField.preferredSize.height = 235;
         txt_textField.alignment = ["fill", "fill"];
         txt_textField.text = parseSpecText(specJSON)
@@ -871,7 +875,6 @@
         tab2.margins = 0;
 
         var txt_mdField = tab2.add('edittext {properties: {name: "txt_mdField", multiline: true, scrollable: true}}');
-        txt_mdField.helpTip = "Event marker name";
         // txt_mdField.preferredSize.height = 235;
         txt_mdField.alignment = ["fill", "fill"];
         txt_mdField.text = parseSpecText(specJSON, true)
@@ -890,7 +893,6 @@
         tpanel1.selection = tab1;
 
         var txt_jsonField = tab3.add('edittext {properties: {name: "txt_jsonField", multiline: true, scrollable: true}}');
-        txt_jsonField.helpTip = "Event marker name";
         // txt_jsonField.preferredSize.height = 200;
         txt_jsonField.alignment = ["fill", "fill"];
         txt_jsonField.text = (JSON.stringify(specJSON, false, 2))

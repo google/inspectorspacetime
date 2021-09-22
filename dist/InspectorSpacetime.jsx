@@ -228,6 +228,7 @@
             var dynText = thisComp.layers.addText('Counter');
             dynText.name = 'Counter';
             dynText.comment = scriptName + '_data';
+            dynText.guideLayer = true;
             var dynText_TextProp = dynText('ADBE Text Properties')('ADBE Text Document');
             var dynText_TextDocument = dynText_TextProp.value;
             dynText_TextDocument.resetCharStyle();
@@ -525,11 +526,12 @@
                 }
             }
         }
+        var parenCubic = "(" + round(arr[0]) + ", " + round(arr[1]) + ", " + round(arr[2]) + ", " + round(arr[3]) + ")";
         if (tokenMatch) {
             val = "" + tokenMatch.name;
         }
         else {
-            val = "(" + round(arr[0]) + ", " + round(arr[1]) + ", " + round(arr[2]) + ", " + round(arr[3]) + ")";
+            val = parenCubic;
         }
         return val;
         function round(num) {
@@ -567,7 +569,6 @@
         tab1.spacing = 10;
         tab1.margins = 0;
         var txt_textField = tab1.add('edittext {properties: {name: "txt_textField", multiline: true, scrollable: true}}');
-        txt_textField.helpTip = "Event marker name";
         txt_textField.alignment = ["fill", "fill"];
         txt_textField.text = parseSpecText(specJSON);
         var tab2 = tpanel1.add("tab", undefined, undefined, { name: "tab2" });
@@ -577,7 +578,6 @@
         tab2.spacing = 10;
         tab2.margins = 0;
         var txt_mdField = tab2.add('edittext {properties: {name: "txt_mdField", multiline: true, scrollable: true}}');
-        txt_mdField.helpTip = "Event marker name";
         txt_mdField.alignment = ["fill", "fill"];
         txt_mdField.text = parseSpecText(specJSON, true);
         var tab3 = tpanel1.add("tab", undefined, undefined, { name: "tab3" });
@@ -588,7 +588,6 @@
         tab3.margins = 0;
         tpanel1.selection = tab1;
         var txt_jsonField = tab3.add('edittext {properties: {name: "txt_jsonField", multiline: true, scrollable: true}}');
-        txt_jsonField.helpTip = "Event marker name";
         txt_jsonField.alignment = ["fill", "fill"];
         txt_jsonField.text = (JSON.stringify(specJSON, false, 2));
         var btn_saveJSON = tab3.add("button", undefined, undefined, { name: "btn_saveJSON" });
