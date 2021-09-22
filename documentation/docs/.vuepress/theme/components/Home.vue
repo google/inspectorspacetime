@@ -52,12 +52,12 @@
     </header>
 
     <div v-if="data.usage && data.usage.length" class="section">
-      <h2>Usage</h2>
-      <div class="grid two-three" v-for="(use, index) in data.usage" :key="index">
-        <div >
+      <!-- <h2>Usage</h2> -->
+      <div class="grid" >
+      <div v-for="(use, index) in data.usage" :key="index">
           <img v-if="use.img" :src="use.img" :alt="use.title">
-        </div>
-        <div>
+        <!-- </div>
+        <div> -->
           <h3>{{ use.title }}</h3>
           <p><span v-html="use.details"></span></p>
         </div>
@@ -77,7 +77,7 @@
 
     <div v-if="data.updates && data.updates.length" class="section">
       <!-- <h2>Updates</h2> -->
-      <div class="grid half" >
+      <div class="grid two-one-one" >
         <div v-for="(use, index) in data.updates"
         :key="index">
           <img v-if="use.img" :src="use.img" :alt="use.title">
@@ -89,11 +89,11 @@
     </div>
 
     <div v-if="data.addons && data.addons.length" class="section">
-      <!-- <h2>Details</h2> -->
-      <div class="grid two-three" v-for="(use, index) in data.addons" :key="index">
+      <h2>Add-ons</h2>
+      <div class="grid half" v-for="(use, index) in data.addons" :key="index">
         <div >
           <img v-if="use.img" :src="use.img" :alt="use.title">
-          <div v-if="use.video" class="youtube" style="margin: 3rem auto 1.5rem; width: 390px">
+          <div v-if="use.video" class="" style="width: auto">
             <video
               v-if="use.video"
               width="100%"
@@ -155,7 +155,7 @@
       </div>
       
 
-      <p>The tool is named after the Doctor Who parody from the underrated NBC comedy <i>Community</i>. The series really falls apart at the end but it's mostly pretty amazing.</p>
+      <p>The tool is named after the Doctor Who parody from the underrated NBC comedy <i>Community</i>. The series sort of falls apart toward the end but it's mostly pretty amazing.</p>
       <p>In<u>spec</u>tor Spacetime. It's a bad pun. I'm a dad. I can't help it.</p>
     </div>
     <br />
@@ -203,6 +203,8 @@ export default {
 header
   display flex
   padding 8rem 0 4rem 0
+code
+  font-size: 11px
 .home
   padding $navbarHeight 2rem 0
   max-width $homePageWidth
@@ -281,6 +283,8 @@ header
     margin-top 16px
   .half 
     grid-template-columns 1fr 1fr
+  .two-one-one 
+    grid-template-columns 2fr 1fr 1fr
   .two-three 
     grid-template-columns 0.4fr 0.6fr
   br
@@ -308,7 +312,7 @@ header
       grid-template-columns 3fr
     .grid>*
       max-width 400px
-      margin 0 auto
+      // margin 0 auto
     .youtube
       width 100%
       margin-left auto
