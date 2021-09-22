@@ -29,12 +29,8 @@
      */
     function initConfig() {
         easeLib = {
-            linear: {
-                val: [0.0, 0.0, 1.0, 1.0]
-            },
-            hold: {
-                val: [0.0, 0.0, 0.0, 0.0]
-            },
+            linear: [0.0, 0.0, 1.0, 1.0],
+            hold: [0.0, 0.0, 0.0, 0.0],
         }
         const easeLibPath = `${configFolder}/ease-library.json`
 
@@ -629,7 +625,7 @@
         // loop through all tokens in the easing library
         for (const key in easeLib) {
             if (Object.hasOwnProperty.call(easeLib, key)) {
-                const cubicBez = easeLib[key].val;
+                const cubicBez = easeLib[key];
 
                 const tollerance = 0.01
 

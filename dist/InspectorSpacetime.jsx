@@ -50,12 +50,8 @@
     initConfig();
     function initConfig() {
         easeLib = {
-            linear: {
-                val: [0.0, 0.0, 1.0, 1.0]
-            },
-            hold: {
-                val: [0.0, 0.0, 0.0, 0.0]
-            }
+            linear: [0.0, 0.0, 1.0, 1.0],
+            hold: [0.0, 0.0, 0.0, 0.0]
         };
         var easeLibPath = configFolder + "/ease-library.json";
         if (!Folder(configFolder).exists) {
@@ -453,7 +449,7 @@
         var tokenMatch = null;
         for (var key in easeLib) {
             if (Object.hasOwnProperty.call(easeLib, key)) {
-                var cubicBez = easeLib[key].val;
+                var cubicBez = easeLib[key];
                 var tollerance = 0.01;
                 var match = true;
                 for (var i = 0; i < cubicBez.length; i++) {
