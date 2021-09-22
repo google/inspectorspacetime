@@ -582,7 +582,7 @@
         } else if (valObj.matchName.match(/Rotate|Angle/) != null) {
             str = `${round(valObj.start)} → ${round(valObj.end)}º`
         } else if (valObj.matchName.match(/Color|Shape/) != null) {
-            str = ` `
+            str += `${colorToHex(valObj.start)} → ${colorToHex(valObj.end)}`
         } else {
             str = null
         }
@@ -605,6 +605,15 @@
         }
 
         return str
+
+        function colorToHex(colorArr) {
+            let hex = ''
+            hex += (colorArr[0] * 255).toString(16)
+            hex += (colorArr[1] * 255).toString(16)
+            hex += (colorArr[2] * 255).toString(16)
+
+            return hex.toUpperCase()
+        }
     }
 
     /**
