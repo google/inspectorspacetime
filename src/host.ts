@@ -570,9 +570,10 @@
                 }
                 // add each property to the .props array of its layer
                 let propSpec = getPropSpec(actKey)
-
+                
+                // Pseudo effect support
                 let nameOverride = null
-                if (prop.matchName.match(/Slider|Angle/) != null) {
+                if (prop.matchName.match(/Control/) != null) {
                     nameOverride = prop.propertyGroup(1).name
                 }
 
@@ -750,7 +751,6 @@
         }
 
         if (!str) {
-            // alert(JSON.stringify(valObj, false, 2))
             str = ''
             if (valObj.start.length > 1) {      // iterate through multi dimension props
                 for (const i in valObj.start) {

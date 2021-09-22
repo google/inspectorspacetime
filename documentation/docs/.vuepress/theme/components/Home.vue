@@ -53,10 +53,34 @@
 
     <div v-if="data.usage && data.usage.length" class="section">
       <h2>Usage</h2>
+      <div class="grid two-three" v-for="(use, index) in data.usage" :key="index">
+        <div >
+          <img v-if="use.img" :src="use.img" :alt="use.title">
+        </div>
+        <div>
+          <h3>{{ use.title }}</h3>
+          <p><span v-html="use.details"></span></p>
+        </div>
+      </div>
+    </div>
+    <!-- <div v-if="data.usage && data.usage.length" class="section">
+      <h2>Usage</h2>
       <div class="grid" >
         <div v-for="(use, index) in data.usage"
         :key="index">
-          <img :src="use.img" :alt="use.title">
+          <img v-if="use.img" :src="use.img" :alt="use.title">
+          <h3>{{ use.title }}</h3>
+          <p><span v-html="use.details"></span></p>
+        </div>
+      </div>
+    </div> -->
+
+    <div v-if="data.updates && data.updates.length" class="section">
+      <!-- <h2>Updates</h2> -->
+      <div class="grid half" >
+        <div v-for="(use, index) in data.updates"
+        :key="index">
+          <img v-if="use.img" :src="use.img" :alt="use.title">
           <h3>{{ use.title }}</h3>
           <!-- <p>{{ use.details }}</p> -->
           <p><span v-html="use.details"></span></p>
@@ -65,15 +89,22 @@
     </div>
 
     <div v-if="data.addons && data.addons.length" class="section">
-      <h2>Add-ons</h2>
-      <div class="grid" >
-        <div v-for="(addon, index) in data.addons"
-        :key="index">
-          <img :src="addon.img" :alt="addon.title">
-          <h3>{{ addon.title }}</h3>
-          <p><span v-html="addon.details"></span></p>
-          
-          <!-- <p>{{ addon.details | textPrep }}</p> -->
+      <!-- <h2>Details</h2> -->
+      <div class="grid two-three" v-for="(use, index) in data.addons" :key="index">
+        <div >
+          <img v-if="use.img" :src="use.img" :alt="use.title">
+          <div v-if="use.video" class="youtube" style="margin: 3rem auto 1.5rem; width: 390px">
+            <video
+              v-if="use.video"
+              width="100%"
+              :src="$withBase(use.video)"
+              autoplay loop muted
+            />
+          </div>
+        </div>
+        <div>
+          <h3>{{ use.title }}</h3>
+          <p><span v-html="use.details"></span></p>
         </div>
       </div>
     </div>
@@ -242,12 +273,16 @@ header
     float right
     margin-left 16px
   img
-    width 100%    
+    width 100%   
   .grid
     display grid
     grid-template-columns 1fr 1fr 1fr
     gap 32px 32px
     margin-top 16px
+  .half 
+    grid-template-columns 1fr 1fr
+  .two-three 
+    grid-template-columns 0.4fr 0.6fr
   br
     clear both
   .youtube

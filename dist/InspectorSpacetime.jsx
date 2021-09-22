@@ -345,7 +345,7 @@
                 }
                 var propSpec = getPropSpec(actKey);
                 var nameOverride = null;
-                if (prop.matchName.match(/Slider|Angle/) != null) {
+                if (prop.matchName.match(/Control/) != null) {
                     nameOverride = prop.propertyGroup(1).name;
                 }
                 spec.layers[spec.layers.length - 1].props.push({
