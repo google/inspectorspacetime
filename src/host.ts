@@ -570,8 +570,14 @@
                 }
                 // add each property to the .props array of its layer
                 let propSpec = getPropSpec(actKey)
+
+                let nameOverride = null
+                if (prop.matchName.match(/Slider|Angle/) != null) {
+                    nameOverride = prop.propertyGroup(1).name
+                }
+
                 spec.layers[spec.layers.length - 1].props.push({
-                    name: prop.name,
+                    name: nameOverride || prop.name,
                     value: propSpec.value,
                     duration: propSpec.duration,
                     ease: propSpec.ease,
@@ -735,7 +741,7 @@
             str = `${round(valObj.start[0])} → ${round(valObj.end[0])}%`
         } else if (valObj.matchName.match(/Position_0|Position_1|Position_2/) != null) {
             str = `${round(valObj.start)} → ${round(valObj.end)}px`
-        } else if (valObj.matchName.match(/Rotate/) != null) {
+        } else if (valObj.matchName.match(/Rotate|Angle/) != null) {
             str = `${round(valObj.start)} → ${round(valObj.end)}º`
         } else if (valObj.matchName.match(/Color|Shape/) != null) {
             str = ` `
@@ -744,15 +750,21 @@
         }
 
         if (!str) {
+            // alert(JSON.stringify(valObj, false, 2))
             str = ''
-            for (const i in valObj.start) {
-                // if (Object.prototype.hasOwnProperty.call(valObj, start)) {
-                if (!isNaN(i)) {
-                    str += `${round(valObj.start[i])} → ${round(valObj.end[i])} | `
+            if (valObj.start.length > 1) {      // iterate through multi dimension props
+                for (const i in valObj.start) {
+                    // if (Object.prototype.hasOwnProperty.call(valObj, start)) {
+                    if (!isNaN(i)) {
+                        str += `${round(valObj.start[i])} → ${round(valObj.end[i])} | `
+                    }
+                    
                 }
-                
+                str = str.slice(0, -3)      // remove the last ` :: `
+            } else {
+                str = `${round(valObj.start)} → ${round(valObj.end)}`
+
             }
-            str = str.slice(0, -3)      // remove the last ` :: `
         }
 
         return str

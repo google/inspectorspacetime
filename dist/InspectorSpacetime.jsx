@@ -344,8 +344,12 @@
                     });
                 }
                 var propSpec = getPropSpec(actKey);
+                var nameOverride = null;
+                if (prop.matchName.match(/Slider|Angle/) != null) {
+                    nameOverride = prop.propertyGroup(1).name;
+                }
                 spec.layers[spec.layers.length - 1].props.push({
-                    name: prop.name,
+                    name: nameOverride || prop.name,
                     value: propSpec.value,
                     duration: propSpec.duration,
                     ease: propSpec.ease,
@@ -485,7 +489,7 @@
         else if (valObj.matchName.match(/Position_0|Position_1|Position_2/) != null) {
             str = round(valObj.start) + " \u2192 " + round(valObj.end) + "px";
         }
-        else if (valObj.matchName.match(/Rotate/) != null) {
+        else if (valObj.matchName.match(/Rotate|Angle/) != null) {
             str = round(valObj.start) + " \u2192 " + round(valObj.end) + "\u00BA";
         }
         else if (valObj.matchName.match(/Color|Shape/) != null) {
@@ -496,12 +500,17 @@
         }
         if (!str) {
             str = '';
-            for (var i in valObj.start) {
-                if (!isNaN(i)) {
-                    str += round(valObj.start[i]) + " \u2192 " + round(valObj.end[i]) + " | ";
+            if (valObj.start.length > 1) {
+                for (var i in valObj.start) {
+                    if (!isNaN(i)) {
+                        str += round(valObj.start[i]) + " \u2192 " + round(valObj.end[i]) + " | ";
+                    }
                 }
+                str = str.slice(0, -3);
             }
-            str = str.slice(0, -3);
+            else {
+                str = round(valObj.start) + " \u2192 " + round(valObj.end);
+            }
         }
         return str;
     }
