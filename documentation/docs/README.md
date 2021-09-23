@@ -19,7 +19,7 @@ updates:
 - title: New in v2.5
   details: Since its initial release in 2017 as one of the first attempts at speccing motion, the ways motion designers work with engineering have matured. Inspector Spacetime is now much simpler than previous versions. <br/><br/>The dynamic expressions and spec sidebar are gone and have been replaced with a few different varieties of plain text formatting.  
 - title: Improvements
-  details: <ul><li>Lots of simplicity</li><li>Cubic bezier easing accuracy</li><li>Markdown formatting of text</li><li>Transparent object notation of the spec</li><li>Removed a bunch of unnecessary stuff</li></ul>
+  details: <ul><li>Lots of simplicity</li><li>Cubic bezier easing accuracy</li><li>Support for named easing curves</li><li> Markdown formatting of text</li><li>Transparent object notation of the spec</li><li>Removed a bunch of unnecessary stuff</li></ul>
 - title: Now supporting
   details: <ul><li>Color as hex</li><li>Pseudo effects</li><li>All Ae properties except paths</li></ul>
 addons:

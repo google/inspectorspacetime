@@ -1,7 +1,7 @@
 <img src="https://google.github.io/inspectorspacetime/images/Inspector_Spacetime_logo.png" width="100" alt="Inspector Spacetime logo">
 
 # [Inspector Spacetime][4e4c540d]
-Motion specs are a necessary part of the engineering process. It's often difficult and time consuming to deliver the data required to replicate motion on device. With Inspector Spacetime you can generate this data along side the reference quicktime, with just one click.
+Motion specs are a necessary part of the engineering process. It's often difficult and time consuming to deliver the data required to replicate motion on device. With Inspector Spacetime it is possible to generate this data in the most usable formats, with just one click.
 
   [4e4c540d]: https://google.github.io/inspectorspacetime/ "Inspector Spacetime"
 
@@ -31,47 +31,73 @@ Restart Ae and InspectorSpacetime will be available in the Window menu at the to
 ## Usage
 
 ### Basics
-<img src="https://google.github.io/inspectorspacetime/images/Panel.png" width="380">
+<img src="https://google.github.io/inspectorspacetime/images/Panel.jpg" width="280">
 
-Select a pair or several pairs of keyframes and click the giant button. These keyframe values will be collected within a floating panel and may be copied out as text or added to a renderable blue side panel in a duplicate comp.
+Select pairs of keyframes and click the big button. These keyframe values will be collected within the panel and may be copied out in one of the format versions (Text, Markdown, or JSON).
 
-### Pastable Text
-<img src="https://google.github.io/inspectorspacetime/images/PropPanel.png" width="380">
+Note- this JSON is not the same as Lottie JSON. It is just a verbose look at all the details of the spec data. An engineer might want this or you might want to build your own converter.
 
-Selected keyframe pairs are now added to the property list as plain text. Additional keys may be added to the list and the overall duration and delay of each key pair will update.
+### Collected data
+```
+Comp name
+Transition duration
 
-**Note: Live text is dead–** as of v2.1, the live text panel has been removed because it was a major pain to get useable data out with all those expressions.
+Layer name
+- PropertyName: StartValue → EndValue
+  Duration (in milliseconds)
+  Easing curve as cubic bezier
+  Delay (in milliseconds) from the playhead
 
-### Data output
-<img src="https://google.github.io/inspectorspacetime/images/DataOutput.gif" width="380">
+- PropertyName: StartValue → EndValue
+  Duration (in milliseconds)
+  ...
+```
 
-Keyframe data output:
+### New in 2.5
+Since its initial release in 2017 as one of the first attempts at speccing motion, the ways motion designers work with engineering have matured. Inspector Spacetime is now much simpler than previous versions.
 
-- Property name
-- Delay time (live value)
-- Duration of keyframe pair
-- Value change
-- Cubic Bezier interpolation curve
-#### Position
-- May be coordinates or distance
-- 3X is the default DP for working at 1080x1920
+The dynamic expressions and spec sidebar are gone and have been replaced with a few different varieties of plain text formatting.
 
-## Generator Buttons
+#### Improvements
+- Lots of simplicity 
+- Cubic bezier easing accuracy
+- Support for named easing curves
+- Markdown formatting of text
+- Transparent object notation of the spec
+- Removed a bunch of unnecessary stuff
 
-### Isolation Layer
-<img src="https://google.github.io/inspectorspacetime/images/IsoLayer.gif" width="380">
+#### Now supporting
+- Color as hex
+- Pseudo effects
+- All Ae properties except paths
 
-If your comp is really busy it can be tough to clearly see what's being spec'd. An isolation layer is just an adjustment layer that will grey out everything below it to get a little more focus on what you're showing.
 
-## Time Counter
+## Addons
+
+### New Counter
 <img src="https://google.github.io/inspectorspacetime/images/TimeCounter.gif" width="380">
 
-Created with every spec, a counter is also available as its own layer. Create a millisecond counter with a defined start and end point. Start the timer at the beginning of the transition to easily illustrate the global start time.
+Having a visual representation of the elapsed time on screen can often be helpful. Click to a add a new time counter layer at the playhead, and drag the Start and End markers to the beginning of the transition to easily illustrate the global start time.
 
-## Pointer
-<img src="https://google.github.io/inspectorspacetime/images/Pointer.png" width="380">
+Alternatively, select a set of keyframes and click to automatically place the Start and End markers around the selected keys.
 
-Everyone names things differently, which can lead to confusion. So draw a line from spec data to the visual element and save yourself a lot of explaining. This button will get you started, or just draw your own. Either way, it'll make your life easier.
+### Eas library
+<img src="https://google.github.io/inspectorspacetime/images/Ease-library.jpg" width="380">
+
+The system generates easing curves as cubic bezier easing functions. This is a common format, but your team might have developed its own short-hand terminology for these curves.
+
+A Linear curve is a good example of one you might not need numbers for.
+
+To auto-detect reusable curves, click the ✱ button at the bottom of the panel to open the /config folder. Open the ease-library.json file in a text editor and add new curves in JSON format.
+
+```
+"material standard": [
+  0.4,
+  0,
+  0.2,
+  1
+],
+```
 
 ___
 ## Why the dumb name?
