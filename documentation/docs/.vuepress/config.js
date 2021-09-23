@@ -30,7 +30,7 @@ module.exports = {
    */
   themeConfig: {
     repo: 'https://github.com/google/inspectorspacetime.git',
-    logo: 'images/Inspector_Spacetime_logo.png',
+    logo: 'images/logo.svg',
     editLinks: false,
     docsDir: '',
     editLinkText: '',
