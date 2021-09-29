@@ -43,7 +43,7 @@
                 Object.prototype.hasOwnProperty.call(b, g) && (f = c(b, g), f !== void 0 ? b[g] = f : delete b[g]); return e.call(a, d, b); } var d, a = String(a); q.lastIndex = 0; q.test(a) && (a = a.replace(q, function (a) { return "\\u" + ("0000" + a.charCodeAt(0).toString(16)).slice(-4); })); if (/^[\],:{}\s]*$/.test(a.replace(/\\(?:["\\\/bfnrt]|u[0-9a-fA-F]{4})/g, "@").replace(/"[^"\\\n\r]*"|true|false|null|-?\d+(?:\.\d*)?(?:[eE][+\-]?\d+)?/g, "]").replace(/(?:^|:|,)(?:\s*\[)+/g, "")))
             return d = eval("(" + a + ")"), typeof e === "function" ? c({ "": d }, "") : d; throw new SyntaxError("JSON.parse"); }; })();
     var scriptName = 'Inspector Spacetime';
-    var scriptVersion = '2.5';
+    var scriptVersion = '2.5.2';
     var thisComp, easeLib = {};
     var exp_counter = 'var sTime = marker.key("Start").time; var eTime = marker.key("End").time; var countTime = Math.max(time - sTime, 0); countTime = Math.min(countTime, eTime - sTime); var counter = Math.round(countTime * 1000); var playIcon = (time > sTime && time < eTime) ? "\u25ba " : "\u25a0 "; playIcon + counter + "ms";';
     var configFolder = Folder.userData.toString() + '/BattleAxe/InspectorSpacetime/config/';
@@ -266,18 +266,26 @@
                         props: []
                     });
                 }
-                var propSpec = getPropSpec(actKey);
-                var nameOverride = null;
-                if (prop.matchName.match(/Control/) != null) {
-                    nameOverride = prop.propertyGroup(1).name;
+                for (var i = 0; i < keys.length; i += 2) {
+                    if (!keys[i + 1]) {
+                        continue;
+                    }
+                    var propSpec = getPropSpec({
+                        prop: prop,
+                        keys: [keys[i], keys[i + 1]]
+                    });
+                    var nameOverride = null;
+                    if (prop.matchName.match(/Control/) != null) {
+                        nameOverride = prop.propertyGroup(1).name;
+                    }
+                    spec.layers[spec.layers.length - 1].props.push({
+                        name: nameOverride || prop.name,
+                        value: propSpec.value,
+                        duration: propSpec.duration,
+                        ease: propSpec.ease,
+                        delay: propSpec.delay
+                    });
                 }
-                spec.layers[spec.layers.length - 1].props.push({
-                    name: nameOverride || prop.name,
-                    value: propSpec.value,
-                    duration: propSpec.duration,
-                    ease: propSpec.ease,
-                    delay: propSpec.delay
-                });
             }
             return spec;
         }
@@ -299,12 +307,16 @@
             valChange.start = prop.keyValue(keys[0]);
             valChange.end = prop.keyValue(keys[1]);
         }
+        if (prop.matchName.match(/Text Document/)) {
+            valChange.start = prop.keyValue(actKey.keys[0]).toString();
+            valChange.end = prop.keyValue(actKey.keys[1]).toString();
+        }
         if (prop.matchName.match(/Shape/)) {
             valChange.start = null;
             valChange.end = null;
         }
         var layer = prop.propertyGroup(prop.propertyDepth);
-        if (!layer.threeDLayer && ((_a = valChange === null || valChange === void 0 ? void 0 : valChange.start) === null || _a === void 0 ? void 0 : _a.length) > 2) {
+        if (!prop.matchName.match(/Text Document/) && !layer.threeDLayer && ((_a = valChange === null || valChange === void 0 ? void 0 : valChange.start) === null || _a === void 0 ? void 0 : _a.length) > 2) {
             valChange.start.pop();
             valChange.end.pop();
         }
@@ -398,7 +410,7 @@
             return str;
         }
         catch (e) {
-            alert(e.toString() + "\nError on line: " + e.line.toString());
+            return 'Select some keyframes';
         }
     }
     function getVal(valObj) {
@@ -415,24 +427,32 @@
         else if (valObj.matchName.match(/Rotate|Angle/) != null) {
             str = round(valObj.start) + " \u2192 " + round(valObj.end) + "\u00BA";
         }
-        else if (valObj.matchName.match(/Color|Shape/) != null) {
+        else if (valObj.matchName.match(/Color/) != null) {
             str += colorToHex(valObj.start) + " \u2192 " + colorToHex(valObj.end);
+        }
+        else if (valObj.matchName.match(/Text Document/) != null) {
+            str = valObj.start + " \u2192 " + valObj.end;
         }
         else {
             str = null;
         }
         if (!str) {
             str = '';
-            if (valObj.start.length > 1) {
-                for (var i in valObj.start) {
-                    if (!isNaN(i)) {
-                        str += round(valObj.start[i]) + " \u2192 " + round(valObj.end[i]) + " | ";
+            try {
+                if (valObj.start.length > 1) {
+                    for (var i in valObj.start) {
+                        if (!isNaN(i)) {
+                            str += round(valObj.start[i]) + " \u2192 " + round(valObj.end[i]) + " | ";
+                        }
                     }
+                    str = str.slice(0, -3);
                 }
-                str = str.slice(0, -3);
+                else {
+                    str = round(valObj.start) + " \u2192 " + round(valObj.end);
+                }
             }
-            else {
-                str = round(valObj.start) + " \u2192 " + round(valObj.end);
+            catch (e) {
+                str = '';
             }
         }
         return str;
@@ -485,7 +505,10 @@
         return str.charAt(0).toUpperCase() + str.slice(1);
     }
     function buildUI() {
-        var specJSON = getKeysSpec();
+        var specJSON = {};
+        if (setComp()) {
+            specJSON = getKeysSpec();
+        }
         var myPanel = (thisObj instanceof Panel) ? thisObj : new Window('palette', scriptName, undefined, { resizeable: true });
         if (myPanel === null)
             return;

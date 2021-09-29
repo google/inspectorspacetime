@@ -14,7 +14,7 @@
 
     //================ VARIABLES ======================
     var scriptName = 'Inspector Spacetime';
-    var scriptVersion = '2.5';
+    var scriptVersion = '2.5.2';
     var thisComp, easeLib = {};
 
     var exp_counter = 'var sTime = marker.key("Start").time; var eTime = marker.key("End").time; var countTime = Math.max(time - sTime, 0); countTime = Math.min(countTime, eTime - sTime); var counter = Math.round(countTime * 1000); var playIcon = (time > sTime && time < eTime) ? "\u25ba " : "\u25a0 "; playIcon + counter + "ms";';
@@ -401,22 +401,30 @@
                         props: []
                     })
                 }
-                // add each property to the .props array of its layer
-                let propSpec = getPropSpec(actKey)
-                
-                // Pseudo effect support
-                let nameOverride = null
-                if (prop.matchName.match(/Control/) != null) {
-                    nameOverride = prop.propertyGroup(1).name
-                }
+                for (let i = 0; i < keys.length; i += 2) {
+                    // make sure there are even numbers of selected keys
+                    if (!keys[i + 1]) { continue }
 
-                spec.layers[spec.layers.length - 1].props.push({
-                    name: nameOverride || prop.name,
-                    value: propSpec.value,
-                    duration: propSpec.duration,
-                    ease: propSpec.ease,
-                    delay: propSpec.delay,
-                })
+                    // add each property to the .props array of its layer
+                    let propSpec = getPropSpec({
+                        prop,
+                        keys: [keys[i], keys[i + 1]]
+                    })
+                    
+                    // Pseudo effect support
+                    let nameOverride = null
+                    if (prop.matchName.match(/Control/) != null) {
+                        nameOverride = prop.propertyGroup(1).name
+                    }
+    
+                    spec.layers[spec.layers.length - 1].props.push({
+                        name: nameOverride || prop.name,
+                        value: propSpec.value,
+                        duration: propSpec.duration,
+                        ease: propSpec.ease,
+                        delay: propSpec.delay,
+                    })
+                }
 
             }
 
@@ -447,12 +455,16 @@
             valChange.start = prop.keyValue(keys[0])
             valChange.end = prop.keyValue(keys[1])
         }
+        if (prop.matchName.match(/Text Document/)) {
+            valChange.start = prop.keyValue(actKey.keys[0]).toString()
+            valChange.end = prop.keyValue(actKey.keys[1]).toString()
+        }
         if (prop.matchName.match(/Shape/)) {        // catch if a shape property - remove this block if you want path info
             valChange.start = null
             valChange.end = null
         }
         let layer = prop.propertyGroup(prop.propertyDepth)
-        if (!layer.threeDLayer && valChange?.start?.length > 2) {       // remove the 3rd prop if layer not 3d
+        if (!prop.matchName.match(/Text Document/) && !layer.threeDLayer && valChange?.start?.length > 2) {       // remove the 3rd prop if layer not 3d
             valChange.start.pop()
             valChange.end.pop()
         }
@@ -557,7 +569,7 @@
             }
     
             return str
-        } catch (e) { alert(e.toString() + "\nError on line: " + e.line.toString());}
+        } catch (e) { return 'Select some keyframes'}
     }
 
     /**
@@ -577,27 +589,31 @@
             str = `${round(valObj.start)} → ${round(valObj.end)}px`
         } else if (valObj.matchName.match(/Rotate|Angle/) != null) {
             str = `${round(valObj.start)} → ${round(valObj.end)}º`
-        } else if (valObj.matchName.match(/Color|Shape/) != null) {
+        } else if (valObj.matchName.match(/Color/) != null) {
             str += `${colorToHex(valObj.start)} → ${colorToHex(valObj.end)}`
+        } else if (valObj.matchName.match(/Text Document/) != null) {
+            str = `${valObj.start} → ${valObj.end}`
         } else {
             str = null
         }
 
         if (!str) {
             str = ''
-            if (valObj.start.length > 1) {      // iterate through multi dimension props
-                for (const i in valObj.start) {
-                    // if (Object.prototype.hasOwnProperty.call(valObj, start)) {
-                    if (!isNaN(i)) {
-                        str += `${round(valObj.start[i])} → ${round(valObj.end[i])} | `
+            try {
+                if (valObj.start.length > 1) {      // iterate through multi dimension props
+                    for (const i in valObj.start) {
+                        // if (Object.prototype.hasOwnProperty.call(valObj, start)) {
+                        if (!isNaN(i)) {
+                            str += `${round(valObj.start[i])} → ${round(valObj.end[i])} | `
+                        }
+                        
                     }
-                    
+                    str = str.slice(0, -3)      // remove the last ` :: `
+                } else {
+                    str = `${round(valObj.start)} → ${round(valObj.end)}`
+    
                 }
-                str = str.slice(0, -3)      // remove the last ` :: `
-            } else {
-                str = `${round(valObj.start)} → ${round(valObj.end)}`
-
-            }
+            } catch (e) { str = ''}
         }
 
         return str
@@ -675,7 +691,8 @@
     }
 
     function buildUI() {
-        let specJSON = getKeysSpec()        
+        let specJSON = {}
+        if (setComp()) { specJSON = getKeysSpec()}
         /*
         Code for Import https://scriptui.joonas.me — (Triple click to select):
         {"items":{"item-0":{"id":0,"type":"Dialog","parentId":false,"style":{"enabled":true,"varName":"myPanel","windowType":"Dialog","creationProps":{"su1PanelCoordinates":false,"maximizeButton":false,"minimizeButton":false,"independent":false,"closeButton":true,"borderless":false,"resizeable":true},"text":"Dialog","preferredSize":[240,0],"margins":16,"orientation":"column","spacing":10,"alignChildren":["fill","top"]}},"item-1":{"id":1,"type":"Button","parentId":0,"style":{"enabled":true,"varName":"btn_getSpec","text":"Get specs from selected keys","justify":"center","preferredSize":[0,0],"alignment":"fill","helpTip":""}},"item-4":{"id":4,"type":"EditText","parentId":24,"style":{"enabled":true,"varName":"txt_jsonField","creationProps":{"noecho":false,"readonly":false,"multiline":true,"scrollable":true,"borderless":false,"enterKeySignalsOnChange":false},"softWrap":false,"text":"","justify":"left","preferredSize":[0,200],"alignment":"fill","helpTip":"Event marker name"}},"item-22":{"id":22,"type":"TabbedPanel","parentId":0,"style":{"enabled":true,"varName":null,"preferredSize":[0,0],"margins":0,"alignment":"fill","selection":23}},"item-23":{"id":23,"type":"Tab","parentId":22,"style":{"enabled":true,"varName":null,"text":"Text","orientation":"column","spacing":10,"alignChildren":["left","top"]}},"item-24":{"id":24,"type":"Tab","parentId":22,"style":{"enabled":true,"varName":null,"text":"JSON","orientation":"column","spacing":10,"alignChildren":["left","top"]}},"item-25":{"id":25,"type":"EditText","parentId":23,"style":{"enabled":true,"varName":"txt_textField","creationProps":{"noecho":false,"readonly":false,"multiline":true,"scrollable":true,"borderless":false,"enterKeySignalsOnChange":false},"softWrap":false,"text":"","justify":"left","preferredSize":[0,235],"alignment":"fill","helpTip":"Event marker name"}},"item-26":{"id":26,"type":"Group","parentId":0,"style":{"enabled":true,"varName":null,"preferredSize":[0,0],"margins":0,"orientation":"row","spacing":10,"alignChildren":["left","center"],"alignment":"fill"}},"item-27":{"id":27,"type":"Button","parentId":26,"style":{"enabled":true,"varName":"btn_settings","text":"✱","justify":"right","preferredSize":[40,0],"alignment":null,"helpTip":"Settings"}},"item-28":{"id":28,"type":"Button","parentId":24,"style":{"enabled":true,"varName":"btn_saveJSON","text":"Save to .JSON","justify":"center","preferredSize":[0,0],"alignment":"fill","helpTip":null}},"item-29":{"id":29,"type":"Button","parentId":26,"style":{"enabled":true,"varName":"btn_newCounter","text":"New counter","justify":"left","preferredSize":[0,0],"alignment":null,"helpTip":"Create a time counter layer"}}},"order":[0,1,22,23,25,24,4,28,26,29,27],"settings":{"importJSON":true,"indentSize":false,"cepExport":false,"includeCSSJS":true,"showDialog":true,"functionWrapper":false,"afterEffectsDockable":false,"itemReferenceList":"None"},"activeId":26}
