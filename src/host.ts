@@ -154,7 +154,7 @@
                     continue
                 }
                 // if (!selKeys || selKeys.length < 1) continue
-                if (selKeys.length % 2 > 0) { selKeys.pop() }
+                // if (selKeys.length % 2 > 0) { selKeys.pop() }       // remove odd number keys
 
                 selKeyList.push({
                     prop: prop,
@@ -401,7 +401,8 @@
                         props: []
                     })
                 }
-                for (let i = 0; i < keys.length; i += 2) {
+
+                for (let i = 0; i < keys.length; i++) {
                     // make sure there are even numbers of selected keys
                     if (!keys[i + 1]) { continue }
 

@@ -129,9 +129,6 @@
                 if (selKeys.length < 2) {
                     continue;
                 }
-                if (selKeys.length % 2 > 0) {
-                    selKeys.pop();
-                }
                 selKeyList.push({
                     prop: prop,
                     keys: selKeys || null
@@ -266,7 +263,7 @@
                         props: []
                     });
                 }
-                for (var i = 0; i < keys.length; i += 2) {
+                for (var i = 0; i < keys.length; i++) {
                     if (!keys[i + 1]) {
                         continue;
                     }
